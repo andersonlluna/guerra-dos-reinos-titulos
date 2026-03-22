@@ -73,6 +73,7 @@
         }
         .tag-bastardos { background:rgba(90,100,112,0.18); border:1px solid rgba(176,190,197,0.35); color:#9AAAB8; }
         .tag-anel      { background:rgba(28,78,58,0.18);  border:1px solid rgba(46,122,88,0.4);  color:#3A8A66; }
+        .tag-northclaw { background:rgba(139,90,43,0.18); border:1px solid rgba(200,130,60,0.4); color:#C88040; }
 
         /* PRIMARY TITLE CARD */
         .primary-title-card {
@@ -261,8 +262,8 @@ const LORDS = [
     { name:'Icebergteam',     house:'Forja Polar',          avatar:'❄️',  color:'#00CED1', alliance:'anel'      },
     { name:'Sons of Númenor', house:'Herdeiros de Elendil',  avatar:'🛡️',  color:'#4169E1', alliance:'bastardos' },
     { name:'Ironverdict',     house:'Forja da Justiça',      avatar:'🗡️',  color:'#8a8a8a', alliance:'bastardos' },
-    { name:'CEEC',            house:'Mestre das Espadas',    avatar:'⚔️',  color:'#8B0000', alliance:'anel'      },
-    { name:'Otopatamá',       house:'Samurais Guerreiros',   avatar:'🤖',  color:'#1E90FF', alliance:'anel'      },
+    { name:'CEEC',            house:'Mestre das Espadas',    avatar:'⚔️',  color:'#8B0000', alliance:'northclaw' },
+    { name:'Otopatamá',       house:'Samurais Guerreiros',   avatar:'🤖',  color:'#1E90FF', alliance:'northclaw' },
     { name:'Andorinha Jr',    house:'Jovem Veloz',           avatar:'🦆',  color:'#FF6347', alliance:'anel'      },
     { name:'Andorinha',       house:'Senhores do Voo',       avatar:'🦅',  color:'#DC143C', alliance:'anel'      },
     { name:'Varelitas',       house:'Guardas da Colina',     avatar:'🦊',  color:'#228B22', alliance:'bastardos' },
@@ -527,9 +528,11 @@ function render(lordConfig, stats) {
     document.getElementById('hero-avatar').textContent = lordConfig.avatar;
     document.getElementById('hero-name').textContent = lordConfig.name;
     document.getElementById('hero-house').innerHTML = `<span style="color:${lordConfig.color}">${lordConfig.house}</span>`;
-    document.getElementById('hero-alliance').innerHTML = lordConfig.alliance === 'bastardos'
-        ? `<span class="hero-alliance tag-bastardos">🗡️ Os Bastardos</span>`
-        : `<span class="hero-alliance tag-anel">💍 Sociedade do Anel</span>`;
+    let allianceHTML;
+    if (lordConfig.alliance === 'bastardos')        allianceHTML = `<span class="hero-alliance tag-bastardos">🗡️ Os Bastardos</span>`;
+    else if (lordConfig.alliance === 'northclaw')   allianceHTML = `<span class="hero-alliance tag-northclaw">🦅 North Claw</span>`;
+    else                                            allianceHTML = `<span class="hero-alliance tag-anel">💍 Sociedade do Anel</span>`;
+    document.getElementById('hero-alliance').innerHTML = allianceHTML;
 
     const primaryTitle = stats.locked ? '📰 Escudeiro Sem Nome' : getPrimaryTitle(stats);
 
