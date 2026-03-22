@@ -310,7 +310,8 @@ function getPrimaryTier(l){if(l.mvp)return'S';if(l.mitada)return'A';if(l.recuper
 // Contar títulos desbloqueados (cada tier dentro de cada categoria que foi alcançado)
 function countUnlocked(stats){
     let count=0;
-    for(const[key,data]of Object.entries(TITLES_DATA)){
+    const TIER_ORDER=['mvp','mitada','massacre','podio','recuperacao','lanterna'];
+    for(const key of TIER_ORDER){const data=TITLES_DATA[key];
         const n=stats[key]||0;
         for(const tier of data.tiers) if(n>=tier.min) count++;
     }
@@ -417,7 +418,8 @@ function render(cfg,stats){
     }
 
     const gloria=[],vergonha=[],proximos=[];
-    for(const[key,data]of Object.entries(TITLES_DATA)){
+    const TIER_ORDER=['mvp','mitada','massacre','podio','recuperacao','lanterna'];
+    for(const key of TIER_ORDER){const data=TITLES_DATA[key];
         const count=stats[key]||0;
         const cur=getTier(key,count);
         const nxt=getNext(key,count);
