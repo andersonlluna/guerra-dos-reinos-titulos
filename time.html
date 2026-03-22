@@ -12,189 +12,216 @@
             --amber: #C8860A; --amber-light: #E8A020; --amber-dim: #8A5C06;
             --bg-deep: #080A0E; --bg-card: rgba(14,17,26,0.98);
             --border: rgba(200,134,10,0.18);
-            --text: #DDD5C8; --text-bright: #EDE8E0; --text-muted: #6B6878;
-            --lord-color: #C8860A;
+            --text: #DDD5C8; --text-bright: #EDE8E0; --text-muted: #7A7688;
         }
         body {
             font-family: 'Crimson Text', Georgia, serif;
             background: var(--bg-deep);
-            color: var(--text); min-height: 100vh; padding-bottom: 60px;
+            color: var(--text); min-height: 100vh; padding-bottom: 80px;
+            font-size: 18px;
         }
 
         /* LOADING */
         #loading {
             position:fixed; inset:0; background:var(--bg-deep);
             display:flex; flex-direction:column; align-items:center; justify-content:center;
-            z-index:999; gap:16px;
+            z-index:999; gap:18px;
         }
-        .loading-icon { font-size:3em; animation:pulse 1.3s ease-in-out infinite; }
-        .loading-text { font-family:'Cinzel',serif; color:var(--amber-light); font-size:.95em; letter-spacing:.12em; }
+        .loading-icon { font-size:3.5em; animation:pulse 1.3s ease-in-out infinite; }
+        .loading-text { font-family:'Cinzel',serif; color:var(--amber-light); font-size:1.1em; letter-spacing:.12em; }
         @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.88)} }
 
-        /* BACK */
+        /* BACK BAR */
         .back-bar {
-            padding:14px 16px;
-            border-bottom:1px solid rgba(255,255,255,0.04);
+            padding:16px 18px;
+            border-bottom:1px solid rgba(255,255,255,0.05);
+            display:flex; align-items:center; justify-content:space-between;
         }
         .back-link {
-            display:inline-flex; align-items:center; gap:6px;
-            font-family:'Cinzel',serif; font-size:.75em; color:var(--text-muted);
-            text-decoration:none; transition:color .2s;
+            display:inline-flex; align-items:center; gap:8px;
+            font-family:'Cinzel',serif; font-size:.85em; color:var(--text-muted);
+            text-decoration:none; padding:10px 16px;
+            border:1px solid rgba(255,255,255,0.08); border-radius:6px;
+            transition:color .2s, border-color .2s;
+            -webkit-tap-highlight-color:transparent;
         }
-        .back-link:hover { color:var(--amber); }
+        .back-link:active { color:var(--amber); border-color:var(--amber-dim); }
+
+        /* WHATSAPP SHARE */
+        .share-btn {
+            display:inline-flex; align-items:center; gap:8px;
+            font-family:'Cinzel',serif; font-size:.85em; font-weight:700;
+            color:#25D366; text-decoration:none;
+            padding:10px 16px; border:1px solid rgba(37,211,102,0.3);
+            border-radius:6px; background:rgba(37,211,102,0.06);
+            transition:background .2s; -webkit-tap-highlight-color:transparent;
+        }
+        .share-btn:active { background:rgba(37,211,102,0.14); }
 
         /* HERO */
         .hero {
-            padding: 36px 20px 32px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
+            padding:36px 20px 28px; text-align:center; position:relative; overflow:hidden;
         }
         .hero::before {
-            content:'';
-            position:absolute; inset:0;
-            background: radial-gradient(ellipse 70% 60% at 50% 0%,
-                rgba(var(--lord-r),var(--lord-g),var(--lord-b),0.12) 0%, transparent 70%);
+            content:''; position:absolute; inset:0;
+            background:radial-gradient(ellipse 70% 60% at 50% 0%, var(--lord-glow,rgba(200,134,10,0.1)) 0%, transparent 70%);
             pointer-events:none;
         }
-        .hero-color-bar {
-            position:absolute; top:0; left:0; right:0; height:4px;
-        }
-        .hero-avatar { font-size:3.5em; margin-bottom:12px; line-height:1; }
+        .hero-color-bar { position:absolute; top:0; left:0; right:0; height:5px; }
+        .hero-avatar { font-size:4em; margin-bottom:12px; line-height:1; }
         .hero-name {
-            font-family:'Cinzel',serif; font-size:clamp(1.5em,5vw,2.2em); font-weight:900;
-            color:var(--text-bright); letter-spacing:.06em; margin-bottom:4px;
+            font-family:'Cinzel',serif; font-size:clamp(1.7em,6vw,2.4em); font-weight:900;
+            color:var(--text-bright); letter-spacing:.06em; margin-bottom:6px;
         }
-        .hero-house { font-size:.95em; font-weight:600; margin-bottom:10px; }
+        .hero-house { font-size:1em; font-weight:600; margin-bottom:12px; }
         .hero-alliance {
-            display:inline-block; font-family:'Cinzel',serif; font-size:.72em;
-            padding:3px 12px; border-radius:3px; font-weight:700; letter-spacing:.04em;
-            margin-bottom:20px;
+            display:inline-block; font-family:'Cinzel',serif; font-size:.82em;
+            padding:5px 16px; border-radius:5px; font-weight:700; letter-spacing:.04em;
+            margin-bottom:0;
         }
         .tag-bastardos { background:rgba(90,100,112,0.18); border:1px solid rgba(176,190,197,0.35); color:#9AAAB8; }
         .tag-anel      { background:rgba(28,78,58,0.18);  border:1px solid rgba(46,122,88,0.4);  color:#3A8A66; }
         .tag-northclaw { background:rgba(139,90,43,0.18); border:1px solid rgba(200,130,60,0.4); color:#C88040; }
 
+        /* WRAP */
+        .wrap { max-width:600px; margin:0 auto; padding:0 16px; }
+
         /* PRIMARY TITLE CARD */
         .primary-title-card {
-            max-width:440px; margin:0 auto 8px;
-            background: var(--bg-card);
-            border:1px solid var(--border);
-            border-radius:10px; overflow:hidden;
+            margin:24px 0 0;
+            background:var(--bg-card); border:1px solid var(--border);
+            border-radius:12px; overflow:hidden;
             box-shadow:0 12px 40px rgba(0,0,0,0.6);
+            display:flex; align-items:center; gap:0;
         }
-        .ptc-img {
-            width:100%; aspect-ratio:1/1;
-            object-fit:contain; display:block;
+        .ptc-img-wrap {
+            width:110px; min-height:110px; flex-shrink:0;
             background:rgba(200,134,10,0.05);
-        }
-        .ptc-img-placeholder {
-            width:100%; height:160px;
             display:flex; align-items:center; justify-content:center;
-            font-size:4em; opacity:.2;
-            background:rgba(200,134,10,0.04);
+            overflow:hidden;
         }
-        .ptc-body { padding:16px 20px 20px; }
+        .ptc-img { width:110px; height:110px; object-fit:contain; display:block; }
+        .ptc-img-placeholder { font-size:3em; opacity:.2; }
+        .ptc-body { padding:18px 20px; flex:1; }
         .ptc-label {
-            font-family:'Cinzel',serif; font-size:.68em; color:var(--text-muted);
-            letter-spacing:.16em; text-transform:uppercase; margin-bottom:6px;
+            font-family:'Cinzel',serif; font-size:.72em; color:var(--text-muted);
+            letter-spacing:.16em; text-transform:uppercase; margin-bottom:8px;
         }
         .ptc-title {
-            font-family:'Cinzel',serif; font-size:1.2em; font-weight:900;
-            color:var(--amber-light); line-height:1.25;
+            font-family:'Cinzel',serif; font-size:1.1em; font-weight:900;
+            color:var(--amber-light); line-height:1.3;
         }
 
-        /* PONTOS STRIP */
-        .pontos-strip {
-            display:flex; justify-content:center; gap:24px; flex-wrap:wrap;
-            padding:20px 16px; max-width:480px; margin:0 auto;
+        /* PONTOS */
+        .pontos-grid {
+            display:grid; grid-template-columns:1fr 1fr 1fr;
+            gap:10px; margin:18px 0 0;
         }
-        .pt-item { text-align:center; }
-        .pt-value { font-family:'Cinzel',serif; font-size:1.6em; font-weight:900; line-height:1; }
-        .pt-label { font-size:.78em; color:var(--text-muted); margin-top:3px; }
+        .pt-item {
+            text-align:center; padding:14px 8px;
+            background:var(--bg-card); border:1px solid rgba(255,255,255,0.05);
+            border-radius:8px;
+        }
+        .pt-value { font-family:'Cinzel',serif; font-size:1.5em; font-weight:900; line-height:1; }
+        .pt-label { font-size:.78em; color:var(--text-muted); margin-top:5px; }
 
         /* SECTION */
-        .section {
-            max-width:600px; margin:0 auto; padding:0 16px;
-        }
         .section-title {
-            font-family:'Cinzel',serif; font-size:.78em; font-weight:700;
+            font-family:'Cinzel',serif; font-size:.82em; font-weight:700;
             color:var(--text-muted); letter-spacing:.16em; text-transform:uppercase;
-            margin:28px 0 14px; padding-bottom:10px;
+            margin:32px 0 16px; padding-bottom:10px;
             border-bottom:1px solid var(--border);
         }
 
-        /* CONQUISTA ROW */
+        /* CONQUISTA ITEM */
         .conquista-item {
-            display:flex; align-items:center; gap:14px;
-            padding:14px 16px; margin-bottom:10px;
-            background:var(--bg-card); border:1px solid rgba(255,255,255,0.05);
-            border-radius:7px;
+            display:flex; align-items:center; gap:16px;
+            padding:16px; margin-bottom:12px;
+            background:var(--bg-card); border:1px solid rgba(255,255,255,0.06);
+            border-radius:10px;
         }
-        .conquista-item.has-title {
-            border-color:var(--border);
-        }
+        .conquista-item.gloria { border-color:var(--border); }
+        .conquista-item.vergonha { border-color:rgba(139,0,0,0.25); background:rgba(80,0,0,0.1); }
+
         .ci-img {
-            width:56px; height:56px; border-radius:5px; flex-shrink:0;
+            width:72px; height:72px; border-radius:8px; flex-shrink:0;
             overflow:hidden; border:1px solid rgba(200,134,10,0.15);
             background:rgba(200,134,10,0.04);
             display:flex; align-items:center; justify-content:center;
         }
-        .ci-img img { width:100%; height:100%; object-fit:cover; }
-        .ci-img-placeholder { font-size:1.6em; opacity:.3; }
+        .ci-img img { width:100%; height:100%; object-fit:contain; }
+        .ci-img-placeholder { font-size:1.8em; opacity:.3; }
+
         .ci-info { flex:1; min-width:0; }
         .ci-category {
-            font-size:.75em; color:var(--text-muted);
-            text-transform:uppercase; letter-spacing:.1em; margin-bottom:3px;
+            font-size:.78em; color:var(--text-muted);
+            text-transform:uppercase; letter-spacing:.1em; margin-bottom:4px;
         }
         .ci-title {
-            font-family:'Cinzel',serif; font-size:.95em; font-weight:700;
-            color:var(--text-bright); line-height:1.25; margin-bottom:4px;
+            font-family:'Cinzel',serif; font-size:1em; font-weight:700;
+            color:var(--text-bright); line-height:1.3; margin-bottom:5px;
         }
-        .ci-count {
-            font-size:.82em; color:var(--amber-dim);
-        }
+        .ci-count { font-size:.85em; color:var(--amber-dim); }
         .ci-pts {
-            font-family:'Cinzel',serif; font-size:1.1em; font-weight:700;
-            flex-shrink:0; min-width:48px; text-align:right;
+            font-family:'Cinzel',serif; font-size:1.2em; font-weight:900;
+            flex-shrink:0; min-width:52px; text-align:right;
         }
-        .ci-pts.pos { color:#4A8C5C; }
-        .ci-pts.neg { color:#8C3A3A; }
+        .ci-pts.pos { color:#4A9C5C; }
+        .ci-pts.neg { color:#9C3A3A; }
 
-        /* PROGRESS */
-        .progress-section { margin-bottom:10px; }
-        .progress-item {
-            padding:12px 16px; margin-bottom:8px;
-            background:rgba(200,134,10,0.04); border:1px solid rgba(200,134,10,0.1);
-            border-radius:6px;
+        /* VERGONHA LABEL */
+        .shame-label {
+            font-family:'Cinzel',serif; font-size:.75em; font-weight:700;
+            color:#9C3A3A; letter-spacing:.14em; text-transform:uppercase;
+            margin:28px 0 14px; padding:10px 14px;
+            background:rgba(80,0,0,0.12); border:1px solid rgba(139,0,0,0.2);
+            border-radius:6px; text-align:center;
         }
+
+        /* PROGRESSO */
+        .progress-item {
+            padding:16px; margin-bottom:12px;
+            background:rgba(200,134,10,0.04); border:1px solid rgba(200,134,10,0.12);
+            border-radius:10px;
+        }
+        .progress-header {
+            display:flex; align-items:center; gap:12px; margin-bottom:12px;
+        }
+        .progress-ci-img {
+            width:52px; height:52px; border-radius:6px; flex-shrink:0;
+            overflow:hidden; border:1px solid rgba(200,134,10,0.15);
+            background:rgba(200,134,10,0.04);
+            display:flex; align-items:center; justify-content:center;
+            opacity:.5;
+        }
+        .progress-ci-img img { width:100%; height:100%; object-fit:contain; }
+        .progress-ci-placeholder { font-size:1.4em; opacity:.3; }
+        .progress-info { flex:1; }
         .progress-label {
-            font-family:'Cinzel',serif; font-size:.82em; color:var(--amber);
+            font-family:'Cinzel',serif; font-size:.9em; font-weight:700;
+            color:var(--amber); margin-bottom:3px; line-height:1.3;
+        }
+        .progress-sublabel { font-size:.8em; color:var(--text-muted); }
+        .progress-bar-wrap {
+            background:rgba(255,255,255,0.07); border-radius:6px; height:10px; overflow:hidden;
             margin-bottom:8px;
         }
-        .progress-bar-wrap {
-            background:rgba(255,255,255,0.06); border-radius:3px; height:6px; overflow:hidden;
-        }
-        .progress-bar {
-            height:100%; border-radius:3px; transition:width .6s ease;
-        }
-        .progress-text {
-            font-size:.78em; color:var(--text-muted); margin-top:5px;
-        }
+        .progress-bar { height:100%; border-radius:6px; transition:width .8s ease; }
+        .progress-text { font-size:.85em; color:var(--text-muted); text-align:right; }
 
         /* LOCKED */
         .locked-notice {
-            text-align:center; padding:32px 20px;
-            font-style:italic; color:var(--text-muted); font-size:.95em; line-height:1.6;
+            text-align:center; padding:40px 20px;
+            font-style:italic; color:var(--text-muted); font-size:1.05em; line-height:1.7;
         }
         .locked-notice strong { color:var(--amber); font-style:normal; }
 
         /* FOOTER */
         footer {
-            margin-top:40px; padding:20px; text-align:center;
+            margin-top:44px; padding:22px; text-align:center;
             border-top:1px solid rgba(200,134,10,0.08);
         }
-        .footer-quote { font-style:italic; color:var(--amber-dim); font-size:.9em; }
+        .footer-quote { font-style:italic; color:var(--amber-dim); font-size:.95em; line-height:1.5; }
     </style>
 </head>
 <body>
@@ -207,7 +234,10 @@
 <div id="main" style="display:none">
 
     <div class="back-bar">
-        <a class="back-link" href="titulos.html">← Todos os Reinos</a>
+        <a class="back-link" href="index.html">← Todos os Reinos</a>
+        <a class="share-btn" id="share-btn" href="#" target="_blank">
+            <span>📲</span> Compartilhar
+        </a>
     </div>
 
     <div class="hero" id="hero">
@@ -218,11 +248,11 @@
         <div id="hero-alliance"></div>
     </div>
 
-    <div style="max-width:600px;margin:0 auto;padding:0 16px">
+    <div class="wrap">
 
         <!-- TÍTULO PRINCIPAL -->
         <div class="primary-title-card" id="primary-card">
-            <div id="ptc-img-wrap"></div>
+            <div class="ptc-img-wrap" id="ptc-img-wrap"></div>
             <div class="ptc-body">
                 <div class="ptc-label">Título Atual</div>
                 <div class="ptc-title" id="ptc-title"></div>
@@ -230,22 +260,27 @@
         </div>
 
         <!-- PONTOS -->
-        <div class="pontos-strip" id="pontos-strip"></div>
+        <div class="pontos-grid" id="pontos-grid"></div>
+
+        <!-- CONQUISTAS GLÓRIA -->
+        <div id="conquistas-gloria-section">
+            <div class="section-title">⚔️ Conquistas de Glória</div>
+            <div id="conquistas-gloria"></div>
+        </div>
+
+        <!-- CONQUISTAS VERGONHA -->
+        <div id="conquistas-vergonha-section" style="display:none">
+            <div class="shame-label">☠️ Marcas de Vergonha</div>
+            <div id="conquistas-vergonha"></div>
+        </div>
+
+        <!-- PRÓXIMOS TÍTULOS -->
+        <div id="proximos-section">
+            <div class="section-title">🎯 Próximos Títulos</div>
+            <div id="proximos-list"></div>
+        </div>
 
     </div>
-
-    <!-- CONQUISTAS -->
-    <div class="section" id="conquistas-section">
-        <div class="section-title">Conquistas Desbloqueadas</div>
-        <div id="conquistas-list"></div>
-    </div>
-
-    <!-- PRÓXIMOS TÍTULOS -->
-    <div class="section" id="proximos-section">
-        <div class="section-title">Próximos Títulos</div>
-        <div id="proximos-list"></div>
-    </div>
-
 </div>
 
 <footer>
@@ -253,9 +288,6 @@
 </footer>
 
 <script>
-// ═══════════════════════════════════════════════════
-// CONFIGURAÇÃO (espelho do titulos.html)
-// ═══════════════════════════════════════════════════
 const MEDIEVAL_START = 6;
 
 const LORDS = [
@@ -272,7 +304,7 @@ const LORDS = [
 
 const TITLES_DATA = {
     mvp: {
-        label:'MVP', icon:'🏆', pts_label:'+10/ocorrência', color:'#C8860A',
+        label:'MVP', icon:'🏆', color:'#C8860A', vergonha:false,
         tiers:[
             {min:15,pts:200,t:'⚡ Portador de Glamdring'},
             {min:10,pts:135,t:'🐉 O Rei que Voltou'},
@@ -283,7 +315,7 @@ const TITLES_DATA = {
         ]
     },
     podio: {
-        label:'Pódio', icon:'🥇', pts_label:'+3/ocorrência', color:'#70a870',
+        label:'Pódio', icon:'🥇', color:'#70a870', vergonha:false,
         tiers:[
             {min:15,pts:75,t:'💫 Protetor dos Sete Reinos'},
             {min:10,pts:45,t:'🎖️ Mão do Rei'},
@@ -293,7 +325,7 @@ const TITLES_DATA = {
         ]
     },
     mitada: {
-        label:'Mitada', icon:'💀', pts_label:'+5/ocorrência', color:'#e06060',
+        label:'Mitada', icon:'💀', color:'#e06060', vergonha:false,
         tiers:[
             {min:10,pts:100,t:'⚡ Portador da Espada de Fogo'},
             {min:7, pts:70, t:'💎 Portador da Garra Longa'},
@@ -303,7 +335,7 @@ const TITLES_DATA = {
         ]
     },
     massacre: {
-        label:'Massacre', icon:'🗡️', pts_label:'+6/ocorrência', color:'#a078c0',
+        label:'Massacre', icon:'🗡️', color:'#a078c0', vergonha:false,
         tiers:[
             {min:7,pts:62,t:'🐉 Terror de Westeros'},
             {min:5,pts:40,t:'📱 Flagelo dos Reinos'},
@@ -312,7 +344,7 @@ const TITLES_DATA = {
         ]
     },
     recuperacao: {
-        label:'Recuperação', icon:'📈', pts_label:'+8/ocorrência', color:'#6aa8d8',
+        label:'Recuperação', icon:'📈', color:'#6aa8d8', vergonha:false,
         tiers:[
             {min:7,pts:96,t:'🌟 Ressurgido das Trevas'},
             {min:5,pts:65,t:'⚡ Jon Snow Ressuscitado'},
@@ -321,7 +353,7 @@ const TITLES_DATA = {
         ]
     },
     lanterna: {
-        label:'Lanterna', icon:'📦', pts_label:'−5/ocorrência', color:'#a06060',
+        label:'Lanterna', icon:'📦', color:'#9C3A3A', vergonha:true,
         tiers:[
             {min:10,pts:-100,t:'🕳️ Rei da Noite Eterna'},
             {min:7, pts:-70, t:'🌑 Prisioneiro de Mordor'},
@@ -367,42 +399,46 @@ const TITLE_IMAGES = {
 
 function imgSlug(title) { return TITLE_IMAGES[title] || null; }
 
-function imgEl(title, size=56) {
+function imgEl(title, size=72) {
     const slug = imgSlug(title);
     if (!slug) return `<div class="ci-img-placeholder">⚔️</div>`;
     return `<img src="imagens/titulos/${slug}.jpg" alt="${title}"
-                 style="width:100%;height:100%;object-fit:cover"
+                 style="width:100%;height:100%;object-fit:contain"
                  onerror="this.parentElement.innerHTML='<div class=\\'ci-img-placeholder\\'>⚔️</div>'"
+                 loading="lazy">`;
+}
+
+function imgProgress(title) {
+    const slug = imgSlug(title);
+    if (!slug) return `<div class="progress-ci-placeholder">⚔️</div>`;
+    return `<img src="imagens/titulos/${slug}.jpg" alt="${title}"
+                 style="width:100%;height:100%;object-fit:contain"
+                 onerror="this.parentElement.innerHTML='<div class=\\'progress-ci-placeholder\\'>⚔️</div>'"
                  loading="lazy">`;
 }
 
 function getTierTitle(type, count) {
     if (!count) return null;
-    const data = TITLES_DATA[type];
-    for (const tier of data.tiers) if (count >= tier.min) return tier;
+    for (const tier of TITLES_DATA[type].tiers) if (count >= tier.min) return tier;
     return null;
 }
 
 function getNextTier(type, count) {
-    const data = TITLES_DATA[type];
-    const tiers = [...data.tiers].reverse();
+    const tiers = [...TITLES_DATA[type].tiers].reverse();
     for (const tier of tiers) if (count < tier.min) return tier;
     return null;
 }
 
 function getPrimaryTitle(lord) {
-    return getTierTitle('mvp', lord.mvp)?.t ||
-           getTierTitle('mitada', lord.mitada)?.t ||
-           getTierTitle('recuperacao', lord.recuperacao)?.t ||
-           getTierTitle('massacre', lord.massacre)?.t ||
-           getTierTitle('podio', lord.podio)?.t ||
-           getTierTitle('lanterna', lord.lanterna)?.t ||
+    return getTierTitle('mvp',lord.mvp)?.t ||
+           getTierTitle('mitada',lord.mitada)?.t ||
+           getTierTitle('recuperacao',lord.recuperacao)?.t ||
+           getTierTitle('massacre',lord.massacre)?.t ||
+           getTierTitle('podio',lord.podio)?.t ||
+           getTierTitle('lanterna',lord.lanterna)?.t ||
            '📰 Escudeiro Sem Nome';
 }
 
-// ═══════════════════════════════════════════════════
-// PARSE & PROCESS
-// ═══════════════════════════════════════════════════
 function parseCSV(text) {
     const rows = [];
     const lines = text.trim().split('\n');
@@ -517,17 +553,20 @@ function processLord(BATTLES, targetName) {
     return lord;
 }
 
-// ═══════════════════════════════════════════════════
-// RENDER
-// ═══════════════════════════════════════════════════
 function render(lordConfig, stats) {
     document.title = `${lordConfig.name} — Guerra dos Reinos`;
+
+    // WhatsApp share
+    const shareUrl = encodeURIComponent(window.location.href);
+    const shareText = encodeURIComponent(`⚔️ ${lordConfig.name} na Guerra dos Reinos!\nVeja as conquistas do reino:`);
+    document.getElementById('share-btn').href = `https://wa.me/?text=${shareText}%20${shareUrl}`;
 
     // Hero
     document.getElementById('color-bar').style.background = lordConfig.color;
     document.getElementById('hero-avatar').textContent = lordConfig.avatar;
     document.getElementById('hero-name').textContent = lordConfig.name;
     document.getElementById('hero-house').innerHTML = `<span style="color:${lordConfig.color}">${lordConfig.house}</span>`;
+
     let allianceHTML;
     if (lordConfig.alliance === 'bastardos')        allianceHTML = `<span class="hero-alliance tag-bastardos">🗡️ Os Bastardos</span>`;
     else if (lordConfig.alliance === 'northclaw')   allianceHTML = `<span class="hero-alliance tag-northclaw">🦅 North Claw</span>`;
@@ -539,24 +578,23 @@ function render(lordConfig, stats) {
     // Primary title card
     const slug = imgSlug(primaryTitle);
     const imgWrap = document.getElementById('ptc-img-wrap');
-    if (slug) {
-        imgWrap.innerHTML = `<img class="ptc-img" src="imagens/titulos/${slug}.jpg" alt="${primaryTitle}"
-            onerror="this.outerHTML='<div class=\\'ptc-img-placeholder\\'>⚔️</div>'">`;
-    } else {
-        imgWrap.innerHTML = `<div class="ptc-img-placeholder">⚔️</div>`;
-    }
+    imgWrap.innerHTML = slug
+        ? `<img class="ptc-img" src="imagens/titulos/${slug}.jpg" alt="${primaryTitle}"
+               object-fit="contain"
+               onerror="this.outerHTML='<div class=\\'ptc-img-placeholder\\'>⚔️</div>'">`
+        : `<div class="ptc-img-placeholder">⚔️</div>`;
     document.getElementById('ptc-title').textContent = primaryTitle;
 
     // Pontos
     const medSign = stats.medievalPoints >= 0 ? '+' : '';
-    const medColor = stats.medievalPoints > 0 ? '#4A8C5C' : stats.medievalPoints < 0 ? '#8C3A3A' : '#555';
-    document.getElementById('pontos-strip').innerHTML = `
+    const medColor = stats.medievalPoints > 0 ? '#4A9C5C' : stats.medievalPoints < 0 ? '#9C3A3A' : '#555';
+    document.getElementById('pontos-grid').innerHTML = `
         <div class="pt-item">
-            <div class="pt-value" style="color:var(--amber-light)">${stats.totalPoints.toFixed(2)}</div>
+            <div class="pt-value" style="color:var(--amber-light)">${stats.totalPoints.toFixed(1)}</div>
             <div class="pt-label">Total</div>
         </div>
         <div class="pt-item">
-            <div class="pt-value" style="color:#4A8C5C">${stats.cartolaPoints.toFixed(2)}</div>
+            <div class="pt-value" style="color:#4A9C5C">${stats.cartolaPoints.toFixed(1)}</div>
             <div class="pt-label">📊 Cartola</div>
         </div>
         <div class="pt-item">
@@ -564,16 +602,17 @@ function render(lordConfig, stats) {
             <div class="pt-label">⚔️ Medieval</div>
         </div>`;
 
-    // Conquistas
     if (stats.locked) {
-        document.getElementById('conquistas-section').innerHTML =
+        document.getElementById('conquistas-gloria-section').innerHTML =
             `<div class="locked-notice">⏳ Conquistas medievais ativam na <strong>Rodada ${MEDIEVAL_START}</strong>.</div>`;
         document.getElementById('proximos-section').style.display = 'none';
         return;
     }
 
-    const conquistas = [];
-    const proximos = [];
+    // Conquistas glória e vergonha separadas
+    const gloriaItems = [];
+    const vergonhaItems = [];
+    const proximosItems = [];
 
     for (const [key, data] of Object.entries(TITLES_DATA)) {
         const count = stats[key] || 0;
@@ -581,58 +620,58 @@ function render(lordConfig, stats) {
         const next = getNextTier(key, count);
 
         if (current) {
-            const isNeg = data.label === 'Lanterna';
-            conquistas.push(`
-                <div class="conquista-item has-title">
+            const itemHTML = `
+                <div class="conquista-item ${data.vergonha ? 'vergonha' : 'gloria'}">
                     <div class="ci-img">${imgEl(current.t)}</div>
                     <div class="ci-info">
                         <div class="ci-category" style="color:${data.color}">${data.icon} ${data.label}</div>
                         <div class="ci-title">${current.t}</div>
                         <div class="ci-count">${count}x ocorrência${count>1?'s':''}</div>
                     </div>
-                    <div class="ci-pts ${isNeg?'neg':'pos'}">${current.pts > 0 ? '+' : ''}${current.pts}</div>
-                </div>`);
+                    <div class="ci-pts ${data.vergonha ? 'neg' : 'pos'}">${current.pts > 0 ? '+' : ''}${current.pts}</div>
+                </div>`;
+            if (data.vergonha) vergonhaItems.push(itemHTML);
+            else gloriaItems.push(itemHTML);
         }
 
-        if (next && count > 0) {
+        if (next && count >= 0 && !data.vergonha) {
             const pct = Math.min(100, Math.round((count / next.min) * 100));
-            proximos.push(`
+            proximosItems.push(`
                 <div class="progress-item">
-                    <div class="progress-label">${data.icon} ${data.label} → ${next.t}</div>
+                    <div class="progress-header">
+                        <div class="progress-ci-img">${imgProgress(next.t)}</div>
+                        <div class="progress-info">
+                            <div class="progress-label">${next.t}</div>
+                            <div class="progress-sublabel">${data.icon} ${data.label} · ${count} de ${next.min}</div>
+                        </div>
+                    </div>
                     <div class="progress-bar-wrap">
                         <div class="progress-bar" style="width:${pct}%;background:${data.color}"></div>
                     </div>
-                    <div class="progress-text">${count} de ${next.min} — faltam ${next.min - count}</div>
-                </div>`);
-        } else if (!current && count === 0) {
-            const firstTier = data.tiers[data.tiers.length - 1];
-            proximos.push(`
-                <div class="progress-item">
-                    <div class="progress-label">${data.icon} ${data.label} → ${firstTier.t}</div>
-                    <div class="progress-bar-wrap">
-                        <div class="progress-bar" style="width:0%;background:${data.color}"></div>
-                    </div>
-                    <div class="progress-text">0 de ${firstTier.min} — ainda não desbloqueado</div>
+                    <div class="progress-text">Faltam ${next.min - count} ocorrência${(next.min-count)>1?'s':''}</div>
                 </div>`);
         }
     }
 
-    document.getElementById('conquistas-list').innerHTML =
-        conquistas.length ? conquistas.join('') : `<div style="color:var(--text-muted);font-style:italic;padding:16px 0">Nenhuma conquista ainda.</div>`;
+    document.getElementById('conquistas-gloria').innerHTML =
+        gloriaItems.length ? gloriaItems.join('') : `<div style="color:var(--text-muted);font-style:italic;padding:16px 0;font-size:1em">Nenhuma conquista de glória ainda.</div>`;
+
+    if (vergonhaItems.length) {
+        document.getElementById('conquistas-vergonha-section').style.display = 'block';
+        document.getElementById('conquistas-vergonha').innerHTML = vergonhaItems.join('');
+    }
+
     document.getElementById('proximos-list').innerHTML =
-        proximos.length ? proximos.join('') : `<div style="color:var(--text-muted);font-style:italic;padding:16px 0">Todos os títulos possíveis já foram alcançados!</div>`;
+        proximosItems.length ? proximosItems.join('') : `<div style="color:var(--text-muted);font-style:italic;padding:16px 0;font-size:1em">Todos os títulos de glória já foram alcançados!</div>`;
 }
 
-// ═══════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════
 async function init() {
     const params = new URLSearchParams(window.location.search);
     const timeName = params.get('time');
-    if (!timeName) { window.location.href = 'titulos.html'; return; }
+    if (!timeName) { window.location.href = 'index.html'; return; }
 
     const lordConfig = LORDS.find(l => l.name.toLowerCase() === timeName.toLowerCase());
-    if (!lordConfig) { window.location.href = 'titulos.html'; return; }
+    if (!lordConfig) { window.location.href = 'index.html'; return; }
 
     try {
         const res = await fetch('dados.csv?v=' + Date.now());
@@ -641,15 +680,14 @@ async function init() {
         const rows = parseCSV(csv);
         const BATTLES = buildBattles(rows);
         const stats = processLord(BATTLES, lordConfig.name);
-
         render(lordConfig, stats);
         document.getElementById('loading').style.display = 'none';
         document.getElementById('main').style.display = 'block';
     } catch(err) {
         document.getElementById('loading').innerHTML = `
             <div style="font-size:2em">🏚️</div>
-            <div style="font-family:Cinzel,serif;color:#e74c3c;font-size:1.1em">Erro ao carregar</div>
-            <div style="color:#6B6878;font-size:.9em;max-width:300px;text-align:center;line-height:1.6">${err.message}</div>`;
+            <div style="font-family:Cinzel,serif;color:#e74c3c;font-size:1.2em">Erro ao carregar</div>
+            <div style="color:#6B6878;font-size:.95em;max-width:300px;text-align:center;line-height:1.6">${err.message}</div>`;
     }
 }
 document.addEventListener('DOMContentLoaded', init);
