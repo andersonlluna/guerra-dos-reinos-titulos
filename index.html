@@ -134,6 +134,14 @@
         .badge.mas{border-color:rgba(192,32,32,0.4);color:#E08080;background:rgba(150,20,20,0.1);}
         .badge.lan{border-color:rgba(139,48,200,0.5);color:#C090E0;background:rgba(100,10,150,0.1);}
 
+
+        .title-stars{font-family:'Cinzel',serif;letter-spacing:3px;font-size:.82em;margin-top:5px;display:block;}
+        .stars-s{color:var(--tier-s);text-shadow:0 0 8px rgba(240,192,64,0.6);}
+        .stars-a{color:var(--tier-a);text-shadow:0 0 6px rgba(192,32,32,0.5);}
+        .stars-b{color:var(--tier-b);}
+        .stars-c{color:var(--tier-c);}
+        .stars-d{color:var(--tier-d);opacity:.5;}
+
         .card-footer{padding:10px 18px;font-family:'Cinzel',serif;font-size:.75em;color:var(--gold-dark);text-align:right;letter-spacing:.06em;border-top:1px solid rgba(240,192,64,0.06);}
 
         /* FOOTER */
@@ -191,6 +199,46 @@ const TITLES={
     podio:      [{min:15,t:'💫 Protetor dos Sete Reinos',tier:'B'},{min:10,t:'🎖️ Mão do Rei',tier:'B'},{min:8,t:'💎 Lorde Comandante da Muralha',tier:'B'},{min:5,t:'🏅 Cavaleiro da Guarda Real',tier:'B'},{min:1,t:'🎯 Guardião da Torre Branca',tier:'B'}],
     lanterna:   [{min:10,t:'🕳️ Rei da Noite Eterna',tier:'C'},{min:7,t:'🌑 Prisioneiro de Mordor',tier:'C'},{min:5,t:'💀 Servo de Sauron',tier:'C'},{min:3,t:'⚰️ Habitante das Terras Sombrias',tier:'C'},{min:1,t:'🗡️ Banido para o Exílio',tier:'C'}],
 };
+
+const STARS_MAP = {
+    '⚔️ Cavaleiro da Companhia':        ['S','✦'],
+    '🛡️ Senhor dos Cavaleiros de Rohan':['S','✦✦'],
+    '👑 Herdeiro de Isildur':            ['S','✦✦✦'],
+    '✨ Rei Coroado de Gondor':           ['S','✦✦✦✦'],
+    '🐉 O Rei que Voltou':               ['S','✦✦✦✦✦'],
+    '⚡ Portador de Glamdring':           ['S','✦✦✦✦✦✦'],
+    '🔥 Portador da Ferroada':           ['A','✦'],
+    '⚔️ Empunhador de Andúril':          ['A','✦✦'],
+    '🌟 Cavaleiro do Amanhecer':         ['A','✦✦✦'],
+    '💎 Portador da Garra Longa':        ['A','✦✦✦✦'],
+    '⚡ Portador da Espada de Fogo':     ['A','✦✦✦✦✦'],
+    '🗡️ Conquistador de Terras':         ['A','✦'],
+    '⚔️ O Senhor do Aço Negro':          ['A','✦✦'],
+    '📱 Flagelo dos Reinos':             ['A','✦✦✦'],
+    '🐉 Terror de Westeros':             ['A','✦✦✦✦'],
+    '🎯 Guardião da Torre Branca':       ['B','✦'],
+    '🏅 Cavaleiro da Guarda Real':       ['B','✦✦'],
+    '💎 Lorde Comandante da Muralha':    ['B','✦✦✦'],
+    '🎖️ Mão do Rei':                    ['B','✦✦✦✦'],
+    '💫 Protetor dos Sete Reinos':       ['B','✦✦✦✦✦'],
+    '🦅 Cavaleiro do Corvo Branco':      ['B','✦'],
+    '🐉 Renascido no Fogo':              ['B','✦✦'],
+    '⚡ Jon Snow Ressuscitado':           ['B','✦✦✦'],
+    '🌟 Ressurgido das Trevas':           ['B','✦✦✦✦'],
+    '🗡️ Banido para o Exílio':           ['C','✦'],
+    '⚰️ Habitante das Terras Sombrias':  ['C','✦✦'],
+    '💀 Servo de Sauron':                ['C','✦✦✦'],
+    '🌑 Prisioneiro de Mordor':          ['C','✦✦✦✦'],
+    '🕳️ Rei da Noite Eterna':            ['C','✦✦✦✦✦'],
+    '📰 Escudeiro Sem Nome':             ['D','✦'],
+};
+function getStars(title){return STARS_MAP[title]||null;}
+function starsHTML(title){
+    const s=getStars(title);if(!s)return'';
+    const[tier,stars]=s;
+    return`<span class="title-stars stars-${tier.toLowerCase()}">${stars}</span>`;
+}
+
 const TITLE_IMAGES={'⚔️ Cavaleiro da Companhia':'cavaleiro-da-companhia','🛡️ Senhor dos Cavaleiros de Rohan':'senhor-dos-cavaleiros-de-rohan','👑 Herdeiro de Isildur':'herdeiro-de-isildur','✨ Rei Coroado de Gondor':'rei-coroado-de-gondor','🐉 O Rei que Voltou':'o-rei-que-voltou','⚡ Portador de Glamdring':'portador-de-glamdring','🎯 Guardião da Torre Branca':'guardiao-da-torre-branca','🏅 Cavaleiro da Guarda Real':'cavaleiro-da-guarda-real','💎 Lorde Comandante da Muralha':'lorde-comandante-da-muralha','🎖️ Mão do Rei':'mao-do-rei','💫 Protetor dos Sete Reinos':'protetor-dos-sete-reinos','🔥 Portador da Ferroada':'portador-da-ferroada','⚔️ Empunhador de Andúril':'empunhador-de-anduril','🌟 Cavaleiro do Amanhecer':'cavaleiro-do-amanhecer','💎 Portador da Garra Longa':'portador-da-garra-longa','⚡ Portador da Espada de Fogo':'portador-da-espada-de-fogo','🗡️ Conquistador de Terras':'conquistador-de-terras','⚔️ O Senhor do Aço Negro':'o-senhor-do-aco-negro','📱 Flagelo dos Reinos':'flagelo-dos-reinos','🐉 Terror de Westeros':'terror-de-westeros','🦅 Cavaleiro do Corvo Branco':'cavaleiro-do-corvo-branco','🐉 Renascido no Fogo':'renascido-no-fogo','⚡ Jon Snow Ressuscitado':'jon-snow-ressuscitado','🌟 Ressurgido das Trevas':'ressurgido-das-trevas','🗡️ Banido para o Exílio':'banido-para-o-exilio','⚰️ Habitante das Terras Sombrias':'habitante-das-terras-sombrias','💀 Servo de Sauron':'servo-de-sauron','🌑 Prisioneiro de Mordor':'prisioneiro-de-mordor','🕳️ Rei da Noite Eterna':'rei-da-noite-eterna','📰 Escudeiro Sem Nome':'escudeiro-sem-nome'};
 
 function imgSlug(t){return TITLE_IMAGES[t]||null;}
@@ -288,6 +336,7 @@ function renderCards(data){
             <div class="card-title-block" style="background:linear-gradient(90deg,var(--${tc}-glow,rgba(240,192,64,0.04)),transparent)">
                 <div class="card-title-label">Título Atual</div>
                 <div class="card-title-text ${tc}-text">${l.primaryTitle}</div>
+                ${starsHTML(l.primaryTitle)}
             </div>
             ${locked?'':badgeRow(l)}
             <div class="card-footer">Ver conquistas completas ✦</div>

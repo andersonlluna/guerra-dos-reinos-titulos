@@ -147,6 +147,14 @@
         .progress-bar::after{content:'';position:absolute;top:0;left:0;right:0;height:50%;background:rgba(255,255,255,0.12);border-radius:6px 6px 0 0;}
         .progress-text{font-size:.85em;color:var(--text-muted);text-align:right;font-family:'Cinzel',serif;letter-spacing:.04em;}
 
+
+        .title-stars{font-family:'Cinzel',serif;letter-spacing:3px;font-size:.82em;margin-top:5px;display:block;}
+        .stars-s{color:var(--tier-s);text-shadow:0 0 8px rgba(240,192,64,0.6);}
+        .stars-a{color:var(--tier-a);text-shadow:0 0 6px rgba(192,32,32,0.5);}
+        .stars-b{color:var(--tier-b);}
+        .stars-c{color:var(--tier-c);}
+        .stars-d{color:var(--tier-d);opacity:.5;}
+
         .locked-notice{text-align:center;padding:44px 20px;font-style:italic;color:var(--text-muted);font-size:1.05em;line-height:1.7;}
         .locked-notice strong{color:var(--gold);font-style:normal;}
 
@@ -183,6 +191,7 @@
                 <div id="ptc-tier-badge"></div>
                 <div class="ptc-label">✦ Título Atual ✦</div>
                 <div class="ptc-title" id="ptc-title"></div>
+                <div id="ptc-stars"></div>
             </div>
         </div>
 
@@ -247,6 +256,46 @@ const TITLES_DATA={
 
 // Total de títulos possíveis nas 6 categorias (excluindo finais de temporada)
 const TOTAL_POSSIVEIS = Object.values(TITLES_DATA).reduce((s,d)=>s+d.tiers.length,0); // 29
+
+
+const STARS_MAP = {
+    '⚔️ Cavaleiro da Companhia':        ['S','✦'],
+    '🛡️ Senhor dos Cavaleiros de Rohan':['S','✦✦'],
+    '👑 Herdeiro de Isildur':            ['S','✦✦✦'],
+    '✨ Rei Coroado de Gondor':           ['S','✦✦✦✦'],
+    '🐉 O Rei que Voltou':               ['S','✦✦✦✦✦'],
+    '⚡ Portador de Glamdring':           ['S','✦✦✦✦✦✦'],
+    '🔥 Portador da Ferroada':           ['A','✦'],
+    '⚔️ Empunhador de Andúril':          ['A','✦✦'],
+    '🌟 Cavaleiro do Amanhecer':         ['A','✦✦✦'],
+    '💎 Portador da Garra Longa':        ['A','✦✦✦✦'],
+    '⚡ Portador da Espada de Fogo':     ['A','✦✦✦✦✦'],
+    '🗡️ Conquistador de Terras':         ['A','✦'],
+    '⚔️ O Senhor do Aço Negro':          ['A','✦✦'],
+    '📱 Flagelo dos Reinos':             ['A','✦✦✦'],
+    '🐉 Terror de Westeros':             ['A','✦✦✦✦'],
+    '🎯 Guardião da Torre Branca':       ['B','✦'],
+    '🏅 Cavaleiro da Guarda Real':       ['B','✦✦'],
+    '💎 Lorde Comandante da Muralha':    ['B','✦✦✦'],
+    '🎖️ Mão do Rei':                    ['B','✦✦✦✦'],
+    '💫 Protetor dos Sete Reinos':       ['B','✦✦✦✦✦'],
+    '🦅 Cavaleiro do Corvo Branco':      ['B','✦'],
+    '🐉 Renascido no Fogo':              ['B','✦✦'],
+    '⚡ Jon Snow Ressuscitado':           ['B','✦✦✦'],
+    '🌟 Ressurgido das Trevas':           ['B','✦✦✦✦'],
+    '🗡️ Banido para o Exílio':           ['C','✦'],
+    '⚰️ Habitante das Terras Sombrias':  ['C','✦✦'],
+    '💀 Servo de Sauron':                ['C','✦✦✦'],
+    '🌑 Prisioneiro de Mordor':          ['C','✦✦✦✦'],
+    '🕳️ Rei da Noite Eterna':            ['C','✦✦✦✦✦'],
+    '📰 Escudeiro Sem Nome':             ['D','✦'],
+};
+function getStars(title){return STARS_MAP[title]||null;}
+function starsHTML(title){
+    const s=getStars(title);if(!s)return'';
+    const[tier,stars]=s;
+    return`<span class="title-stars stars-${tier.toLowerCase()}">${stars}</span>`;
+}
 
 const TITLE_IMAGES={'⚔️ Cavaleiro da Companhia':'cavaleiro-da-companhia','🛡️ Senhor dos Cavaleiros de Rohan':'senhor-dos-cavaleiros-de-rohan','👑 Herdeiro de Isildur':'herdeiro-de-isildur','✨ Rei Coroado de Gondor':'rei-coroado-de-gondor','🐉 O Rei que Voltou':'o-rei-que-voltou','⚡ Portador de Glamdring':'portador-de-glamdring','🎯 Guardião da Torre Branca':'guardiao-da-torre-branca','🏅 Cavaleiro da Guarda Real':'cavaleiro-da-guarda-real','💎 Lorde Comandante da Muralha':'lorde-comandante-da-muralha','🎖️ Mão do Rei':'mao-do-rei','💫 Protetor dos Sete Reinos':'protetor-dos-sete-reinos','🔥 Portador da Ferroada':'portador-da-ferroada','⚔️ Empunhador de Andúril':'empunhador-de-anduril','🌟 Cavaleiro do Amanhecer':'cavaleiro-do-amanhecer','💎 Portador da Garra Longa':'portador-da-garra-longa','⚡ Portador da Espada de Fogo':'portador-da-espada-de-fogo','🗡️ Conquistador de Terras':'conquistador-de-terras','⚔️ O Senhor do Aço Negro':'o-senhor-do-aco-negro','📱 Flagelo dos Reinos':'flagelo-dos-reinos','🐉 Terror de Westeros':'terror-de-westeros','🦅 Cavaleiro do Corvo Branco':'cavaleiro-do-corvo-branco','🐉 Renascido no Fogo':'renascido-no-fogo','⚡ Jon Snow Ressuscitado':'jon-snow-ressuscitado','🌟 Ressurgido das Trevas':'ressurgido-das-trevas','🗡️ Banido para o Exílio':'banido-para-o-exilio','⚰️ Habitante das Terras Sombrias':'habitante-das-terras-sombrias','💀 Servo de Sauron':'servo-de-sauron','🌑 Prisioneiro de Mordor':'prisioneiro-de-mordor','🕳️ Rei da Noite Eterna':'rei-da-noite-eterna','📰 Escudeiro Sem Nome':'escudeiro-sem-nome'};
 
@@ -338,6 +387,7 @@ function render(cfg,stats){
     const slug=imgSlug(primary);
     document.getElementById('ptc-img-wrap').innerHTML=slug?`<img class="ptc-img" src="imagens/titulos/${slug}.jpg" alt="${primary}" onerror="this.outerHTML='<div class=\\'ptc-img-placeholder\\'>⚔️</div>'">`:`<div class="ptc-img-placeholder">⚔️</div>`;
     document.getElementById('ptc-title').textContent=primary;
+    document.getElementById('ptc-stars').innerHTML=starsHTML(primary);
     document.getElementById('ptc-title').className=`ptc-title tier-${primaryTier.toLowerCase()}-text`;
     document.getElementById('ptc-tier-badge').innerHTML=tierBadgeHTML(primaryTier);
     document.getElementById('primary-card').className=`primary-card tier-${primaryTier.toLowerCase()}`;
@@ -379,6 +429,7 @@ function render(cfg,stats){
                     <div class="ci-tier-badge badge-${tier.toLowerCase()}">TIER ${tier}</div>
                     <div class="ci-category" style="color:var(--tier-${tier.toLowerCase()})">${data.icon} ${data.label}</div>
                     <div class="ci-title tier-${tier.toLowerCase()}-text">${cur.t}</div>
+                    ${starsHTML(cur.t)}
                     <div class="ci-count">${count}x ocorrência${count>1?'s':''}</div>
                 </div>
                 <div class="ci-pts ${data.vergonha?'neg':'pos'}">${cur.pts>0?'+':''}${cur.pts}</div>
@@ -391,7 +442,7 @@ function render(cfg,stats){
                 <div class="progress-header">
                     <div class="progress-ci-img">${imgProgress(nxt.t)}</div>
                     <div class="progress-info">
-                        <div class="progress-label tier-${tier.toLowerCase()}-text">${nxt.t}</div>
+                        <div class="progress-label tier-${tier.toLowerCase()}-text">${nxt.t} ${starsHTML(nxt.t)}</div>
                         <div class="progress-sublabel">${data.icon} ${data.label} · ${count} de ${nxt.min}</div>
                     </div>
                 </div>
