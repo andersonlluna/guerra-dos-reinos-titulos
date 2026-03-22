@@ -3,198 +3,309 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#080A0E">
+    <meta name="theme-color" content="#1A0A00">
     <title>👑 Títulos — Guerra dos Reinos</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
         :root {
-            --amber: #C8860A; --amber-light: #E8A020; --amber-dim: #8A5C06;
-            --bg-deep: #080A0E; --bg-card: rgba(14,17,26,0.98);
-            --border: rgba(200,134,10,0.18);
-            --text: #DDD5C8; --text-bright: #EDE8E0; --text-muted: #7A7688;
+            --gold:        #F0C040;
+            --gold-bright: #FFE080;
+            --gold-dim:    #A07820;
+            --gold-dark:   #5A3E08;
+            --red-deep:    #6B0F0F;
+            --red-mid:     #8B1A1A;
+            --brown-rich:  #2A1506;
+            --brown-mid:   #3D1F08;
+            --brown-light: #5C3010;
+            --parchment:   #E8D5A0;
+            --parchment-dim:#B09860;
+            --text-bright: #FFE8B0;
+            --text:        #D4B878;
+            --text-muted:  #8A7040;
+            --card-bg:     #1E0C02;
+            --card-border: #6B4010;
+            --glow-gold:   rgba(240,192,64,0.25);
+            --glow-red:    rgba(180,30,30,0.3);
+            --bastardos:   #B0BEC5;
+            --anel:        #4CAF80;
+            --northclaw:   #E8A040;
         }
+
         body {
             font-family: 'Crimson Text', Georgia, serif;
-            background: var(--bg-deep);
+            background: var(--brown-rich);
             background-image:
-                radial-gradient(ellipse 80% 35% at 50% 0%, rgba(200,134,10,0.07) 0%, transparent 60%),
-                radial-gradient(ellipse at 15% 85%, rgba(90,100,112,0.06) 0%, transparent 50%),
-                radial-gradient(ellipse at 85% 85%, rgba(28,78,58,0.06) 0%, transparent 50%);
-            color: var(--text); min-height: 100vh; padding-bottom: 60px;
+                /* stone texture via gradients */
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px),
+                repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,0,0,0.02) 2px, rgba(0,0,0,0.02) 4px),
+                radial-gradient(ellipse 100% 50% at 50% 0%, rgba(180,80,0,0.18) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 40% at 20% 100%, rgba(100,10,10,0.15) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 40% at 80% 100%, rgba(100,10,10,0.15) 0%, transparent 50%),
+                linear-gradient(180deg, #1A0800 0%, #130600 50%, #1A0800 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding-bottom: 70px;
             font-size: 18px;
         }
 
-        /* LOADING */
+        /* ── LOADING ── */
         #loading {
-            position:fixed; inset:0; background:var(--bg-deep);
+            position:fixed; inset:0;
+            background: linear-gradient(135deg, #1A0800, #0D0400);
             display:flex; flex-direction:column; align-items:center; justify-content:center;
-            z-index:999; gap:18px;
+            z-index:999; gap:20px;
         }
-        .loading-icon { font-size:3.5em; animation:pulse 1.3s ease-in-out infinite; }
-        .loading-text { font-family:'Cinzel',serif; color:var(--amber-light); font-size:1.1em; letter-spacing:.12em; }
-        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.88)} }
+        .loading-icon { font-size:4em; animation:pulse 1.4s ease-in-out infinite; }
+        .loading-text {
+            font-family:'Cinzel Decorative',serif; color:var(--gold);
+            font-size:1em; letter-spacing:.15em;
+            text-shadow: 0 0 20px var(--glow-gold);
+        }
+        @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.85)} }
 
-        /* HEADER */
+        /* ── HEADER ── */
         header {
-            text-align: center;
-            padding: 44px 20px 32px;
-            border-bottom: 1px solid var(--border);
-            background: linear-gradient(180deg, rgba(200,134,10,0.07) 0%, transparent 100%);
+            text-align:center;
+            padding: 52px 20px 40px;
+            position: relative;
+            overflow: hidden;
         }
-        .header-ornament { font-size:2.6em; margin-bottom:12px; filter:drop-shadow(0 0 14px rgba(200,134,10,0.45)); }
+        header::before {
+            content:'';
+            position:absolute; inset:0;
+            background:
+                radial-gradient(ellipse 80% 60% at 50% 0%, rgba(200,100,0,0.2) 0%, transparent 65%),
+                linear-gradient(180deg, rgba(0,0,0,0.4) 0%, transparent 100%);
+            pointer-events:none;
+        }
+        /* Ornamental top border */
+        header::after {
+            content:'';
+            position:absolute; bottom:0; left:10%; right:10%; height:2px;
+            background: linear-gradient(90deg, transparent, var(--gold-dim), var(--gold), var(--gold-dim), transparent);
+        }
+
+        .header-crest {
+            font-size:3em; margin-bottom:14px; position:relative;
+            filter: drop-shadow(0 0 20px rgba(240,192,64,0.5));
+            animation: float 4s ease-in-out infinite;
+        }
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+
         h1 {
-            font-family:'Cinzel',serif; font-size:clamp(1.7em,5vw,2.4em); font-weight:900;
-            color:var(--amber-light); letter-spacing:.07em; line-height:1.15; margin-bottom:10px;
-            text-shadow:0 0 40px rgba(232,160,32,.2), 0 2px 4px rgba(0,0,0,.8);
+            font-family:'Cinzel Decorative',serif;
+            font-size:clamp(1.3em, 4vw, 2em);
+            font-weight:900;
+            color: var(--gold-bright);
+            letter-spacing:.06em; line-height:1.2; margin-bottom:8px;
+            text-shadow:
+                0 0 30px rgba(255,200,50,0.4),
+                0 2px 6px rgba(0,0,0,0.9),
+                0 0 60px rgba(200,100,0,0.2);
+            position:relative;
         }
-        .header-sub { font-style:italic; color:var(--text-muted); font-size:1em; }
+        .header-sub {
+            font-family:'Cinzel',serif; font-style:italic;
+            color:var(--parchment-dim); font-size:.9em; letter-spacing:.06em;
+            position:relative;
+        }
         .header-round {
-            display:inline-block; margin-top:16px;
-            font-family:'Cinzel',serif; font-size:.88em; font-weight:700;
-            color:var(--amber); border:1px solid var(--amber-dim);
-            padding:7px 24px; border-radius:4px; letter-spacing:.1em;
-            background:rgba(200,134,10,0.07);
+            display:inline-block; margin-top:18px;
+            font-family:'Cinzel',serif; font-size:.85em; font-weight:700;
+            color:var(--gold);
+            border-top:1px solid var(--gold-dim);
+            border-bottom:1px solid var(--gold-dim);
+            padding:7px 28px; letter-spacing:.12em;
+            background: linear-gradient(90deg, transparent, rgba(240,192,64,0.08), transparent);
+            position:relative;
         }
 
-        /* SECTION LABEL */
+        /* ── DIVIDER ── */
         .section-label {
-            font-family:'Cinzel',serif; font-size:.82em; font-weight:700;
-            color:var(--text-muted); letter-spacing:.18em; text-transform:uppercase;
-            text-align:center; padding:32px 20px 18px;
+            font-family:'Cinzel',serif; font-size:.78em; font-weight:700;
+            color:var(--gold-dim); letter-spacing:.2em; text-transform:uppercase;
+            text-align:center; padding:36px 20px 20px;
+            position:relative;
+        }
+        .section-label::before, .section-label::after {
+            content:'✦';
+            margin: 0 14px;
+            color:var(--gold-dark);
         }
 
-        /* GRID */
+        /* ── LOCKED ── */
+        .locked-banner {
+            margin:0 16px 8px;
+            max-width:900px; margin-left:auto; margin-right:auto;
+            background: linear-gradient(135deg, rgba(90,30,5,0.6), rgba(60,20,5,0.6));
+            border:1px solid rgba(200,130,0,0.3);
+            border-radius:8px; padding:16px 20px;
+            font-size:1em; color:var(--parchment-dim); font-style:italic;
+            line-height:1.6; text-align:center;
+        }
+        .locked-banner strong { font-style:normal; color:var(--gold); }
+
+        /* ── GRID ── */
         .grid {
             display:grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap:18px; padding:0 16px; max-width:1000px; margin:0 auto;
+            gap:20px; padding:0 16px; max-width:960px; margin:0 auto;
         }
-        @media (max-width:500px) {
-            .grid { grid-template-columns:1fr; gap:14px; }
-        }
+        @media(max-width:500px) { .grid { grid-template-columns:1fr; } }
 
-        /* CARD */
+        /* ── LORD CARD — estilo carta de baralho ── */
         .lord-card {
-            background:var(--bg-card);
-            border:1px solid var(--border);
-            border-radius:10px;
+            display:block; text-decoration:none; color:inherit;
+            background: linear-gradient(160deg, #2A1205, #1A0900, #221005);
+            border-radius:12px;
+            border:1px solid var(--card-border);
+            box-shadow:
+                0 0 0 1px rgba(240,192,64,0.08),
+                0 8px 32px rgba(0,0,0,0.7),
+                inset 0 1px 0 rgba(240,192,64,0.06);
             overflow:hidden;
-            cursor:pointer;
-            transition:transform .2s, border-color .2s, box-shadow .2s;
-            text-decoration:none; color:inherit;
-            display:block;
-            box-shadow:0 8px 32px rgba(0,0,0,0.5);
-            -webkit-tap-highlight-color: transparent;
+            transition:transform .25s, box-shadow .25s;
+            -webkit-tap-highlight-color:transparent;
+            position:relative;
         }
-        .lord-card:active { transform:scale(0.98); border-color:var(--amber-dim); }
+        .lord-card::before {
+            /* Corner ornaments via gradient */
+            content:'';
+            position:absolute; inset:0; border-radius:12px;
+            background:
+                radial-gradient(circle at 0% 0%, rgba(240,192,64,0.07) 0%, transparent 30%),
+                radial-gradient(circle at 100% 0%, rgba(240,192,64,0.07) 0%, transparent 30%),
+                radial-gradient(circle at 0% 100%, rgba(240,192,64,0.05) 0%, transparent 30%),
+                radial-gradient(circle at 100% 100%, rgba(240,192,64,0.05) 0%, transparent 30%);
+            pointer-events:none;
+        }
+        .lord-card:active {
+            transform:scale(0.97);
+            box-shadow: 0 0 0 2px var(--gold-dim), 0 4px 16px rgba(0,0,0,0.8);
+        }
 
-        .card-strip { height:5px; }
+        /* Color strip + glow */
+        .card-strip {
+            height:4px;
+            box-shadow: 0 0 12px 2px var(--strip-glow, rgba(240,192,64,0.4));
+        }
 
-        .card-body { padding:20px 18px 16px; }
-
-        /* TITLE IMAGE */
+        /* Header inside card */
+        .card-head {
+            display:flex; align-items:center; gap:14px;
+            padding:18px 18px 14px;
+            border-bottom:1px solid rgba(240,192,64,0.08);
+        }
         .title-img-wrap {
-            width:80px; height:80px; border-radius:8px;
-            overflow:hidden; float:right; margin:0 0 12px 16px;
-            border:1px solid rgba(200,134,10,0.2);
-            background:rgba(200,134,10,0.05);
+            width:78px; height:78px; border-radius:8px; flex-shrink:0;
+            overflow:hidden;
+            border:2px solid var(--gold-dark);
+            box-shadow: 0 0 12px rgba(240,192,64,0.15), inset 0 0 8px rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.4);
             display:flex; align-items:center; justify-content:center;
-            flex-shrink:0;
         }
-        .title-img-wrap img { width:100%; height:100%; object-fit:contain; display:block; }
-        .title-img-placeholder { font-size:2.2em; opacity:.3; }
+        .title-img-wrap img { width:100%; height:100%; object-fit:contain; }
+        .title-img-placeholder { font-size:2.2em; opacity:.25; }
 
-        .lord-avatar { font-size:1.7em; margin-bottom:5px; }
+        .card-info { flex:1; min-width:0; }
+        .lord-avatar { font-size:1.6em; margin-bottom:3px; line-height:1; }
         .lord-name {
-            font-family:'Cinzel',serif; font-size:1.2em; font-weight:700;
-            color:var(--text-bright); margin-bottom:4px; line-height:1.2;
+            font-family:'Cinzel',serif; font-size:1.15em; font-weight:700;
+            color:var(--text-bright); margin-bottom:3px; line-height:1.2;
         }
-        .lord-house { font-size:.9em; margin-bottom:10px; font-weight:600; }
+        .lord-house { font-size:.88em; font-weight:600; margin-bottom:6px; }
 
+        /* Alliance tag — pílula ornamentada */
         .alliance-tag {
-            display:inline-block; font-size:.78em; font-family:'Cinzel',serif;
-            padding:4px 12px; border-radius:4px; font-weight:700;
-            letter-spacing:.03em; margin-bottom:12px;
+            display:inline-block; font-family:'Cinzel',serif; font-size:.72em;
+            padding:3px 12px; border-radius:20px; font-weight:700; letter-spacing:.04em;
         }
-        .tag-bastardos { background:rgba(90,100,112,0.18); border:1px solid rgba(176,190,197,0.35); color:#9AAAB8; }
-        .tag-anel      { background:rgba(28,78,58,0.18);  border:1px solid rgba(46,122,88,0.4);  color:#3A8A66; }
-        .tag-northclaw { background:rgba(139,90,43,0.18); border:1px solid rgba(200,130,60,0.4); color:#C88040; }
+        .tag-bastardos { background:rgba(80,90,100,0.25); border:1px solid rgba(176,190,197,0.4); color:#9AAAB8; }
+        .tag-anel      { background:rgba(20,80,50,0.25);  border:1px solid rgba(76,175,128,0.4); color:#4CAF80; }
+        .tag-northclaw { background:rgba(100,60,10,0.25); border:1px solid rgba(232,160,64,0.4); color:#E8A040; }
 
-        .current-title {
-            clear:both;
-            font-family:'Cinzel',serif; font-size:.9em; font-weight:700;
-            color:var(--amber); font-style:italic;
-            padding:11px 14px;
-            background:rgba(200,134,10,0.06); border:1px solid rgba(200,134,10,0.14);
-            border-radius:5px; margin-top:10px; line-height:1.4;
+        /* Title block */
+        .card-title-block {
+            padding:12px 18px 14px;
+            background: linear-gradient(90deg, rgba(240,192,64,0.06), transparent);
+            border-bottom:1px solid rgba(240,192,64,0.07);
+        }
+        .card-title-label {
+            font-family:'Cinzel',serif; font-size:.65em; color:var(--gold-dim);
+            letter-spacing:.16em; text-transform:uppercase; margin-bottom:5px;
+        }
+        .card-title-text {
+            font-family:'Cinzel',serif; font-size:.95em; font-weight:700;
+            color:var(--gold); font-style:italic; line-height:1.35;
+            text-shadow: 0 0 12px rgba(240,192,64,0.2);
         }
 
-        /* BADGES */
+        /* Badges */
         .conquistas-row {
-            display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;
-            padding-top:14px; border-top:1px solid rgba(255,255,255,0.05);
+            display:flex; gap:7px; flex-wrap:wrap;
+            padding:12px 18px 14px;
         }
         .badge {
-            font-size:.82em; padding:5px 10px; border-radius:4px;
-            background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
-            color:var(--text-muted); white-space:nowrap;
+            font-size:.78em; padding:4px 10px; border-radius:20px;
+            font-family:'Cinzel',serif; font-weight:600;
+            background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.08);
+            color:var(--text-muted);
         }
-        .badge.mvp    { border-color:rgba(200,134,10,0.4); color:var(--amber); }
-        .badge.mitada { border-color:rgba(231,76,60,0.4);  color:#e06060; }
-        .badge.podio  { border-color:rgba(100,160,100,0.4); color:#70a870; }
-        .badge.rec    { border-color:rgba(74,144,226,0.4); color:#6aa8d8; }
-        .badge.mas    { border-color:rgba(155,89,182,0.4); color:#a078c0; }
-        .badge.lan    { border-color:rgba(150,50,50,0.4);  color:#a06060; }
+        .badge.mvp    { border-color:rgba(240,192,64,0.5);  color:var(--gold); background:rgba(240,192,64,0.08); }
+        .badge.mitada { border-color:rgba(220,60,60,0.5);   color:#E07070; background:rgba(180,30,30,0.1); }
+        .badge.podio  { border-color:rgba(80,160,100,0.5);  color:#70C090; background:rgba(40,100,60,0.1); }
+        .badge.rec    { border-color:rgba(80,140,220,0.5);  color:#80B8E8; background:rgba(40,80,160,0.1); }
+        .badge.mas    { border-color:rgba(160,90,200,0.5);  color:#C090E0; background:rgba(100,40,150,0.1); }
+        .badge.lan    { border-color:rgba(160,40,40,0.5);   color:#C06060; background:rgba(100,10,10,0.1); }
 
-        /* VER MAIS */
+        /* Card footer */
         .card-footer {
-            padding:13px 18px;
-            border-top:1px solid rgba(255,255,255,0.04);
-            font-family:'Cinzel',serif; font-size:.8em; color:var(--text-muted);
+            padding:10px 18px;
+            font-family:'Cinzel',serif; font-size:.75em; color:var(--gold-dark);
             text-align:right; letter-spacing:.06em;
+            border-top:1px solid rgba(240,192,64,0.06);
+            transition:color .2s;
         }
+        .lord-card:hover .card-footer { color:var(--gold-dim); }
 
-        /* LOCKED */
-        .locked-banner {
-            background:rgba(200,134,10,0.06); border:1px solid rgba(200,134,10,0.2);
-            border-radius:8px; padding:16px 20px; margin:24px 16px 0;
-            max-width:1000px; margin-left:auto; margin-right:auto;
-            font-size:1em; color:#9A8060; font-style:italic;
-            line-height:1.6; text-align:center;
-        }
-        .locked-banner strong { font-style:normal; color:var(--amber-light); }
-
-        /* FOOTER */
+        /* ── FOOTER ── */
         footer {
-            margin-top:44px; padding:22px; text-align:center;
-            border-top:1px solid rgba(200,134,10,0.08);
+            margin-top:50px; padding:24px 20px; text-align:center;
+            position:relative;
         }
-        .footer-quote { font-style:italic; color:var(--amber-dim); font-size:1em; margin-bottom:8px; line-height:1.5; }
-        .footer-info  { font-size:.82em; color:#242028; }
+        footer::before {
+            content:'';
+            position:absolute; top:0; left:10%; right:10%; height:1px;
+            background:linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+        }
+        .footer-quote {
+            font-style:italic; color:var(--gold-dark); font-size:1em;
+            margin-bottom:8px; line-height:1.5;
+        }
+        .footer-info { font-size:.8em; color:#3A2010; }
     </style>
 </head>
 <body>
 
 <div id="loading">
-    <div class="loading-icon">👑</div>
+    <div class="loading-icon">⚔️</div>
     <div class="loading-text">Convocando os Reinos...</div>
 </div>
 
 <header>
-    <div class="header-ornament">⚔️</div>
+    <div class="header-crest">👑</div>
     <h1>Títulos da Guerra dos Reinos</h1>
     <div class="header-sub">Temporada 2026 · Sistema de Conquistas Medievais v3.2</div>
     <div class="header-round" id="round-badge">Carregando...</div>
 </header>
 
 <div id="locked-msg" style="display:none">
-    <div class="locked-banner">
-        ⏳ Títulos e conquistas medievais ativam na <strong>Rodada 6</strong>. Aguardando início oficial.
-    </div>
+    <div class="locked-banner">⏳ Títulos e conquistas medievais ativam na <strong>Rodada 6</strong>.</div>
 </div>
 
-<div class="section-label">Os Nove Reinos — Títulos Atuais</div>
+<div class="section-label">Os Nove Reinos</div>
 
 <div class="grid" id="cards-grid"></div>
 
@@ -205,19 +316,17 @@
 
 <script>
 const MEDIEVAL_START = 6;
-
 const LORDS = [
     { name:'Icebergteam',     house:'Forja Polar',          avatar:'❄️',  color:'#00CED1', alliance:'anel'      },
     { name:'Sons of Númenor', house:'Herdeiros de Elendil',  avatar:'🛡️',  color:'#4169E1', alliance:'bastardos' },
-    { name:'Ironverdict',     house:'Forja da Justiça',      avatar:'🗡️',  color:'#8a8a8a', alliance:'bastardos' },
-    { name:'CEEC',            house:'Mestre das Espadas',    avatar:'⚔️',  color:'#8B0000', alliance:'northclaw' },
+    { name:'Ironverdict',     house:'Forja da Justiça',      avatar:'🗡️',  color:'#9a9a9a', alliance:'bastardos' },
+    { name:'CEEC',            house:'Mestre das Espadas',    avatar:'⚔️',  color:'#CC2222', alliance:'northclaw' },
     { name:'Otopatamá',       house:'Samurais Guerreiros',   avatar:'🤖',  color:'#1E90FF', alliance:'northclaw' },
     { name:'Andorinha Jr',    house:'Jovem Veloz',           avatar:'🦆',  color:'#FF6347', alliance:'anel'      },
     { name:'Andorinha',       house:'Senhores do Voo',       avatar:'🦅',  color:'#DC143C', alliance:'anel'      },
-    { name:'Varelitas',       house:'Guardas da Colina',     avatar:'🦊',  color:'#228B22', alliance:'bastardos' },
-    { name:'Lobonegro',       house:'Agente do Caos',        avatar:'🐺',  color:'#7a5af0', alliance:'bastardos' },
+    { name:'Varelitas',       house:'Guardas da Colina',     avatar:'🦊',  color:'#3CB054', alliance:'bastardos' },
+    { name:'Lobonegro',       house:'Agente do Caos',        avatar:'🐺',  color:'#9A6AF0', alliance:'bastardos' },
 ];
-
 const TITLES = {
     mvp:        [{min:15,t:'⚡ Portador de Glamdring'},{min:10,t:'🐉 O Rei que Voltou'},{min:7,t:'✨ Rei Coroado de Gondor'},{min:5,t:'👑 Herdeiro de Isildur'},{min:3,t:'🛡️ Senhor dos Cavaleiros de Rohan'},{min:1,t:'⚔️ Cavaleiro da Companhia'}],
     mitada:     [{min:10,t:'⚡ Portador da Espada de Fogo'},{min:7,t:'💎 Portador da Garra Longa'},{min:5,t:'🌟 Cavaleiro do Amanhecer'},{min:3,t:'⚔️ Empunhador de Andúril'},{min:1,t:'🔥 Portador da Ferroada'}],
@@ -226,244 +335,128 @@ const TITLES = {
     podio:      [{min:15,t:'💫 Protetor dos Sete Reinos'},{min:10,t:'🎖️ Mão do Rei'},{min:8,t:'💎 Lorde Comandante da Muralha'},{min:5,t:'🏅 Cavaleiro da Guarda Real'},{min:1,t:'🎯 Guardião da Torre Branca'}],
     lanterna:   [{min:10,t:'🕳️ Rei da Noite Eterna'},{min:7,t:'🌑 Prisioneiro de Mordor'},{min:5,t:'💀 Servo de Sauron'},{min:3,t:'⚰️ Habitante das Terras Sombrias'},{min:1,t:'🗡️ Banido para o Exílio'}],
 };
-
 const TITLE_IMAGES = {
-    '⚔️ Cavaleiro da Companhia':        'cavaleiro-da-companhia',
-    '🛡️ Senhor dos Cavaleiros de Rohan': 'senhor-dos-cavaleiros-de-rohan',
-    '👑 Herdeiro de Isildur':            'herdeiro-de-isildur',
-    '✨ Rei Coroado de Gondor':           'rei-coroado-de-gondor',
-    '🐉 O Rei que Voltou':               'o-rei-que-voltou',
-    '⚡ Portador de Glamdring':           'portador-de-glamdring',
-    '🎯 Guardião da Torre Branca':        'guardiao-da-torre-branca',
-    '🏅 Cavaleiro da Guarda Real':        'cavaleiro-da-guarda-real',
-    '💎 Lorde Comandante da Muralha':     'lorde-comandante-da-muralha',
-    '🎖️ Mão do Rei':                     'mao-do-rei',
-    '💫 Protetor dos Sete Reinos':        'protetor-dos-sete-reinos',
-    '🔥 Portador da Ferroada':            'portador-da-ferroada',
-    '⚔️ Empunhador de Andúril':           'empunhador-de-anduril',
-    '🌟 Cavaleiro do Amanhecer':          'cavaleiro-do-amanhecer',
-    '💎 Portador da Garra Longa':         'portador-da-garra-longa',
-    '⚡ Portador da Espada de Fogo':      'portador-da-espada-de-fogo',
-    '🗡️ Conquistador de Terras':          'conquistador-de-terras',
-    '⚔️ O Senhor do Aço Negro':           'o-senhor-do-aco-negro',
-    '📱 Flagelo dos Reinos':              'flagelo-dos-reinos',
-    '🐉 Terror de Westeros':              'terror-de-westeros',
-    '🦅 Cavaleiro do Corvo Branco':       'cavaleiro-do-corvo-branco',
-    '🐉 Renascido no Fogo':               'renascido-no-fogo',
-    '⚡ Jon Snow Ressuscitado':            'jon-snow-ressuscitado',
-    '🌟 Ressurgido das Trevas':            'ressurgido-das-trevas',
-    '🗡️ Banido para o Exílio':            'banido-para-o-exilio',
-    '⚰️ Habitante das Terras Sombrias':   'habitante-das-terras-sombrias',
-    '💀 Servo de Sauron':                 'servo-de-sauron',
-    '🌑 Prisioneiro de Mordor':           'prisioneiro-de-mordor',
-    '🕳️ Rei da Noite Eterna':             'rei-da-noite-eterna',
-    '📰 Escudeiro Sem Nome':              'escudeiro-sem-nome',
+    '⚔️ Cavaleiro da Companhia':'cavaleiro-da-companhia','🛡️ Senhor dos Cavaleiros de Rohan':'senhor-dos-cavaleiros-de-rohan',
+    '👑 Herdeiro de Isildur':'herdeiro-de-isildur','✨ Rei Coroado de Gondor':'rei-coroado-de-gondor',
+    '🐉 O Rei que Voltou':'o-rei-que-voltou','⚡ Portador de Glamdring':'portador-de-glamdring',
+    '🎯 Guardião da Torre Branca':'guardiao-da-torre-branca','🏅 Cavaleiro da Guarda Real':'cavaleiro-da-guarda-real',
+    '💎 Lorde Comandante da Muralha':'lorde-comandante-da-muralha','🎖️ Mão do Rei':'mao-do-rei',
+    '💫 Protetor dos Sete Reinos':'protetor-dos-sete-reinos','🔥 Portador da Ferroada':'portador-da-ferroada',
+    '⚔️ Empunhador de Andúril':'empunhador-de-anduril','🌟 Cavaleiro do Amanhecer':'cavaleiro-do-amanhecer',
+    '💎 Portador da Garra Longa':'portador-da-garra-longa','⚡ Portador da Espada de Fogo':'portador-da-espada-de-fogo',
+    '🗡️ Conquistador de Terras':'conquistador-de-terras','⚔️ O Senhor do Aço Negro':'o-senhor-do-aco-negro',
+    '📱 Flagelo dos Reinos':'flagelo-dos-reinos','🐉 Terror de Westeros':'terror-de-westeros',
+    '🦅 Cavaleiro do Corvo Branco':'cavaleiro-do-corvo-branco','🐉 Renascido no Fogo':'renascido-no-fogo',
+    '⚡ Jon Snow Ressuscitado':'jon-snow-ressuscitado','🌟 Ressurgido das Trevas':'ressurgido-das-trevas',
+    '🗡️ Banido para o Exílio':'banido-para-o-exilio','⚰️ Habitante das Terras Sombrias':'habitante-das-terras-sombrias',
+    '💀 Servo de Sauron':'servo-de-sauron','🌑 Prisioneiro de Mordor':'prisioneiro-de-mordor',
+    '🕳️ Rei da Noite Eterna':'rei-da-noite-eterna','📰 Escudeiro Sem Nome':'escudeiro-sem-nome',
 };
-
-function titleImageSlug(title) { return TITLE_IMAGES[title] || null; }
-
-function getTitle(type, count) {
-    if (!count) return '';
-    for (const e of TITLES[type]||[]) if (count >= e.min) return e.t;
-    return '';
-}
-
-function getPrimaryTitle(lord) {
-    return getTitle('mvp',lord.mvp)||getTitle('mitada',lord.mitada)||
-           getTitle('recuperacao',lord.recuperacao)||getTitle('massacre',lord.massacre)||
-           getTitle('podio',lord.podio)||getTitle('lanterna',lord.lanterna)||'📰 Escudeiro Sem Nome';
-}
-
-function parseCSV(text) {
-    const rows = [];
-    const lines = text.trim().split('\n');
-    for (let i = 1; i < lines.length; i++) {
-        const parts = lines[i].trim().split(',');
-        if (parts.length < 3) continue;
-        const rodada = parseInt(parts[0].trim());
-        const time   = parts[1].trim();
-        const pontos = parseFloat(parts[2].trim());
-        if (!isNaN(rodada) && time && !isNaN(pontos)) rows.push({ rodada, time, pontos });
-    }
-    return rows;
-}
-
-function buildBattles(rows) {
-    const map = {};
-    rows.forEach(r => {
-        if (!map[r.rodada]) map[r.rodada] = [];
-        map[r.rodada].push({ name: r.time, points: r.pontos });
-    });
-    return Object.keys(map).map(Number).sort((a,b)=>a-b).map(week => ({
-        week, results: map[week], medievalActive: week >= MEDIEVAL_START,
-    }));
-}
-
-function processAll(BATTLES) {
-    const ld = LORDS.map(l => ({...l,
-        cartolaPoints:0, medievalPoints:0, totalPoints:0,
-        mvp:0, podio:0, mitada:0, recuperacao:0, massacre:0, lanterna:0, bonusG2:0,
-    }));
-    const find = n => ld.find(l => l.name.toLowerCase().trim() === n.toLowerCase().trim());
-
-    BATTLES.forEach(battle => {
-        battle.results.forEach(r => {
-            const lord = find(r.name); if (!lord) return;
-            lord.cartolaPoints += r.points;
+function imgSlug(t){return TITLE_IMAGES[t]||null;}
+function getTitle(type,count){if(!count)return'';for(const e of TITLES[type]||[])if(count>=e.min)return e.t;return'';}
+function getPrimary(l){return getTitle('mvp',l.mvp)||getTitle('mitada',l.mitada)||getTitle('recuperacao',l.recuperacao)||getTitle('massacre',l.massacre)||getTitle('podio',l.podio)||getTitle('lanterna',l.lanterna)||'📰 Escudeiro Sem Nome';}
+function parseCSV(text){const rows=[];const lines=text.trim().split('\n');for(let i=1;i<lines.length;i++){const p=lines[i].trim().split(',');if(p.length<3)continue;const r=parseInt(p[0]),t=p[1].trim(),pts=parseFloat(p[2]);if(!isNaN(r)&&t&&!isNaN(pts))rows.push({rodada:r,time:t,pontos:pts});}return rows;}
+function buildBattles(rows){const map={};rows.forEach(r=>{if(!map[r.rodada])map[r.rodada]=[];map[r.rodada].push({name:r.time,points:r.pontos});});return Object.keys(map).map(Number).sort((a,b)=>a-b).map(w=>({week:w,results:map[w],medievalActive:w>=MEDIEVAL_START}));}
+function processAll(BATTLES){
+    const ld=LORDS.map(l=>({...l,cartolaPoints:0,medievalPoints:0,totalPoints:0,mvp:0,podio:0,mitada:0,recuperacao:0,massacre:0,lanterna:0,bonusG2:0}));
+    const find=n=>ld.find(l=>l.name.toLowerCase().trim()===n.toLowerCase().trim());
+    BATTLES.forEach(b=>b.results.forEach(r=>{const l=find(r.name);if(l)l.cartolaPoints+=r.points;}));
+    const fa={};LORDS.forEach(l=>fa[l.name]=0);const abr={};
+    BATTLES.forEach(b=>{b.results.forEach(r=>fa[r.name]=(fa[r.name]||0)+r.points);abr[b.week]={...fa};});
+    const active=BATTLES.filter(b=>b.medievalActive);let prev={};
+    active.forEach((battle,idx)=>{
+        const sorted=[...battle.results].sort((a,b)=>b.points-a.points);
+        const pr=BATTLES.find(b=>b.week===battle.week-1);let bs={};
+        if(pr)bs=abr[pr.week];else{const pi=BATTLES.filter(b=>!b.medievalActive&&b.week<battle.week);if(pi.length)bs=abr[Math.max(...pi.map(b=>b.week))];else LORDS.forEach(l=>bs[l.name]=0);}
+        const as=abr[battle.week];
+        const rb=Object.entries(bs).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
+        const ra=Object.entries(as).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
+        const pb={};rb.forEach((n,i)=>pb[n]=i);const pa={};ra.forEach((n,i)=>pa[n]=i);
+        sorted.forEach((r,pos)=>{
+            const l=find(r.name);if(!l)return;
+            if(pos===0&&r.points>0)l.mvp++;
+            if(pos===1||pos===2)l.podio++;
+            if(r.points>=80){l.mitada++;if(r.points>=110)l.bonusG2+=14;else if(r.points>=100)l.bonusG2+=8;else if(r.points>=90)l.bonusG2+=4;}
+            if(pos===sorted.length-1&&r.points>0)l.lanterna++;
+            if(idx>0&&(prev[r.name]||0)>0&&(r.points-prev[r.name])>=50)l.recuperacao++;
+            if(idx>0&&(pb[r.name]??999)>(pa[r.name]??999)){let hm=false;LORDS.forEach(o=>{if(o.name===r.name)return;if((pb[r.name]??999)>(pb[o.name]??999)&&(pa[r.name]??999)<(pa[o.name]??999))if(((as[r.name]||0)-(as[o.name]||0))>=10)hm=true;});if(hm)l.massacre++;}
         });
+        battle.results.forEach(r=>prev[r.name]=r.points);
     });
-
-    const fullAcum = {}; LORDS.forEach(l => fullAcum[l.name]=0);
-    const acumByRound = {};
-    BATTLES.forEach(battle => {
-        battle.results.forEach(r => fullAcum[r.name] = (fullAcum[r.name]||0) + r.points);
-        acumByRound[battle.week] = {...fullAcum};
-    });
-
-    const activeRounds = BATTLES.filter(b => b.medievalActive);
-    let prev = {};
-
-    activeRounds.forEach((battle, idx) => {
-        const sorted = [...battle.results].sort((a,b)=>b.points-a.points);
-        const prevRound = BATTLES.find(b => b.week === battle.week - 1);
-        let beforeSnap = {};
-        if (prevRound) {
-            beforeSnap = acumByRound[prevRound.week];
-        } else {
-            const prevInactive = BATTLES.filter(b => !b.medievalActive && b.week < battle.week);
-            if (prevInactive.length) beforeSnap = acumByRound[Math.max(...prevInactive.map(b=>b.week))];
-            else LORDS.forEach(l => beforeSnap[l.name]=0);
-        }
-        const afterSnap = acumByRound[battle.week];
-        const rankB = Object.entries(beforeSnap).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
-        const rankA = Object.entries(afterSnap ).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
-        const posB  = {}; rankB.forEach((n,i) => posB[n]=i);
-        const posA  = {}; rankA.forEach((n,i) => posA[n]=i);
-
-        sorted.forEach((r, pos) => {
-            const lord = find(r.name); if (!lord) return;
-            if (pos===0 && r.points>0) lord.mvp++;
-            if (pos===1||pos===2) lord.podio++;
-            if (r.points>=80) {
-                lord.mitada++;
-                if      (r.points>=110) lord.bonusG2+=14;
-                else if (r.points>=100) lord.bonusG2+=8;
-                else if (r.points>=90)  lord.bonusG2+=4;
-            }
-            if (pos===sorted.length-1 && r.points>0) lord.lanterna++;
-            if (idx>0 && (prev[r.name]||0)>0 && (r.points - prev[r.name])>=50) lord.recuperacao++;
-            if (idx>0 && (posB[r.name]??999)>(posA[r.name]??999)) {
-                let hm = false;
-                LORDS.forEach(o => {
-                    if (o.name===r.name) return;
-                    if ((posB[r.name]??999)>(posB[o.name]??999) && (posA[r.name]??999)<(posA[o.name]??999))
-                        if (((afterSnap[r.name]||0)-(afterSnap[o.name]||0))>=10) hm=true;
-                });
-                if (hm) lord.massacre++;
-            }
-        });
-        battle.results.forEach(r => prev[r.name]=r.points);
-    });
-
-    const lastRound = BATTLES.length ? Math.max(...BATTLES.map(b=>b.week)) : 0;
-    const locked = lastRound < MEDIEVAL_START;
-
-    function calcMedieval(a) {
-        let p = 0;
-        const {mvp=0,podio=0,mitada=0,recuperacao=0,massacre=0,lanterna=0} = a;
-        if      (mvp>=15) p+=200; else if(mvp>=10) p+=135; else if(mvp>=7) p+=95;
-        else if (mvp>=5)  p+=65;  else if(mvp>=3)  p+=40;  else p+=mvp*10;
-        if      (podio>=15) p+=75; else if(podio>=10) p+=45; else if(podio>=8) p+=34;
-        else if (podio>=5)  p+=20; else p+=podio*3;
-        if      (mitada>=10) p+=100; else if(mitada>=7) p+=70; else if(mitada>=5) p+=45;
-        else if (mitada>=3)  p+=23;  else p+=mitada*5;
-        if      (recuperacao>=7) p+=96; else if(recuperacao>=5) p+=65; else if(recuperacao>=3) p+=36;
-        else p+=recuperacao*8;
-        if      (massacre>=7) p+=62; else if(massacre>=5) p+=40; else if(massacre>=3) p+=22;
-        else p+=massacre*6;
-        if      (lanterna>=10) p-=100; else if(lanterna>=7) p-=70; else if(lanterna>=5) p-=45;
-        else if (lanterna>=3)  p-=23;  else p-=lanterna*5;
-        return p;
-    }
-
-    ld.forEach(lord => {
-        lord.medievalPoints = locked ? 0 : calcMedieval(lord) + lord.bonusG2;
-        lord.totalPoints = lord.cartolaPoints + lord.medievalPoints;
-        lord.primaryTitle = locked ? '📰 Escudeiro Sem Nome' : getPrimaryTitle(lord);
-        lord.locked = locked;
-    });
-
-    return { lords: ld.sort((a,b)=>b.totalPoints-a.totalPoints), lastRound, locked };
+    const lastRound=BATTLES.length?Math.max(...BATTLES.map(b=>b.week)):0;
+    const locked=lastRound<MEDIEVAL_START;
+    function cm(a){let p=0;const{mvp=0,podio=0,mitada=0,recuperacao=0,massacre=0,lanterna=0}=a;
+        if(mvp>=15)p+=200;else if(mvp>=10)p+=135;else if(mvp>=7)p+=95;else if(mvp>=5)p+=65;else if(mvp>=3)p+=40;else p+=mvp*10;
+        if(podio>=15)p+=75;else if(podio>=10)p+=45;else if(podio>=8)p+=34;else if(podio>=5)p+=20;else p+=podio*3;
+        if(mitada>=10)p+=100;else if(mitada>=7)p+=70;else if(mitada>=5)p+=45;else if(mitada>=3)p+=23;else p+=mitada*5;
+        if(recuperacao>=7)p+=96;else if(recuperacao>=5)p+=65;else if(recuperacao>=3)p+=36;else p+=recuperacao*8;
+        if(massacre>=7)p+=62;else if(massacre>=5)p+=40;else if(massacre>=3)p+=22;else p+=massacre*6;
+        if(lanterna>=10)p-=100;else if(lanterna>=7)p-=70;else if(lanterna>=5)p-=45;else if(lanterna>=3)p-=23;else p-=lanterna*5;
+        return p;}
+    ld.forEach(l=>{l.medievalPoints=locked?0:cm(l)+l.bonusG2;l.totalPoints=l.cartolaPoints+l.medievalPoints;l.primaryTitle=locked?'📰 Escudeiro Sem Nome':getPrimary(l);l.locked=locked;});
+    return{lords:ld.sort((a,b)=>b.totalPoints-a.totalPoints),lastRound,locked};
 }
-
-function imgTag(title) {
-    const slug = titleImageSlug(title);
-    if (!slug) return `<div class="title-img-placeholder">⚔️</div>`;
-    return `<img src="imagens/titulos/${slug}.jpg" alt="${title}"
-                 onerror="this.parentElement.innerHTML='<div class=\\'title-img-placeholder\\'>⚔️</div>'"
-                 loading="lazy" style="width:100%;height:100%;object-fit:contain">`;
+function allianceTag(l){
+    if(l.alliance==='bastardos')return`<span class="alliance-tag tag-bastardos">🗡️ Os Bastardos</span>`;
+    if(l.alliance==='northclaw')return`<span class="alliance-tag tag-northclaw">🦅 North Claw</span>`;
+    return`<span class="alliance-tag tag-anel">💍 Sociedade do Anel</span>`;
 }
-
-function allianceTag(lord) {
-    if (lord.alliance === 'bastardos') return `<span class="alliance-tag tag-bastardos">🗡️ Os Bastardos</span>`;
-    if (lord.alliance === 'northclaw') return `<span class="alliance-tag tag-northclaw">🦅 North Claw</span>`;
-    return `<span class="alliance-tag tag-anel">💍 Sociedade do Anel</span>`;
+function imgTag(title){
+    const slug=imgSlug(title);
+    if(!slug)return`<div class="title-img-placeholder">⚔️</div>`;
+    return`<img src="imagens/titulos/${slug}.jpg" alt="${title}" onerror="this.parentElement.innerHTML='<div class=\\'title-img-placeholder\\'>⚔️</div>'" loading="lazy" style="width:100%;height:100%;object-fit:contain">`;
 }
-
-function badgeRow(lord) {
-    const b = [];
-    if (lord.mvp)         b.push(`<span class="badge mvp">🏆 ${lord.mvp}x MVP</span>`);
-    if (lord.mitada)      b.push(`<span class="badge mitada">💀 ${lord.mitada}x Mitada</span>`);
-    if (lord.podio)       b.push(`<span class="badge podio">🥇 ${lord.podio}x Pódio</span>`);
-    if (lord.recuperacao) b.push(`<span class="badge rec">📈 ${lord.recuperacao}x Recup.</span>`);
-    if (lord.massacre)    b.push(`<span class="badge mas">🗡️ ${lord.massacre}x Massacre</span>`);
-    if (lord.lanterna)    b.push(`<span class="badge lan">📦 ${lord.lanterna}x Lanterna</span>`);
-    return b.length ? `<div class="conquistas-row">${b.join('')}</div>` : '';
+function badgeRow(l){
+    const b=[];
+    if(l.mvp)b.push(`<span class="badge mvp">🏆 ${l.mvp}x</span>`);
+    if(l.mitada)b.push(`<span class="badge mitada">💀 ${l.mitada}x</span>`);
+    if(l.podio)b.push(`<span class="badge podio">🥇 ${l.podio}x</span>`);
+    if(l.recuperacao)b.push(`<span class="badge rec">📈 ${l.recuperacao}x</span>`);
+    if(l.massacre)b.push(`<span class="badge mas">🗡️ ${l.massacre}x</span>`);
+    if(l.lanterna)b.push(`<span class="badge lan">📦 ${l.lanterna}x</span>`);
+    return b.length?`<div class="conquistas-row">${b.join('')}</div>`:'';
 }
-
-function renderCards(data) {
-    const { lords, lastRound, locked } = data;
-    document.getElementById('round-badge').textContent = `Rodada ${lastRound} de 38`;
-    document.getElementById('last-updated').textContent = 'Atualizado ' + new Date().toLocaleDateString('pt-BR');
-    if (locked) document.getElementById('locked-msg').style.display = 'block';
-
-    const grid = document.getElementById('cards-grid');
-    grid.innerHTML = lords.map(lord => `
-        <a class="lord-card" href="time.html?time=${encodeURIComponent(lord.name)}">
-            <div class="card-strip" style="background:${lord.color}"></div>
-            <div class="card-body">
-                <div class="title-img-wrap">${imgTag(lord.primaryTitle)}</div>
-                <div class="lord-avatar">${lord.avatar}</div>
-                <div class="lord-name">${lord.name}</div>
-                <div class="lord-house" style="color:${lord.color}">${lord.house}</div>
-                ${allianceTag(lord)}
-                <div class="current-title">${lord.primaryTitle}</div>
-                ${locked ? '' : badgeRow(lord)}
+function renderCards(data){
+    const{lords,lastRound,locked}=data;
+    document.getElementById('round-badge').textContent=`Rodada ${lastRound} de 38`;
+    document.getElementById('last-updated').textContent='Atualizado '+new Date().toLocaleDateString('pt-BR');
+    if(locked)document.getElementById('locked-msg').style.display='block';
+    document.getElementById('cards-grid').innerHTML=lords.map(l=>`
+        <a class="lord-card" href="time.html?time=${encodeURIComponent(l.name)}">
+            <div class="card-strip" style="background:${l.color};--strip-glow:${l.color}44"></div>
+            <div class="card-head">
+                <div class="title-img-wrap">${imgTag(l.primaryTitle)}</div>
+                <div class="card-info">
+                    <div class="lord-avatar">${l.avatar}</div>
+                    <div class="lord-name">${l.name}</div>
+                    <div class="lord-house" style="color:${l.color}">${l.house}</div>
+                    ${allianceTag(l)}
+                </div>
             </div>
-            <div class="card-footer">Ver conquistas completas →</div>
-        </a>
-    `).join('');
+            <div class="card-title-block">
+                <div class="card-title-label">Título Atual</div>
+                <div class="card-title-text">${l.primaryTitle}</div>
+            </div>
+            ${locked?'':badgeRow(l)}
+            <div class="card-footer">Ver conquistas completas ✦</div>
+        </a>`).join('');
 }
-
-async function init() {
-    try {
-        const res = await fetch('dados.csv?v=' + Date.now());
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const csv = await res.text();
-        const rows = parseCSV(csv);
-        if (!rows.length) throw new Error('dados.csv vazio.');
-        const BATTLES = buildBattles(rows);
-        const data = processAll(BATTLES);
+async function init(){
+    try{
+        const res=await fetch('dados.csv?v='+Date.now());
+        if(!res.ok)throw new Error(`HTTP ${res.status}`);
+        const csv=await res.text();
+        const rows=parseCSV(csv);
+        if(!rows.length)throw new Error('dados.csv vazio.');
+        const BATTLES=buildBattles(rows);
+        const data=processAll(BATTLES);
         renderCards(data);
-        document.getElementById('loading').style.display = 'none';
-    } catch(err) {
-        document.getElementById('loading').innerHTML = `
-            <div style="font-size:2em">🏚️</div>
-            <div style="font-family:Cinzel,serif;color:#e74c3c;font-size:1.1em">Erro ao carregar dados</div>
-            <div style="color:#6B6878;font-size:.9em;max-width:300px;text-align:center;line-height:1.6">${err.message}</div>`;
+        document.getElementById('loading').style.display='none';
+    }catch(err){
+        document.getElementById('loading').innerHTML=`<div style="font-size:2em">🏚️</div><div style="font-family:'Cinzel Decorative',serif;color:#e74c3c;font-size:1.1em">Erro ao carregar</div><div style="color:#8A7040;font-size:.9em;max-width:300px;text-align:center;line-height:1.6">${err.message}</div>`;
     }
 }
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded',init);
 </script>
 </body>
 </html>
