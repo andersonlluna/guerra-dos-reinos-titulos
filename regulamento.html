@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Regulamento · Guerra dos Reinos</title>
-<meta name="description" content="Como conquistar cada figurinha — Guerra dos Reinos · 2026">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,37 +17,58 @@
   border-left:3px solid var(--rs-color,var(--gold));
 }
 .regul-h{
-  font-family:'Cinzel',serif;font-size:1.15rem;font-weight:600;
+  font-family:'Cinzel',serif;font-size:1.2rem;font-weight:600;
   color:var(--rs-color,var(--gold));letter-spacing:1px;
-  margin-bottom:.4rem;display:flex;align-items:center;gap:10px;
+  margin-bottom:.5rem;display:flex;align-items:center;gap:10px;
 }
-.regul-h-icon{font-size:1.5rem;line-height:1}
+.regul-h-icon{font-size:1.6rem;line-height:1}
 .regul-rule{
-  font-size:14px;color:var(--text-secondary);margin-bottom:1rem;font-style:italic;
+  font-size:15px;color:var(--text-secondary);margin-bottom:1rem;
 }
 .regul-table{
   width:100%;border-collapse:collapse;
-  font-family:'JetBrains Mono',monospace;font-size:13px;
+  font-size:14px;
 }
 .regul-table th{
-  text-align:left;padding:8px 10px;
-  font-family:'Inter',sans-serif;font-size:10px;font-weight:600;
+  text-align:left;padding:10px 10px;
+  font-family:'Inter',sans-serif;font-size:11px;font-weight:600;
   letter-spacing:1.5px;color:var(--text-tertiary);text-transform:uppercase;
   border-bottom:1px solid var(--border-strong);
 }
 .regul-table td{
-  padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text-primary);
+  padding:10px 10px;border-bottom:1px solid var(--border);color:var(--text-primary);
 }
-.regul-table td:first-child{font-weight:700;color:var(--rs-color,var(--gold));font-family:'JetBrains Mono',monospace}
-.regul-table td:last-child{font-family:'Cinzel',serif;font-size:13px;font-style:italic}
+.regul-table td:nth-child(1){font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--rs-color,var(--gold));width:50px}
+.regul-table td:nth-child(2){font-family:'JetBrains Mono',monospace;width:110px;color:var(--text-secondary);font-size:13px}
+.regul-table td:nth-child(3){font-family:'Cinzel',serif;font-weight:500}
+.regul-table td:nth-child(4){width:110px;text-align:right}
 .regul-table tr:last-child td{border-bottom:none}
 .regul-note{
-  margin-top:1rem;padding:12px 14px;
+  margin-top:1rem;padding:14px 16px;
   background:var(--bg-surface);border-radius:8px;
-  font-size:13px;color:var(--text-secondary);
+  font-size:14px;color:var(--text-secondary);line-height:1.6;
   border-left:2px solid var(--gold-strong);
 }
 .regul-note strong{color:var(--gold)}
+.dist-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:10px;margin-top:1rem;
+}
+.dist-item{
+  text-align:center;padding:14px;
+  background:var(--bg-surface);border-radius:8px;
+  border:1px solid;
+}
+.dist-item .dist-num{
+  font-family:'Cinzel',serif;font-size:1.8rem;font-weight:700;display:block;
+}
+.dist-item .dist-label{
+  font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  margin-top:5px;display:block;
+}
+@media(max-width:700px){
+  .regul-table td:nth-child(4) .rar-pill{font-size:9px;padding:4px 7px}
+}
 </style>
 </head>
 <body>
@@ -66,7 +86,7 @@
   <div class="header-ornament"><span style="font-size:11px;letter-spacing:4px">✦</span></div>
   <span class="brasao-grande">📜</span>
   <h1>Regulamento</h1>
-  <p class="header-sub">Como conquistar cada uma das 38 figurinhas do álbum.</p>
+  <p class="header-sub">Como conquistar cada uma das 38 figurinhas e qual a raridade de cada.</p>
 </header>
 
 <main class="content">
@@ -74,127 +94,139 @@
   <div class="regul-section" style="--rs-color:var(--gold)">
     <div class="regul-h"><span class="regul-h-icon">⚔</span>Regras Gerais</div>
     <div class="regul-rule">O álbum tem 38 figurinhas distribuídas em 7 categorias + 8 prêmios finais.</div>
-    <div class="regul-note"><strong>Conquistas valem a partir da Rodada 6.</strong> R1–R5 são fase de calibragem — as ações dessas rodadas não desbloqueiam figurinhas.</div>
-    <div class="regul-note"><strong>Tier Inicial — Escudeiro Sem Nome:</strong> todo invocador começa com a figurinha #01 desbloqueada. É o ponto de partida.</div>
-    <div class="regul-note"><strong>Galeria da Liga:</strong> as 38 figurinhas têm raridade dinâmica baseada em quantos invocadores conquistaram. As difíceis ficam <em>Míticas</em> ou <em>Lendárias</em>; as fáceis são <em>Comuns</em>.</div>
+    <div class="regul-note"><strong>Conquistas valem a partir da Rodada 6.</strong> R1–R5 são fase de calibragem — não desbloqueiam figurinhas.</div>
+    <div class="regul-note"><strong>Tier Inicial:</strong> todo jogador começa com o <em>Escudeiro Sem Nome</em> (#01) já desbloqueado.</div>
+
+    <div class="dist-grid">
+      <div class="dist-item" style="border-color:var(--rar-comum);color:var(--rar-comum)"><span class="dist-num">5</span><span class="dist-label">Comum</span></div>
+      <div class="dist-item" style="border-color:var(--rar-incomum);color:var(--rar-incomum)"><span class="dist-num">6</span><span class="dist-label">Incomum</span></div>
+      <div class="dist-item" style="border-color:var(--rar-raro);color:var(--rar-raro)"><span class="dist-num">8</span><span class="dist-label">Raro</span></div>
+      <div class="dist-item" style="border-color:var(--rar-epico);color:var(--rar-epico)"><span class="dist-num">8</span><span class="dist-label">Épico</span></div>
+      <div class="dist-item" style="border-color:var(--rar-lendario);color:var(--rar-lendario)"><span class="dist-num">5</span><span class="dist-label">Lendário</span></div>
+      <div class="dist-item" style="border-color:var(--rar-mitico);color:var(--rar-mitico)"><span class="dist-num">6</span><span class="dist-label">Mítico</span></div>
+    </div>
+  </div>
+
+  <div class="regul-section" style="--rs-color:var(--tier-d)">
+    <div class="regul-h"><span class="regul-h-icon">📜</span>Tier Inicial</div>
+    <table class="regul-table">
+      <thead><tr><th>#</th><th>Marco</th><th>Figurinha</th><th>Raridade</th></tr></thead>
+      <tbody>
+        <tr><td>01</td><td>Padrão</td><td>📜 Escudeiro Sem Nome</td><td><span class="rar-pill rar-comum">Comum</span></td></tr>
+      </tbody>
+    </table>
   </div>
 
   <div class="regul-section" style="--rs-color:var(--tier-s)">
     <div class="regul-h"><span class="regul-h-icon">👑</span>MVP — 1º lugar na rodada</div>
-    <div class="regul-rule">Concedido a quem tem a maior pontuação Cartola na rodada.</div>
     <table class="regul-table">
-      <thead><tr><th>#</th><th>Marco</th><th>Figurinha</th></tr></thead>
+      <thead><tr><th>#</th><th>Marco</th><th>Figurinha</th><th>Raridade</th></tr></thead>
       <tbody>
-        <tr><td>02</td><td>1× MVP</td><td>⚔ Cavaleiro da Companhia</td></tr>
-        <tr><td>03</td><td>3× MVP</td><td>🛡 Senhor dos Cavaleiros de Rohan</td></tr>
-        <tr><td>04</td><td>5× MVP</td><td>👑 Herdeiro de Isildur</td></tr>
-        <tr><td>05</td><td>7× MVP</td><td>⚜ Rei Coroado de Gondor</td></tr>
-        <tr><td>06</td><td>10× MVP</td><td>🐉 O Rei que Voltou</td></tr>
-        <tr><td>07</td><td>15× MVP</td><td>⚡ Portador de Glamdring</td></tr>
+        <tr><td>02</td><td>1× MVP</td><td>⚔ Cavaleiro da Companhia</td><td><span class="rar-pill rar-comum">Comum</span></td></tr>
+        <tr><td>03</td><td>3× MVP</td><td>🛡 Senhor dos Cavaleiros de Rohan</td><td><span class="rar-pill rar-incomum">Incomum</span></td></tr>
+        <tr><td>04</td><td>5× MVP</td><td>👑 Herdeiro de Isildur</td><td><span class="rar-pill rar-raro">Raro</span></td></tr>
+        <tr><td>05</td><td>7× MVP</td><td>⚜ Rei Coroado de Gondor</td><td><span class="rar-pill rar-epico">Épico</span></td></tr>
+        <tr><td>06</td><td>10× MVP</td><td>🐉 O Rei que Voltou</td><td><span class="rar-pill rar-lendario">Lendário</span></td></tr>
+        <tr><td>07</td><td>15× MVP</td><td>⚡ Portador de Glamdring</td><td><span class="rar-pill rar-mitico">Mítico</span></td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="regul-section" style="--rs-color:var(--tier-b)">
-    <div class="regul-h"><span class="regul-h-icon">🥇</span>Pódio — 2º ou 3º lugar na rodada</div>
-    <div class="regul-rule">Concedido ao 2º e 3º lugar da rodada. O 1º já é MVP — não acumula Pódio.</div>
+    <div class="regul-h"><span class="regul-h-icon">🥇</span>Pódio — 2º ou 3º lugar</div>
     <table class="regul-table">
-      <thead><tr><th>#</th><th>Marco</th><th>Figurinha</th></tr></thead>
+      <thead><tr><th>#</th><th>Marco</th><th>Figurinha</th><th>Raridade</th></tr></thead>
       <tbody>
-        <tr><td>08</td><td>1× Pódio</td><td>🎯 Guardião da Torre Branca</td></tr>
-        <tr><td>09</td><td>5× Pódio</td><td>🏅 Cavaleiro da Guarda Real</td></tr>
-        <tr><td>10</td><td>8× Pódio</td><td>💍 Lorde Comandante da Muralha</td></tr>
-        <tr><td>11</td><td>10× Pódio</td><td>🎖 Mão do Rei</td></tr>
-        <tr><td>12</td><td>15× Pódio</td><td>💫 Protetor dos Sete Reinos</td></tr>
+        <tr><td>08</td><td>1× Pódio</td><td>🎯 Guardião da Torre Branca</td><td><span class="rar-pill rar-comum">Comum</span></td></tr>
+        <tr><td>09</td><td>5× Pódio</td><td>🏅 Cavaleiro da Guarda Real</td><td><span class="rar-pill rar-incomum">Incomum</span></td></tr>
+        <tr><td>10</td><td>8× Pódio</td><td>💍 Lorde Comandante da Muralha</td><td><span class="rar-pill rar-raro">Raro</span></td></tr>
+        <tr><td>11</td><td>10× Pódio</td><td>🎖 Mão do Rei</td><td><span class="rar-pill rar-epico">Épico</span></td></tr>
+        <tr><td>12</td><td>15× Pódio</td><td>💫 Protetor dos Sete Reinos</td><td><span class="rar-pill rar-lendario">Lendário</span></td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="regul-section" style="--rs-color:var(--tier-a)">
     <div class="regul-h"><span class="regul-h-icon">💀</span>Mitada — pontuação ≥ 80 pts</div>
-    <div class="regul-rule">Concedida a todos que pontuam ≥ 80 no Cartola na rodada. Múltiplas por rodada.</div>
     <table class="regul-table">
-      <thead><tr><th>#</th><th>Marco</th><th>Figurinha</th></tr></thead>
+      <thead><tr><th>#</th><th>Marco</th><th>Figurinha</th><th>Raridade</th></tr></thead>
       <tbody>
-        <tr><td>13</td><td>1× Mitada</td><td>🔥 Portador da Ferroada</td></tr>
-        <tr><td>14</td><td>3× Mitada</td><td>⚔ Empunhador de Andúril</td></tr>
-        <tr><td>15</td><td>5× Mitada</td><td>🌟 Cavaleiro do Amanhecer</td></tr>
-        <tr><td>16</td><td>7× Mitada</td><td>💎 Portador da Garra Longa</td></tr>
-        <tr><td>17</td><td>10× Mitada</td><td>⚡ Portador da Espada de Fogo</td></tr>
+        <tr><td>13</td><td>1× Mitada</td><td>🔥 Portador da Ferroada</td><td><span class="rar-pill rar-comum">Comum</span></td></tr>
+        <tr><td>14</td><td>3× Mitada</td><td>⚔ Empunhador de Andúril</td><td><span class="rar-pill rar-incomum">Incomum</span></td></tr>
+        <tr><td>15</td><td>5× Mitada</td><td>🌟 Cavaleiro do Amanhecer</td><td><span class="rar-pill rar-raro">Raro</span></td></tr>
+        <tr><td>16</td><td>7× Mitada</td><td>💎 Portador da Garra Longa</td><td><span class="rar-pill rar-epico">Épico</span></td></tr>
+        <tr><td>17</td><td>10× Mitada</td><td>⚡ Portador da Espada de Fogo</td><td><span class="rar-pill rar-lendario">Lendário</span></td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="regul-section" style="--rs-color:var(--tier-a)">
     <div class="regul-h"><span class="regul-h-icon">🗡</span>Massacre — escalada no ranking</div>
-    <div class="regul-rule">Concedido a quem sobe de posição no ranking acumulado E ultrapassa pelo menos 1 adversário com diferença ≥ 10 pts. Escalada estratégica, não placar de rodada.</div>
+    <div class="regul-rule" style="font-size:14px">Subir posição no ranking acumulado E ultrapassar adversário com diferença ≥ 10 pts.</div>
     <table class="regul-table">
-      <thead><tr><th>#</th><th>Marco</th><th>Figurinha</th></tr></thead>
+      <thead><tr><th>#</th><th>Marco</th><th>Figurinha</th><th>Raridade</th></tr></thead>
       <tbody>
-        <tr><td>18</td><td>1× Massacre</td><td>🗡 Conquistador de Terras</td></tr>
-        <tr><td>19</td><td>3× Massacre</td><td>⚔ O Senhor do Aço Negro</td></tr>
-        <tr><td>20</td><td>5× Massacre</td><td>🔱 Flagelo dos Reinos</td></tr>
-        <tr><td>21</td><td>7× Massacre</td><td>🐉 Terror de Westeros</td></tr>
+        <tr><td>18</td><td>1× Massacre</td><td>🗡 Conquistador de Terras</td><td><span class="rar-pill rar-incomum">Incomum</span></td></tr>
+        <tr><td>19</td><td>3× Massacre</td><td>⚔ O Senhor do Aço Negro</td><td><span class="rar-pill rar-raro">Raro</span></td></tr>
+        <tr><td>20</td><td>5× Massacre</td><td>🔱 Flagelo dos Reinos</td><td><span class="rar-pill rar-epico">Épico</span></td></tr>
+        <tr><td>21</td><td>7× Massacre</td><td>🐉 Terror de Westeros</td><td><span class="rar-pill rar-mitico">Mítico</span></td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="regul-section" style="--rs-color:var(--tier-b)">
     <div class="regul-h"><span class="regul-h-icon">📈</span>Recuperação — +50 pts vs rodada anterior</div>
-    <div class="regul-rule">Concedida a quem pontua +50 a mais que na própria rodada anterior. Variação individual.</div>
     <table class="regul-table">
-      <thead><tr><th>#</th><th>Marco</th><th>Figurinha</th></tr></thead>
+      <thead><tr><th>#</th><th>Marco</th><th>Figurinha</th><th>Raridade</th></tr></thead>
       <tbody>
-        <tr><td>22</td><td>1× Recuperação</td><td>🦅 Cavaleiro do Corvo Branco</td></tr>
-        <tr><td>23</td><td>3× Recuperação</td><td>🐉 Renascido no Fogo</td></tr>
-        <tr><td>24</td><td>5× Recuperação</td><td>⚡ Jon Snow Ressuscitado</td></tr>
-        <tr><td>25</td><td>7× Recuperação</td><td>🌟 Ressurgido das Trevas</td></tr>
+        <tr><td>22</td><td>1× Recuperação</td><td>🦅 Cavaleiro do Corvo Branco</td><td><span class="rar-pill rar-incomum">Incomum</span></td></tr>
+        <tr><td>23</td><td>3× Recuperação</td><td>🐉 Renascido no Fogo</td><td><span class="rar-pill rar-raro">Raro</span></td></tr>
+        <tr><td>24</td><td>5× Recuperação</td><td>⚡ Jon Snow Ressuscitado</td><td><span class="rar-pill rar-epico">Épico</span></td></tr>
+        <tr><td>25</td><td>7× Recuperação</td><td>🌟 Ressurgido das Trevas</td><td><span class="rar-pill rar-mitico">Mítico</span></td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="regul-section" style="--rs-color:var(--tier-c)">
     <div class="regul-h"><span class="regul-h-icon">🕯</span>Lanterna — último lugar na rodada</div>
-    <div class="regul-rule">Concedida ao último lugar da rodada. Figurinhas sombrias, mas figurinhas.</div>
     <table class="regul-table">
-      <thead><tr><th>#</th><th>Marco</th><th>Figurinha</th></tr></thead>
+      <thead><tr><th>#</th><th>Marco</th><th>Figurinha</th><th>Raridade</th></tr></thead>
       <tbody>
-        <tr><td>26</td><td>1× Lanterna</td><td>🗡 Banido para o Exílio</td></tr>
-        <tr><td>27</td><td>3× Lanterna</td><td>⚰ Habitante das Terras Sombrias</td></tr>
-        <tr><td>28</td><td>5× Lanterna</td><td>💀 Servo de Sauron</td></tr>
-        <tr><td>29</td><td>7× Lanterna</td><td>🌑 Prisioneiro de Mordor</td></tr>
-        <tr><td>30</td><td>10× Lanterna</td><td>🕳 Rei da Noite Eterna</td></tr>
+        <tr><td>26</td><td>1× Lanterna</td><td>🗡 Banido para o Exílio</td><td><span class="rar-pill rar-comum">Comum</span></td></tr>
+        <tr><td>27</td><td>3× Lanterna</td><td>⚰ Habitante das Terras Sombrias</td><td><span class="rar-pill rar-incomum">Incomum</span></td></tr>
+        <tr><td>28</td><td>5× Lanterna</td><td>💀 Servo de Sauron</td><td><span class="rar-pill rar-raro">Raro</span></td></tr>
+        <tr><td>29</td><td>7× Lanterna</td><td>🌑 Prisioneiro de Mordor</td><td><span class="rar-pill rar-epico">Épico</span></td></tr>
+        <tr><td>30</td><td>10× Lanterna</td><td>🕳 Rei da Noite Eterna</td><td><span class="rar-pill rar-mitico">Mítico</span></td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="regul-section" style="--rs-color:var(--tier-s)">
-    <div class="regul-h"><span class="regul-h-icon">🏛</span>Pódio Final — concedido na Rodada 38</div>
-    <div class="regul-rule">Determinado pela classificação geral final. Sempre Mítica enquanto a temporada não acabar.</div>
+    <div class="regul-h"><span class="regul-h-icon">🏛</span>Pódio Final — Rodada 38</div>
+    <div class="regul-rule" style="font-size:14px">Determinado pela classificação geral final. Concedidos uma única vez.</div>
     <table class="regul-table">
-      <thead><tr><th>#</th><th>Critério</th><th>Figurinha</th></tr></thead>
+      <thead><tr><th>#</th><th>Critério</th><th>Figurinha</th><th>Raridade</th></tr></thead>
       <tbody>
-        <tr><td>31</td><td>1º lugar geral</td><td>🐉 Imperador dos Sete Reinos</td></tr>
-        <tr><td>32</td><td>2º lugar geral</td><td>👑 Príncipe de Pedra do Dragão</td></tr>
-        <tr><td>33</td><td>3º lugar geral</td><td>⚔ Senhor de Winterfell</td></tr>
-        <tr><td>34</td><td>Último lugar geral</td><td>🕳 O Esquecido pelas Crônicas</td></tr>
+        <tr><td>31</td><td>1º geral</td><td>🐉 Imperador dos Sete Reinos</td><td><span class="rar-pill rar-mitico">Mítico</span></td></tr>
+        <tr><td>32</td><td>2º geral</td><td>👑 Príncipe de Pedra do Dragão</td><td><span class="rar-pill rar-lendario">Lendário</span></td></tr>
+        <tr><td>33</td><td>3º geral</td><td>⚔ Senhor de Winterfell</td><td><span class="rar-pill rar-epico">Épico</span></td></tr>
+        <tr><td>34</td><td>Último geral</td><td>🕳 O Esquecido pelas Crônicas</td><td><span class="rar-pill rar-raro">Raro</span></td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="regul-section" style="--rs-color:var(--tier-s)">
-    <div class="regul-h"><span class="regul-h-icon">⭐</span>Prêmios Especiais — concedidos na Rodada 38</div>
-    <div class="regul-rule">Reconhecem feitos extraordinários ao longo da temporada. Acumuláveis com o Pódio Final.</div>
+    <div class="regul-h"><span class="regul-h-icon">⭐</span>Prêmios Especiais — Rodada 38</div>
+    <div class="regul-rule" style="font-size:14px">Reconhecem feitos extraordinários. Acumuláveis com o Pódio Final.</div>
     <table class="regul-table">
-      <thead><tr><th>#</th><th>Critério</th><th>Figurinha</th></tr></thead>
+      <thead><tr><th>#</th><th>Critério</th><th>Figurinha</th><th>Raridade</th></tr></thead>
       <tbody>
-        <tr><td>35</td><td>1º geral sem nunca ter sido Lanterna</td><td>🏛 Rei de Gondor</td></tr>
-        <tr><td>36</td><td>Campeão vindo do 6º lugar ou abaixo em alguma rodada</td><td>🐉 Cavaleiro de Vhagar</td></tr>
-        <tr><td>37</td><td>Mais MVPs na temporada</td><td>🔥 Domador de Balerion</td></tr>
-        <tr><td>38</td><td>Maior média de pontos Cartola</td><td>💫 Perfeição Encarnada</td></tr>
+        <tr><td>35</td><td>1º geral sem nunca ter sido Lanterna</td><td>🏛 Rei de Gondor</td><td><span class="rar-pill rar-mitico">Mítico</span></td></tr>
+        <tr><td>36</td><td>Campeão vindo do 6º+ em alguma rodada</td><td>🐉 Cavaleiro de Vhagar</td><td><span class="rar-pill rar-lendario">Lendário</span></td></tr>
+        <tr><td>37</td><td>Mais MVPs na temporada</td><td>🔥 Domador de Balerion</td><td><span class="rar-pill rar-epico">Épico</span></td></tr>
+        <tr><td>38</td><td>Maior média de pontos Cartola</td><td>💫 Perfeição Encarnada</td><td><span class="rar-pill rar-raro">Raro</span></td></tr>
       </tbody>
     </table>
-    <div class="regul-note"><strong>Preview em tempo real:</strong> a aba "Prêmios Finais" na página de cada jogador mostra quem está liderando cada categoria atualmente.</div>
   </div>
 
 </main>

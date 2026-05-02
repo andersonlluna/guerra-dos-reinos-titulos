@@ -29,24 +29,40 @@
   <div class="header-ornament"><span style="font-size:11px;letter-spacing:4px">✦</span></div>
   <span class="brasao-grande">⚔</span>
   <h1>Guerra dos Reinos</h1>
-  <p class="header-sub">Álbum colecionável · 38 figurinhas · 9 invocadores · uma temporada</p>
+  <p class="header-sub">Álbum colecionável · 38 figurinhas · 9 jogadores · uma temporada</p>
   <div class="header-meta">
     <div class="header-meta-item">Temporada<span>2026</span></div>
     <div class="header-meta-item">Rodadas<span id="hm-rodadas">—</span></div>
-    <div class="header-meta-item">Vassalos<span id="hm-jogadores">—</span></div>
+    <div class="header-meta-item">Jogadores<span id="hm-jogadores">—</span></div>
     <div class="header-meta-item">Conquistadas<span id="hm-conquistadas">—</span></div>
   </div>
 </header>
 
 <main class="content">
+
   <div class="section-title"><span style="color:var(--gold)">◆</span>Os Nove Reinos<span style="color:var(--gold)">◆</span></div>
-  <div style="text-align:center;color:var(--text-secondary);margin-bottom:2rem;font-size:14px">
-    Cada invocador comanda seu próprio álbum. Clique pra explorar a coleção, ver figurinhas raras e os prêmios finais.
+  <div style="text-align:center;color:var(--text-secondary);margin-bottom:2rem;font-size:15px">
+    Toque num jogador pra ver o álbum dele.
   </div>
   <div class="portal-grid" id="portal-grid">
     <div class="empty"><div class="empty-icon">⏳</div><div class="empty-title">Carregando...</div></div>
   </div>
+
+  <div class="section-title spaced"><span style="color:var(--gold)">◆</span>Galeria das 38 Figurinhas<span style="color:var(--gold)">◆</span></div>
+  <div style="text-align:center;color:var(--text-secondary);margin-bottom:1.5rem;font-size:15px">
+    Todas as figurinhas da liga, com sua raridade e quem já conquistou.<br>
+    <span style="font-size:13px;color:var(--text-tertiary)">Toque pra ver detalhes e como conquistar.</span>
+  </div>
+  <div id="galeria-portal"></div>
+
 </main>
+
+<div class="modal-overlay" id="modal" onclick="closeCardModal(event)">
+  <div class="modal" id="modal-content" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeCardModalDirect()">✕</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
 
 <footer class="footer">
   <div class="footer-credit">⚔ Guerra dos Reinos · Liga Cartola 2026 ⚔</div>
@@ -54,7 +70,9 @@
 
 <script src="./assets/jogadores.js"></script>
 <script src="./assets/motor.js"></script>
-<script>initPortal();</script>
+<script>initPortal();
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCardModalDirect(); });
+</script>
 
 </body>
 </html>
