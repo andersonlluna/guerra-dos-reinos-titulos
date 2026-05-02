@@ -1,364 +1,65 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#1A0A00">
-    <title>👑 Títulos — Guerra dos Reinos</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-    <style>
-        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-        :root {
-            /* Tier cores */
-            --tier-s:      #F0C040;
-            --tier-s-dim:  #A07820;
-            --tier-s-glow: rgba(240,192,64,0.3);
-            --tier-a:      #C02020;
-            --tier-a-dim:  #7A1010;
-            --tier-a-glow: rgba(192,32,32,0.3);
-            --tier-b:      #4169E1;
-            --tier-b-dim:  #2A40A0;
-            --tier-b-glow: rgba(65,105,225,0.3);
-            --tier-c:      #8B30C8;
-            --tier-c-dim:  #4D0072;
-            --tier-c-glow: rgba(139,48,200,0.3);
-            --tier-d:      #5A5A5A;
-            --tier-d-dim:  #3A3A3A;
-            /* Base */
-            --gold:        #F0C040;
-            --gold-bright: #FFE080;
-            --gold-dim:    #A07820;
-            --gold-dark:   #5A3E08;
-            --brown-rich:  #1A0800;
-            --text-bright: #FFE8B0;
-            --text:        #D4B878;
-            --text-muted:  #8A7040;
-            --card-bg:     #1E0C02;
-            --card-border: #6B4010;
-        }
-        body {
-            font-family:'Crimson Text',Georgia,serif;
-            background:var(--brown-rich);
-            background-image:
-                repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.03) 2px,rgba(0,0,0,0.03) 4px),
-                repeating-linear-gradient(90deg,transparent,transparent 2px,rgba(0,0,0,0.02) 2px,rgba(0,0,0,0.02) 4px),
-                radial-gradient(ellipse 100% 50% at 50% 0%,rgba(180,80,0,0.18) 0%,transparent 60%),
-                linear-gradient(180deg,#1A0800 0%,#130600 50%,#1A0800 100%);
-            color:var(--text); min-height:100vh; padding-bottom:70px; font-size:18px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Guerra dos Reinos · Liga Cartola 2026</title>
+<meta name="description" content="Sistema de Conquistas Medievais — Liga Cartola FC · Temporada 2026">
+<meta property="og:title" content="Guerra dos Reinos">
+<meta property="og:description" content="Liga Cartola FC · Temporada 2026">
 
-        /* LOADING */
-        #loading{position:fixed;inset:0;background:linear-gradient(135deg,#1A0800,#0D0400);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:999;gap:20px;}
-        .loading-icon{font-size:4em;animation:pulse 1.4s ease-in-out infinite;}
-        .loading-text{font-family:'Cinzel Decorative',serif;color:var(--gold);font-size:1em;letter-spacing:.15em;text-shadow:0 0 20px rgba(240,192,64,0.4);}
-        @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.85)}}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-        /* HEADER */
-        header{text-align:center;padding:52px 20px 40px;position:relative;overflow:hidden;}
-        header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(200,100,0,0.2) 0%,transparent 65%);pointer-events:none;}
-        header::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:2px;background:linear-gradient(90deg,transparent,var(--gold-dim),var(--gold),var(--gold-dim),transparent);}
-        .header-crest{font-size:3em;margin-bottom:14px;filter:drop-shadow(0 0 20px rgba(240,192,64,0.5));animation:float 4s ease-in-out infinite;}
-        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-        h1{font-family:'Cinzel Decorative',serif;font-size:clamp(1.3em,4vw,2em);font-weight:900;color:var(--gold-bright);letter-spacing:.06em;line-height:1.2;margin-bottom:8px;text-shadow:0 0 30px rgba(255,200,50,0.4),0 2px 6px rgba(0,0,0,0.9);}
-        .header-sub{font-family:'Cinzel',serif;font-style:italic;color:var(--text-muted);font-size:.9em;letter-spacing:.06em;}
-        .header-round{display:inline-block;margin-top:18px;font-family:'Cinzel',serif;font-size:.85em;font-weight:700;color:var(--gold);border-top:1px solid var(--gold-dim);border-bottom:1px solid var(--gold-dim);padding:7px 28px;letter-spacing:.12em;background:linear-gradient(90deg,transparent,rgba(240,192,64,0.08),transparent);}
-
-        /* SECTION LABEL */
-        .section-label{font-family:'Cinzel',serif;font-size:.78em;font-weight:700;color:var(--gold-dim);letter-spacing:.2em;text-transform:uppercase;text-align:center;padding:36px 20px 20px;}
-        .section-label::before,.section-label::after{content:'✦';margin:0 14px;color:var(--gold-dark);}
-
-        /* LOCKED */
-        .locked-banner{margin:0 16px 8px;max-width:900px;margin-left:auto;margin-right:auto;background:linear-gradient(135deg,rgba(90,30,5,0.6),rgba(60,20,5,0.6));border:1px solid rgba(200,130,0,0.3);border-radius:8px;padding:16px 20px;font-size:1em;color:var(--text-muted);font-style:italic;line-height:1.6;text-align:center;}
-        .locked-banner strong{font-style:normal;color:var(--gold);}
-
-        /* GRID */
-        .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px;padding:0 16px;max-width:960px;margin:0 auto;}
-        @media(max-width:500px){.grid{grid-template-columns:1fr;}}
-
-        /* TIER HELPERS */
-        .tier-s-border { border-color: var(--tier-s-dim) !important; box-shadow: 0 0 0 1px rgba(240,192,64,0.15), 0 8px 32px rgba(0,0,0,0.7), 0 0 20px var(--tier-s-glow) !important; }
-        .tier-a-border { border-color: var(--tier-a-dim) !important; box-shadow: 0 0 0 1px rgba(192,32,32,0.15), 0 8px 32px rgba(0,0,0,0.7), 0 0 16px var(--tier-a-glow) !important; }
-        .tier-b-border { border-color: var(--tier-b-dim) !important; box-shadow: 0 0 0 1px rgba(65,105,225,0.12), 0 8px 32px rgba(0,0,0,0.7) !important; }
-        .tier-c-border { border-color: var(--tier-c-dim) !important; box-shadow: 0 0 0 1px rgba(139,48,200,0.12), 0 8px 32px rgba(0,0,0,0.7) !important; }
-        .tier-d-border { border-color: #2A2A2A !important; box-shadow: 0 4px 16px rgba(0,0,0,0.6) !important; }
-
-        /* LORD CARD */
-        .lord-card{display:block;text-decoration:none;color:inherit;background:linear-gradient(160deg,#2A1205,#1A0900,#221005);border-radius:12px;border:1px solid var(--card-border);box-shadow:0 8px 32px rgba(0,0,0,0.7);overflow:hidden;transition:transform .25s,box-shadow .25s;-webkit-tap-highlight-color:transparent;position:relative;}
-        .lord-card::before{content:'';position:absolute;inset:0;border-radius:12px;background:radial-gradient(circle at 0% 0%,rgba(240,192,64,0.06) 0%,transparent 30%),radial-gradient(circle at 100% 0%,rgba(240,192,64,0.06) 0%,transparent 30%);pointer-events:none;}
-        .lord-card:active{transform:scale(0.97);}
-        .card-strip{height:4px;}
-
-        /* TIER BADGE no card */
-        .tier-badge{
-            position:absolute; top:10px; right:10px;
-            font-family:'Cinzel',serif; font-size:.65em; font-weight:700;
-            padding:3px 10px; border-radius:20px; letter-spacing:.08em;
-        }
-        .tier-badge-s{background:rgba(240,192,64,0.15);border:1px solid var(--tier-s-dim);color:var(--tier-s);}
-        .tier-badge-a{background:rgba(192,32,32,0.15);border:1px solid var(--tier-a-dim);color:var(--tier-a);}
-        .tier-badge-b{background:rgba(65,105,225,0.15);border:1px solid var(--tier-b-dim);color:var(--tier-b);}
-        .tier-badge-c{background:rgba(139,48,200,0.15);border:1px solid var(--tier-c-dim);color:var(--tier-c);}
-        .tier-badge-d{background:rgba(90,90,90,0.15);border:1px solid #3A3A3A;color:#888;}
-
-        .card-head{display:flex;align-items:center;gap:14px;padding:18px 18px 14px;border-bottom:1px solid rgba(240,192,64,0.08);}
-        .title-img-wrap{width:78px;height:78px;border-radius:8px;flex-shrink:0;overflow:hidden;border:2px solid var(--gold-dark);box-shadow:0 0 12px rgba(240,192,64,0.15),inset 0 0 8px rgba(0,0,0,0.5);background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;}
-        .title-img-wrap img{width:100%;height:100%;object-fit:contain;}
-        .title-img-placeholder{font-size:2.2em;opacity:.25;}
-        .card-info{flex:1;min-width:0;padding-right:48px;}
-        .lord-avatar{font-size:1.6em;margin-bottom:3px;line-height:1;}
-        .lord-name{font-family:'Cinzel',serif;font-size:1.15em;font-weight:700;color:var(--text-bright);margin-bottom:3px;line-height:1.2;}
-        .lord-house{font-size:.88em;font-weight:600;margin-bottom:6px;}
-        .alliance-tag{display:inline-block;font-family:'Cinzel',serif;font-size:.72em;padding:3px 12px;border-radius:20px;font-weight:700;letter-spacing:.04em;}
-        .tag-bastardos{background:rgba(80,90,100,0.25);border:1px solid rgba(176,190,197,0.4);color:#9AAAB8;}
-        .tag-anel{background:rgba(20,80,50,0.25);border:1px solid rgba(76,175,128,0.4);color:#4CAF80;}
-        .tag-northclaw{background:rgba(100,60,10,0.25);border:1px solid rgba(232,160,64,0.4);color:#E8A040;}
-
-        /* TITLE BLOCK com cor do tier */
-        .card-title-block{padding:12px 18px 14px;border-bottom:1px solid rgba(240,192,64,0.07);}
-        .card-title-label{font-family:'Cinzel',serif;font-size:.65em;color:var(--gold-dim);letter-spacing:.16em;text-transform:uppercase;margin-bottom:5px;}
-        .card-title-text{font-family:'Cinzel',serif;font-size:.95em;font-weight:700;font-style:italic;line-height:1.35;}
-        /* tier text colors */
-        .tier-s-text{color:var(--tier-s);text-shadow:0 0 12px rgba(240,192,64,0.3);}
-        .tier-a-text{color:var(--tier-a);text-shadow:0 0 10px rgba(192,32,32,0.3);font-weight:900;}
-        .tier-b-text{color:var(--tier-b);text-shadow:0 0 8px rgba(65,105,225,0.2);}
-        .tier-c-text{color:var(--tier-c);font-style:italic;}
-        .tier-d-text{color:var(--tier-d);opacity:.6;}
-
-        /* BADGES */
-        .conquistas-row{display:flex;gap:7px;flex-wrap:wrap;padding:12px 18px 14px;}
-        .badge{font-size:.78em;padding:4px 10px;border-radius:20px;font-family:'Cinzel',serif;font-weight:600;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.08);color:var(--text-muted);}
-        .badge.mvp{border-color:rgba(240,192,64,0.5);color:var(--gold);background:rgba(240,192,64,0.08);}
-        .badge.mitada{border-color:rgba(192,32,32,0.5);color:#E07070;background:rgba(180,30,30,0.1);}
-        .badge.podio{border-color:rgba(65,105,225,0.5);color:#7090E8;background:rgba(65,105,225,0.1);}
-        .badge.rec{border-color:rgba(65,105,225,0.4);color:#80B8E8;background:rgba(40,80,160,0.1);}
-        .badge.mas{border-color:rgba(192,32,32,0.4);color:#E08080;background:rgba(150,20,20,0.1);}
-        .badge.lan{border-color:rgba(139,48,200,0.5);color:#C090E0;background:rgba(100,10,150,0.1);}
-
-
-        .title-stars{font-family:'Cinzel',serif;letter-spacing:3px;font-size:.82em;margin-top:5px;display:block;}
-        .stars-s{color:var(--tier-s);text-shadow:0 0 8px rgba(240,192,64,0.6);}
-        .stars-a{color:var(--tier-a);text-shadow:0 0 6px rgba(192,32,32,0.5);}
-        .stars-b{color:var(--tier-b);}
-        .stars-c{color:var(--tier-c);}
-        .stars-d{color:var(--tier-d);opacity:.5;}
-
-        .card-footer{padding:10px 18px;font-family:'Cinzel',serif;font-size:.75em;color:var(--gold-dark);text-align:right;letter-spacing:.06em;border-top:1px solid rgba(240,192,64,0.06);}
-
-        /* FOOTER */
-        footer{margin-top:50px;padding:24px 20px;text-align:center;position:relative;}
-        footer::before{content:'';position:absolute;top:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,var(--gold-dark),transparent);}
-        .footer-quote{font-style:italic;color:var(--gold-dark);font-size:1em;margin-bottom:8px;line-height:1.5;}
-        .footer-info{font-size:.8em;color:#3A2010;}
-    </style>
+<link rel="stylesheet" href="./assets/motor.css">
 </head>
 <body>
 
-<div id="loading">
-    <div class="loading-icon">⚔️</div>
-    <div class="loading-text">Convocando os Reinos...</div>
-</div>
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <span class="top-nav-brand">⚔ Guerra dos Reinos</span>
+    <div class="top-nav-links">
+      <a href="./regulamento.html" class="top-nav-link">✦ Regulamento</a>
+    </div>
+  </div>
+</nav>
 
-<header>
-    <div class="header-crest">👑</div>
-    <h1>Títulos da Guerra dos Reinos</h1>
-    <div class="header-sub">Temporada 2026 · Sistema de Conquistas Medievais v3.2</div>
-    <div class="header-round" id="round-badge">Carregando...</div>
+<header class="header">
+  <div class="header-ornament"><span style="font-size:11px;letter-spacing:4px">✦</span></div>
+  <span class="brasao-grande">⚔</span>
+  <h1>Guerra dos Reinos</h1>
+  <p class="header-sub">Sistema de Conquistas Medievais · 9 invocadores · 38 títulos · uma temporada</p>
+  <div class="header-meta">
+    <div class="header-meta-item">Liga<span>Cartola FC</span></div>
+    <div class="header-meta-item">Temporada<span>2026</span></div>
+    <div class="header-meta-item">Rodadas<span id="hm-rodadas">—</span></div>
+    <div class="header-meta-item">Vassalos<span id="hm-jogadores">—</span></div>
+  </div>
 </header>
 
-<div id="locked-msg" style="display:none">
-    <div class="locked-banner">⏳ Títulos e conquistas medievais ativam na <strong>Rodada 6</strong>.</div>
-</div>
+<main class="content">
 
-<div class="section-label">Os Nove Reinos</div>
-<div class="grid" id="cards-grid"></div>
+  <div id="home-viva">
+    <div class="empty"><div class="empty-icon">⏳</div><div class="empty-title">Carregando estado da liga...</div></div>
+  </div>
 
-<footer>
-    <div class="footer-quote">"A glória não se mede apenas em pontos, mas em conquistas eternas!"</div>
-    <div class="footer-info">Guerra dos Reinos Cartoleiros · v3.2 · <span id="last-updated"></span></div>
+  <div class="section-title spaced">
+    <span style="color:var(--gold)">◆</span>
+    Os Nove Reinos
+    <span style="color:var(--gold)">◆</span>
+  </div>
+  <div class="portal-grid" id="portal-grid"></div>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-credit">⚔ Guerra dos Reinos · Liga Cartola 2026 ⚔</div>
 </footer>
 
-<script>
-const MEDIEVAL_START=6;
-const LORDS=[
-    {name:'Icebergteam',     house:'Forja Polar',         avatar:'❄️', color:'#00CED1',alliance:'anel'},
-    {name:'Sons of Númenor', house:'Herdeiros de Elendil', avatar:'🛡️', color:'#4169E1',alliance:'bastardos'},
-    {name:'Ironverdict',     house:'Forja da Justiça',     avatar:'🗡️', color:'#9a9a9a',alliance:'bastardos'},
-    {name:'CEEC',            house:'Mestre das Espadas',   avatar:'⚔️', color:'#CC2222',alliance:'northclaw'},
-    {name:'Otopatamá',       house:'Samurais Guerreiros',  avatar:'🤖', color:'#1E90FF',alliance:'northclaw'},
-    {name:'Andorinha Jr',    house:'Jovem Veloz',          avatar:'🐦', color:'#FF6347',alliance:'anel'},
-    {name:'Andorinha',       house:'Senhores do Voo',      avatar:'🦅', color:'#DC143C',alliance:'anel'},
-    {name:'Varelitas',       house:'Guardas da Colina',    avatar:'🦊', color:'#3CB054',alliance:'bastardos'},
-    {name:'Lobonegro',       house:'Agente do Caos',       avatar:'🐺', color:'#9A6AF0',alliance:'bastardos'},
-];
+<script src="./assets/jogadores.js"></script>
+<script src="./assets/motor.js"></script>
+<script>initPortal();</script>
 
-const TITLES={
-    mvp:        [{min:15,t:'⚡ Portador de Glamdring',tier:'S'},{min:10,t:'🐉 O Rei que Voltou',tier:'S'},{min:7,t:'✨ Rei Coroado de Gondor',tier:'S'},{min:5,t:'👑 Herdeiro de Isildur',tier:'S'},{min:3,t:'🛡️ Senhor dos Cavaleiros de Rohan',tier:'S'},{min:1,t:'⚔️ Cavaleiro da Companhia',tier:'S'}],
-    mitada:     [{min:10,t:'⚡ Portador da Espada de Fogo',tier:'A'},{min:7,t:'💎 Portador da Garra Longa',tier:'A'},{min:5,t:'🌟 Cavaleiro do Amanhecer',tier:'A'},{min:3,t:'⚔️ Empunhador de Andúril',tier:'A'},{min:1,t:'🔥 Portador da Ferroada',tier:'A'}],
-    recuperacao:[{min:7,t:'🌟 Ressurgido das Trevas',tier:'B'},{min:5,t:'⚡ Jon Snow Ressuscitado',tier:'B'},{min:3,t:'🐉 Renascido no Fogo',tier:'B'},{min:1,t:'🦅 Cavaleiro do Corvo Branco',tier:'B'}],
-    massacre:   [{min:7,t:'🐉 Terror de Westeros',tier:'A'},{min:5,t:'📱 Flagelo dos Reinos',tier:'A'},{min:3,t:'⚔️ O Senhor do Aço Negro',tier:'A'},{min:1,t:'🗡️ Conquistador de Terras',tier:'A'}],
-    podio:      [{min:15,t:'💫 Protetor dos Sete Reinos',tier:'B'},{min:10,t:'🎖️ Mão do Rei',tier:'B'},{min:8,t:'💎 Lorde Comandante da Muralha',tier:'B'},{min:5,t:'🏅 Cavaleiro da Guarda Real',tier:'B'},{min:1,t:'🎯 Guardião da Torre Branca',tier:'B'}],
-    lanterna:   [{min:10,t:'🕳️ Rei da Noite Eterna',tier:'C'},{min:7,t:'🌑 Prisioneiro de Mordor',tier:'C'},{min:5,t:'💀 Servo de Sauron',tier:'C'},{min:3,t:'⚰️ Habitante das Terras Sombrias',tier:'C'},{min:1,t:'🗡️ Banido para o Exílio',tier:'C'}],
-};
-
-const STARS_MAP = {
-    '⚔️ Cavaleiro da Companhia':        ['S','✦'],
-    '🛡️ Senhor dos Cavaleiros de Rohan':['S','✦✦'],
-    '👑 Herdeiro de Isildur':            ['S','✦✦✦'],
-    '✨ Rei Coroado de Gondor':           ['S','✦✦✦✦'],
-    '🐉 O Rei que Voltou':               ['S','✦✦✦✦✦'],
-    '⚡ Portador de Glamdring':           ['S','✦✦✦✦✦✦'],
-    '🔥 Portador da Ferroada':           ['A','✦'],
-    '⚔️ Empunhador de Andúril':          ['A','✦✦'],
-    '🌟 Cavaleiro do Amanhecer':         ['A','✦✦✦'],
-    '💎 Portador da Garra Longa':        ['A','✦✦✦✦'],
-    '⚡ Portador da Espada de Fogo':     ['A','✦✦✦✦✦'],
-    '🗡️ Conquistador de Terras':         ['A','✦'],
-    '⚔️ O Senhor do Aço Negro':          ['A','✦✦'],
-    '📱 Flagelo dos Reinos':             ['A','✦✦✦'],
-    '🐉 Terror de Westeros':             ['A','✦✦✦✦'],
-    '🎯 Guardião da Torre Branca':       ['B','✦'],
-    '🏅 Cavaleiro da Guarda Real':       ['B','✦✦'],
-    '💎 Lorde Comandante da Muralha':    ['B','✦✦✦'],
-    '🎖️ Mão do Rei':                    ['B','✦✦✦✦'],
-    '💫 Protetor dos Sete Reinos':       ['B','✦✦✦✦✦'],
-    '🦅 Cavaleiro do Corvo Branco':      ['B','✦'],
-    '🐉 Renascido no Fogo':              ['B','✦✦'],
-    '⚡ Jon Snow Ressuscitado':           ['B','✦✦✦'],
-    '🌟 Ressurgido das Trevas':           ['B','✦✦✦✦'],
-    '🗡️ Banido para o Exílio':           ['C','✦'],
-    '⚰️ Habitante das Terras Sombrias':  ['C','✦✦'],
-    '💀 Servo de Sauron':                ['C','✦✦✦'],
-    '🌑 Prisioneiro de Mordor':          ['C','✦✦✦✦'],
-    '🕳️ Rei da Noite Eterna':            ['C','✦✦✦✦✦'],
-    '📰 Escudeiro Sem Nome':             ['D','✦'],
-};
-function getStars(title){return STARS_MAP[title]||null;}
-function starsHTML(title){
-    const s=getStars(title);if(!s)return'';
-    const[tier,stars]=s;
-    return`<span class="title-stars stars-${tier.toLowerCase()}">${stars}</span>`;
-}
-
-const TITLE_IMAGES={'⚔️ Cavaleiro da Companhia':'cavaleiro-da-companhia','🛡️ Senhor dos Cavaleiros de Rohan':'senhor-dos-cavaleiros-de-rohan','👑 Herdeiro de Isildur':'herdeiro-de-isildur','✨ Rei Coroado de Gondor':'rei-coroado-de-gondor','🐉 O Rei que Voltou':'o-rei-que-voltou','⚡ Portador de Glamdring':'portador-de-glamdring','🎯 Guardião da Torre Branca':'guardiao-da-torre-branca','🏅 Cavaleiro da Guarda Real':'cavaleiro-da-guarda-real','💎 Lorde Comandante da Muralha':'lorde-comandante-da-muralha','🎖️ Mão do Rei':'mao-do-rei','💫 Protetor dos Sete Reinos':'protetor-dos-sete-reinos','🔥 Portador da Ferroada':'portador-da-ferroada','⚔️ Empunhador de Andúril':'empunhador-de-anduril','🌟 Cavaleiro do Amanhecer':'cavaleiro-do-amanhecer','💎 Portador da Garra Longa':'portador-da-garra-longa','⚡ Portador da Espada de Fogo':'portador-da-espada-de-fogo','🗡️ Conquistador de Terras':'conquistador-de-terras','⚔️ O Senhor do Aço Negro':'o-senhor-do-aco-negro','📱 Flagelo dos Reinos':'flagelo-dos-reinos','🐉 Terror de Westeros':'terror-de-westeros','🦅 Cavaleiro do Corvo Branco':'cavaleiro-do-corvo-branco','🐉 Renascido no Fogo':'renascido-no-fogo','⚡ Jon Snow Ressuscitado':'jon-snow-ressuscitado','🌟 Ressurgido das Trevas':'ressurgido-das-trevas','🗡️ Banido para o Exílio':'banido-para-o-exilio','⚰️ Habitante das Terras Sombrias':'habitante-das-terras-sombrias','💀 Servo de Sauron':'servo-de-sauron','🌑 Prisioneiro de Mordor':'prisioneiro-de-mordor','🕳️ Rei da Noite Eterna':'rei-da-noite-eterna','📰 Escudeiro Sem Nome':'escudeiro-sem-nome'};
-
-function imgSlug(t){return TITLE_IMAGES[t]||null;}
-function getTierOfTitle(type,count){if(!count)return'D';for(const e of TITLES[type]||[])if(count>=e.min)return e.tier||'D';return'D';}
-function getTitle(type,count){if(!count)return'';for(const e of TITLES[type]||[])if(count>=e.min)return e.t;return'';}
-function getPrimary(l){return getTitle('mvp',l.mvp)||getTitle('mitada',l.mitada)||getTitle('recuperacao',l.recuperacao)||getTitle('massacre',l.massacre)||getTitle('podio',l.podio)||getTitle('lanterna',l.lanterna)||'📰 Escudeiro Sem Nome';}
-function getPrimaryTier(l){
-    if(l.mvp)return getTierOfTitle('mvp',l.mvp);
-    if(l.mitada)return getTierOfTitle('mitada',l.mitada);
-    if(l.recuperacao)return getTierOfTitle('recuperacao',l.recuperacao);
-    if(l.massacre)return getTierOfTitle('massacre',l.massacre);
-    if(l.podio)return getTierOfTitle('podio',l.podio);
-    if(l.lanterna)return'C';
-    return'D';
-}
-function tierClass(tier){return{S:'tier-s',A:'tier-a',B:'tier-b',C:'tier-c',D:'tier-d'}[tier]||'tier-d';}
-function parseCSV(text){const rows=[];const lines=text.trim().split('\n');for(let i=1;i<lines.length;i++){const p=lines[i].trim().split(',');if(p.length<3)continue;const r=parseInt(p[0]),t=p[1].trim(),pts=parseFloat(p[2]);if(!isNaN(r)&&t&&!isNaN(pts))rows.push({rodada:r,time:t,pontos:pts});}return rows;}
-function buildBattles(rows){const map={};rows.forEach(r=>{if(!map[r.rodada])map[r.rodada]=[];map[r.rodada].push({name:r.time,points:r.pontos});});return Object.keys(map).map(Number).sort((a,b)=>a-b).map(w=>({week:w,results:map[w],medievalActive:w>=MEDIEVAL_START}));}
-function processAll(BATTLES){
-    const ld=LORDS.map(l=>({...l,cartolaPoints:0,medievalPoints:0,totalPoints:0,mvp:0,podio:0,mitada:0,recuperacao:0,massacre:0,lanterna:0,bonusG2:0}));
-    const find=n=>ld.find(l=>l.name.toLowerCase().trim()===n.toLowerCase().trim());
-    BATTLES.forEach(b=>b.results.forEach(r=>{const l=find(r.name);if(l)l.cartolaPoints+=r.points;}));
-    const fa={};LORDS.forEach(l=>fa[l.name]=0);const abr={};
-    BATTLES.forEach(b=>{b.results.forEach(r=>fa[r.name]=(fa[r.name]||0)+r.points);abr[b.week]={...fa};});
-    const active=BATTLES.filter(b=>b.medievalActive);let prev={};
-    active.forEach((battle,idx)=>{
-        const sorted=[...battle.results].sort((a,b)=>b.points-a.points);
-        const pr=BATTLES.find(b=>b.week===battle.week-1);let bs={};
-        if(pr)bs=abr[pr.week];else{const pi=BATTLES.filter(b=>!b.medievalActive&&b.week<battle.week);if(pi.length)bs=abr[Math.max(...pi.map(b=>b.week))];else LORDS.forEach(l=>bs[l.name]=0);}
-        const as=abr[battle.week];
-        const rb=Object.entries(bs).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
-        const ra=Object.entries(as).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
-        const pb={};rb.forEach((n,i)=>pb[n]=i);const pa={};ra.forEach((n,i)=>pa[n]=i);
-        sorted.forEach((r,pos)=>{
-            const l=find(r.name);if(!l)return;
-            if(pos===0&&r.points>0)l.mvp++;
-            if(pos===1||pos===2)l.podio++;
-            if(r.points>=80){l.mitada++;if(r.points>=110)l.bonusG2+=14;else if(r.points>=100)l.bonusG2+=8;else if(r.points>=90)l.bonusG2+=4;}
-            if(pos===sorted.length-1&&r.points>0)l.lanterna++;
-            if(idx>0&&(prev[r.name]||0)>0&&(r.points-prev[r.name])>=50)l.recuperacao++;
-            if(idx>0&&(pb[r.name]??999)>(pa[r.name]??999)){let hm=false;LORDS.forEach(o=>{if(o.name===r.name)return;if((pb[r.name]??999)>(pb[o.name]??999)&&(pa[r.name]??999)<(pa[o.name]??999))if(((as[r.name]||0)-(as[o.name]||0))>=10)hm=true;});if(hm)l.massacre++;}
-        });
-        battle.results.forEach(r=>prev[r.name]=r.points);
-    });
-    const lastRound=BATTLES.length?Math.max(...BATTLES.map(b=>b.week)):0;
-    const locked=lastRound<MEDIEVAL_START;
-    function cm(a){let p=0;const{mvp=0,podio=0,mitada=0,recuperacao=0,massacre=0,lanterna=0}=a;
-        if(mvp>=15)p+=200;else if(mvp>=10)p+=135;else if(mvp>=7)p+=95;else if(mvp>=5)p+=65;else if(mvp>=3)p+=40;else p+=mvp*10;
-        if(podio>=15)p+=75;else if(podio>=10)p+=45;else if(podio>=8)p+=34;else if(podio>=5)p+=20;else p+=podio*3;
-        if(mitada>=10)p+=100;else if(mitada>=7)p+=70;else if(mitada>=5)p+=45;else if(mitada>=3)p+=23;else p+=mitada*5;
-        if(recuperacao>=7)p+=96;else if(recuperacao>=5)p+=65;else if(recuperacao>=3)p+=36;else p+=recuperacao*8;
-        if(massacre>=7)p+=62;else if(massacre>=5)p+=40;else if(massacre>=3)p+=22;else p+=massacre*6;
-        if(lanterna>=10)p-=100;else if(lanterna>=7)p-=70;else if(lanterna>=5)p-=45;else if(lanterna>=3)p-=23;else p-=lanterna*5;
-        return p;}
-    ld.forEach(l=>{l.medievalPoints=locked?0:cm(l)+l.bonusG2;l.totalPoints=l.cartolaPoints+l.medievalPoints;l.primaryTitle=locked?'📰 Escudeiro Sem Nome':getPrimary(l);l.primaryTier=locked?'D':getPrimaryTier(l);l.locked=locked;});
-    return{lords:ld.sort((a,b)=>b.totalPoints-a.totalPoints),lastRound,locked};
-}
-function allianceTag(l){
-    if(l.alliance==='bastardos')return`<span class="alliance-tag tag-bastardos">🗡️ Os Bastardos</span>`;
-    if(l.alliance==='northclaw')return`<span class="alliance-tag tag-northclaw">🦅 North Claw</span>`;
-    return`<span class="alliance-tag tag-anel">💍 Sociedade do Anel</span>`;
-}
-function imgTag(title){const slug=imgSlug(title);if(!slug)return`<div class="title-img-placeholder">⚔️</div>`;return`<img src="imagens/titulos/${slug}.jpg" alt="${title}" onerror="this.parentElement.innerHTML='<div class=\\'title-img-placeholder\\'>⚔️</div>'" loading="lazy" style="width:100%;height:100%;object-fit:contain">`;}
-function badgeRow(l){
-    const b=[];
-    if(l.mvp)b.push(`<span class="badge mvp">🏆 ${l.mvp}x</span>`);
-    if(l.mitada)b.push(`<span class="badge mitada">💀 ${l.mitada}x</span>`);
-    if(l.podio)b.push(`<span class="badge podio">🥇 ${l.podio}x</span>`);
-    if(l.recuperacao)b.push(`<span class="badge rec">📈 ${l.recuperacao}x</span>`);
-    if(l.massacre)b.push(`<span class="badge mas">🗡️ ${l.massacre}x</span>`);
-    if(l.lanterna)b.push(`<span class="badge lan">📦 ${l.lanterna}x</span>`);
-    return b.length?`<div class="conquistas-row">${b.join('')}</div>`:'';
-}
-function renderCards(data){
-    const{lords,lastRound,locked}=data;
-    document.getElementById('round-badge').textContent=`Rodada ${lastRound} de 38`;
-    document.getElementById('last-updated').textContent='Atualizado '+new Date().toLocaleDateString('pt-BR');
-    if(locked)document.getElementById('locked-msg').style.display='block';
-    const tc=tierClass;
-    document.getElementById('cards-grid').innerHTML=lords.map(l=>{
-        const tier=l.primaryTier;
-        const tc=tierClass(tier);
-        return`<a class="lord-card ${tc}-border" href="time.html?time=${encodeURIComponent(l.name)}">
-            <div class="card-strip" style="background:var(--${tc})"></div>
-            <div class="tier-badge tier-badge-${tier.toLowerCase()}">TIER ${tier}</div>
-            <div class="card-head">
-                <div class="title-img-wrap" style="border-color:var(--${tc}-dim)">${imgTag(l.primaryTitle)}</div>
-                <div class="card-info">
-                    <div class="lord-avatar">${l.avatar}</div>
-                    <div class="lord-name">${l.name}</div>
-                    <div class="lord-house" style="color:${l.color}">${l.house}</div>
-                    ${allianceTag(l)}
-                </div>
-            </div>
-            <div class="card-title-block" style="background:linear-gradient(90deg,var(--${tc}-glow,rgba(240,192,64,0.04)),transparent)">
-                <div class="card-title-label">Título Atual</div>
-                <div class="card-title-text ${tc}-text">${l.primaryTitle}</div>
-                ${starsHTML(l.primaryTitle)}
-            </div>
-            ${locked?'':badgeRow(l)}
-            <div class="card-footer">Ver conquistas completas ✦</div>
-        </a>`;
-    }).join('');
-}
-async function init(){
-    try{
-        const res=await fetch('dados.csv?v='+Date.now());
-        if(!res.ok)throw new Error(`HTTP ${res.status}`);
-        const csv=await res.text();
-        const rows=parseCSV(csv);
-        if(!rows.length)throw new Error('dados.csv vazio.');
-        const BATTLES=buildBattles(rows);
-        const data=processAll(BATTLES);
-        renderCards(data);
-        document.getElementById('loading').style.display='none';
-    }catch(err){
-        document.getElementById('loading').innerHTML=`<div style="font-size:2em">🏚️</div><div style="font-family:'Cinzel Decorative',serif;color:#e74c3c;font-size:1.1em">Erro ao carregar</div><div style="color:#8A7040;font-size:.9em;max-width:300px;text-align:center;line-height:1.6">${err.message}</div>`;
-    }
-}
-document.addEventListener('DOMContentLoaded',init);
-</script>
 </body>
 </html>

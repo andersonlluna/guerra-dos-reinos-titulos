@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regulamento · Guerra dos Reinos</title>
+<meta name="description" content="Regulamento oficial — Guerra dos Reinos · Liga Cartola FC 2026">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="./assets/motor.css">
+<style>
+.regul-section{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:12px;padding:1.5rem 1.75rem;margin-bottom:1.25rem;
+  border-left:3px solid var(--rs-color,var(--gold));
+}
+.regul-h{
+  font-family:'Cinzel',serif;font-size:1.15rem;font-weight:600;
+  color:var(--rs-color,var(--gold));letter-spacing:1px;
+  margin-bottom:.4rem;display:flex;align-items:center;gap:10px;
+}
+.regul-h-icon{font-size:1.5rem;line-height:1}
+.regul-rule{
+  font-size:14px;color:var(--text-secondary);margin-bottom:1rem;font-style:italic;
+}
+.regul-table{
+  width:100%;border-collapse:collapse;
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+}
+.regul-table th{
+  text-align:left;padding:8px 10px;
+  font-family:'Inter',sans-serif;font-size:10px;font-weight:600;
+  letter-spacing:1.5px;color:var(--text-tertiary);text-transform:uppercase;
+  border-bottom:1px solid var(--border-strong);
+}
+.regul-table td{
+  padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text-primary);
+}
+.regul-table td:first-child{font-weight:700;color:var(--rs-color,var(--gold))}
+.regul-table td:last-child{font-family:'Cinzel',serif;font-size:13px;font-style:italic}
+.regul-table tr:last-child td{border-bottom:none}
+.regul-note{
+  margin-top:1rem;padding:12px 14px;
+  background:var(--bg-surface);border-radius:8px;
+  font-size:13px;color:var(--text-secondary);
+  border-left:2px solid var(--gold-strong);
+}
+.regul-note strong{color:var(--gold)}
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="./index.html" class="top-nav-brand">⚔ Guerra dos Reinos</a>
+    <div class="top-nav-links">
+      <a href="./index.html" class="top-nav-link">← Portal</a>
+    </div>
+  </div>
+</nav>
+
+<header class="header">
+  <div class="header-ornament"><span style="font-size:11px;letter-spacing:4px">✦</span></div>
+  <span class="brasao-grande">📜</span>
+  <h1>Regulamento</h1>
+  <p class="header-sub">As leis dos Sete Reinos. Como conquistas, pontos e títulos se decidem ao longo da temporada.</p>
+</header>
+
+<main class="content">
+
+  <div class="regul-section" style="--rs-color:var(--gold)">
+    <div class="regul-h"><span class="regul-h-icon">⚔</span>Regras Gerais</div>
+    <div class="regul-rule">Como funcionam as conquistas medievais ao longo da temporada do Cartola FC 2026.</div>
+    <div class="regul-note"><strong>Conquistas valem a partir da Rodada 6.</strong> R1–R5 são fase de calibragem — só alimentam contadores internos sem gerar pontos nem títulos.</div>
+    <div class="regul-note"><strong>Pontuação por step function:</strong> entre marcos, o valor congela no marco anterior. Ex.: 4 MVPs valem os mesmos 40 pts que 3 MVPs até atingir o próximo marco (5 MVPs → 65 pts).</div>
+    <div class="regul-note"><strong>Título exibido:</strong> o jogador exibe o título da conquista de maior prioridade. Ordem: <strong>MVP &gt; Mitada &gt; Recuperação &gt; Massacre &gt; Pódio &gt; Lanterna</strong>.</div>
+    <div class="regul-note"><strong>Bônus G2:</strong> performance de elite por rodada. ≥ 90 pts → +4 · ≥ 100 pts → +8 · ≥ 110 pts → +14. Exclusivo (pega só o maior threshold). Sem título — soma direto aos Pontos Medievais.</div>
+    <div class="regul-note"><strong>Pontos Medievais (PM):</strong> total acumulado = soma de pontos das 6 categorias + G2. Lanterna desconta (valor negativo).</div>
+  </div>
+
+  <div class="regul-section" style="--rs-color:var(--tier-s)">
+    <div class="regul-h"><span class="regul-h-icon">👑</span>MVP — 1º lugar da rodada</div>
+    <div class="regul-rule">Concedido a quem tem a maior pontuação Cartola na rodada. Cada MVP avança o título medieval.</div>
+    <table class="regul-table">
+      <thead><tr><th>Ocorrências</th><th>Pontos Acumulados</th><th>Título</th></tr></thead>
+      <tbody>
+        <tr><td>1×</td><td>+10</td><td>⚔ Cavaleiro da Companhia</td></tr>
+        <tr><td>2×</td><td>+20</td><td>⚔ Cavaleiro da Companhia</td></tr>
+        <tr><td>3×</td><td>+40</td><td>🛡 Senhor dos Cavaleiros de Rohan</td></tr>
+        <tr><td>5×</td><td>+65</td><td>👑 Herdeiro de Isildur</td></tr>
+        <tr><td>7×</td><td>+95</td><td>⚜ Rei Coroado de Gondor</td></tr>
+        <tr><td>10×</td><td>+135</td><td>🐉 O Rei que Voltou</td></tr>
+        <tr><td>15×</td><td>+200</td><td>⚡ Portador de Glamdring</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="regul-section" style="--rs-color:var(--tier-a)">
+    <div class="regul-h"><span class="regul-h-icon">💀</span>Mitada — pontuação ≥ 80 pts</div>
+    <div class="regul-rule">Concedida a todos que pontuam ≥ 80 no Cartola na rodada. Múltiplas por rodada.</div>
+    <table class="regul-table">
+      <thead><tr><th>Ocorrências</th><th>Pontos</th><th>Título</th></tr></thead>
+      <tbody>
+        <tr><td>1×</td><td>+5</td><td>🔥 Portador da Ferroada</td></tr>
+        <tr><td>2×</td><td>+10</td><td>🔥 Portador da Ferroada</td></tr>
+        <tr><td>3×</td><td>+23</td><td>⚔ Empunhador de Andúril</td></tr>
+        <tr><td>5×</td><td>+45</td><td>🌟 Cavaleiro do Amanhecer</td></tr>
+        <tr><td>7×</td><td>+70</td><td>💎 Portador da Garra Longa</td></tr>
+        <tr><td>10×</td><td>+100</td><td>⚡ Portador da Espada de Fogo</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="regul-section" style="--rs-color:var(--tier-b)">
+    <div class="regul-h"><span class="regul-h-icon">📈</span>Recuperação — +50 pts vs rodada anterior</div>
+    <div class="regul-rule">Concedida a quem pontua +50 a mais que na própria rodada anterior. Variação individual de pontuação.</div>
+    <table class="regul-table">
+      <thead><tr><th>Ocorrências</th><th>Pontos</th><th>Título</th></tr></thead>
+      <tbody>
+        <tr><td>1×</td><td>+8</td><td>🦅 Cavaleiro do Corvo Branco</td></tr>
+        <tr><td>2×</td><td>+16</td><td>🦅 Cavaleiro do Corvo Branco</td></tr>
+        <tr><td>3×</td><td>+36</td><td>🐉 Renascido no Fogo</td></tr>
+        <tr><td>5×</td><td>+65</td><td>⚡ Jon Snow Ressuscitado</td></tr>
+        <tr><td>7×</td><td>+96</td><td>🌟 Ressurgido das Trevas</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="regul-section" style="--rs-color:var(--tier-a)">
+    <div class="regul-h"><span class="regul-h-icon">🗡</span>Massacre — escalada no ranking</div>
+    <div class="regul-rule">Concedido a quem sobe de posição no ranking acumulado E ultrapassa pelo menos 1 adversário com diferença ≥ 10 pts. Escalada no ranking, não placar da rodada.</div>
+    <table class="regul-table">
+      <thead><tr><th>Ocorrências</th><th>Pontos</th><th>Título</th></tr></thead>
+      <tbody>
+        <tr><td>1×</td><td>+6</td><td>🗡 Conquistador de Terras</td></tr>
+        <tr><td>2×</td><td>+12</td><td>🗡 Conquistador de Terras</td></tr>
+        <tr><td>3×</td><td>+22</td><td>⚔ O Senhor do Aço Negro</td></tr>
+        <tr><td>5×</td><td>+40</td><td>🔱 Flagelo dos Reinos</td></tr>
+        <tr><td>7×</td><td>+62</td><td>🐉 Terror de Westeros</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="regul-section" style="--rs-color:var(--tier-b)">
+    <div class="regul-h"><span class="regul-h-icon">🥇</span>Pódio — 2º ou 3º lugar da rodada</div>
+    <div class="regul-rule">Concedido ao 2º e 3º lugar da rodada. O 1º já é MVP — não acumula Pódio.</div>
+    <table class="regul-table">
+      <thead><tr><th>Ocorrências</th><th>Pontos</th><th>Título</th></tr></thead>
+      <tbody>
+        <tr><td>1×</td><td>+3</td><td>🎯 Guardião da Torre Branca</td></tr>
+        <tr><td>2×</td><td>+6</td><td>🎯 Guardião da Torre Branca</td></tr>
+        <tr><td>3×</td><td>+9</td><td>🎯 Guardião da Torre Branca</td></tr>
+        <tr><td>4×</td><td>+12</td><td>🎯 Guardião da Torre Branca</td></tr>
+        <tr><td>5×</td><td>+20</td><td>🏅 Cavaleiro da Guarda Real</td></tr>
+        <tr><td>8×</td><td>+34</td><td>💍 Lorde Comandante da Muralha</td></tr>
+        <tr><td>10×</td><td>+45</td><td>🎖 Mão do Rei</td></tr>
+        <tr><td>15×</td><td>+75</td><td>💫 Protetor dos Sete Reinos</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="regul-section" style="--rs-color:var(--tier-c)">
+    <div class="regul-h"><span class="regul-h-icon">🕯</span>Lanterna — último lugar da rodada</div>
+    <div class="regul-rule">Concedida ao último lugar. Único título com ponto negativo — desconta dos Pontos Medievais.</div>
+    <table class="regul-table">
+      <thead><tr><th>Ocorrências</th><th>Pontos</th><th>Título</th></tr></thead>
+      <tbody>
+        <tr><td>1×</td><td>−5</td><td>🗡 Banido para o Exílio</td></tr>
+        <tr><td>2×</td><td>−10</td><td>🗡 Banido para o Exílio</td></tr>
+        <tr><td>3×</td><td>−23</td><td>⚰ Habitante das Terras Sombrias</td></tr>
+        <tr><td>5×</td><td>−45</td><td>💀 Servo de Sauron</td></tr>
+        <tr><td>7×</td><td>−70</td><td>🌑 Prisioneiro de Mordor</td></tr>
+        <tr><td>10×</td><td>−100</td><td>🕳 Rei da Noite Eterna</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="regul-section" style="--rs-color:var(--gold)">
+    <div class="regul-h"><span class="regul-h-icon">★</span>Bônus G2 — Performance de Elite</div>
+    <div class="regul-rule">Bônus silencioso por rodada de pontuação alta. Não tem título — soma direto aos Pontos Medievais.</div>
+    <table class="regul-table">
+      <thead><tr><th>Pontuação</th><th>Bônus G2</th></tr></thead>
+      <tbody>
+        <tr><td>≥ 90 pts</td><td>+4 pts</td></tr>
+        <tr><td>≥ 100 pts</td><td>+8 pts</td></tr>
+        <tr><td>≥ 110 pts</td><td>+14 pts</td></tr>
+      </tbody>
+    </table>
+    <div class="regul-note"><strong>Exclusivo:</strong> apenas o maior threshold se aplica. Quem faz 112 pts leva +14, não +14+8+4.</div>
+  </div>
+
+  <div class="regul-section" style="--rs-color:var(--tier-s)">
+    <div class="regul-h"><span class="regul-h-icon">⭐</span>Prêmios Finais — Concedidos na Rodada 38</div>
+    <div class="regul-rule">8 títulos de elite concedidos uma única vez ao fim da temporada. Aparecem como "Em disputa" durante o ano para quem está liderando cada critério.</div>
+
+    <h3 style="font-family:'Cinzel',serif;color:var(--gold);font-size:13px;letter-spacing:2px;margin-top:1.5rem;margin-bottom:.75rem;text-transform:uppercase">Pódio Final</h3>
+    <table class="regul-table">
+      <thead><tr><th>#</th><th>Condição</th><th>Título</th></tr></thead>
+      <tbody>
+        <tr><td>31</td><td>1º lugar geral</td><td>🐉 Imperador dos Sete Reinos</td></tr>
+        <tr><td>32</td><td>2º lugar geral</td><td>👑 Príncipe de Pedra do Dragão</td></tr>
+        <tr><td>33</td><td>3º lugar geral</td><td>⚔ Senhor de Winterfell</td></tr>
+        <tr><td>34</td><td>Último lugar geral</td><td>🕳 O Esquecido pelas Crônicas</td></tr>
+      </tbody>
+    </table>
+
+    <h3 style="font-family:'Cinzel',serif;color:var(--gold);font-size:13px;letter-spacing:2px;margin-top:1.5rem;margin-bottom:.75rem;text-transform:uppercase">Prêmios Especiais</h3>
+    <table class="regul-table">
+      <thead><tr><th>#</th><th>Condição</th><th>Título</th></tr></thead>
+      <tbody>
+        <tr><td>35</td><td>1º geral sem nunca ter sido Lanterna</td><td>🏛 Rei de Gondor</td></tr>
+        <tr><td>36</td><td>Campeão vindo do 6º lugar ou abaixo</td><td>🐉 Cavaleiro de Vhagar</td></tr>
+        <tr><td>37</td><td>Mais MVPs na temporada</td><td>🔥 Domador de Balerion</td></tr>
+        <tr><td>38</td><td>Maior média de pontos Cartola</td><td>💫 Perfeição Encarnada</td></tr>
+      </tbody>
+    </table>
+    <div class="regul-note"><strong>Em disputa:</strong> durante a temporada, o jogador que atualmente atende à condição vê o card como "⚡ Em disputa". A confirmação só acontece após a R38, quando vira "✦ Conquistado".</div>
+  </div>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-credit">⚔ Guerra dos Reinos · Liga Cartola 2026 ⚔</div>
+</footer>
+
+</body>
+</html>
