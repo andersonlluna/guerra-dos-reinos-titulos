@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Icebergteam · Guerra dos Reinos</title>
+<meta name="description" content="Icebergteam — Liga Cartola FC · Temporada 2026">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="../assets/motor.css">
+</head>
+<body>
+
+<nav class="top-nav">
+  <div class="top-nav-inner">
+    <a href="../index.html" class="top-nav-brand">⚔ Guerra dos Reinos</a>
+    <div class="top-nav-links">
+      <a href="../index.html" class="top-nav-link">← Portal</a>
+      <a href="../regulamento.html" class="top-nav-link">Regulamento →</a>
+    </div>
+  </div>
+</nav>
+
+<header class="header" id="player-header"></header>
+<div class="stats-bar" id="player-stats"></div>
+
+<nav class="page-nav">
+  <div class="page-nav-inner">
+    <button class="nav-btn active" onclick="showSection('conquistas', this)">Conquistas</button>
+    <button class="nav-btn" onclick="showSection('historico', this)">Histórico</button>
+    <button class="nav-btn" onclick="showSection('lore', this)">Lore</button>
+  </div>
+</nav>
+
+<main class="content">
+  <section class="section active" id="s-conquistas"></section>
+  <section class="section" id="s-premios"></section>
+  <section class="section" id="s-historico"></section>
+  <section class="section" id="s-lore"></section>
+</main>
+
+<div class="modal-overlay" id="modal" onclick="closeCardModal(event)">
+  <div class="modal" id="modal-content" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeCardModalDirect()">✕</button>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-credit">⚔ Guerra dos Reinos · Liga Cartola 2026 ⚔</div>
+</footer>
+
+<script src="../assets/jogadores.js"></script>
+<script src="../assets/motor.js"></script>
+<script>initJogador('icebergteam');</script>
+
+</body>
+</html>
