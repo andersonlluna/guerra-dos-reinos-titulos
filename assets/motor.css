@@ -122,6 +122,110 @@ body{
   font-size:20px;font-weight:600;color:var(--accent);margin-top:5px;
 }
 
+/* ═════ MURAL DE TROFÉUS (topo da página de jogador) ═════ */
+.mural-block{
+  max-width:1100px;margin:0 auto;
+  padding:14px 1.5rem 16px;
+  background:linear-gradient(180deg,rgba(232,200,122,.04) 0%,transparent 100%);
+  border-bottom:1px solid var(--border);
+}
+.mural-unicas{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;
+  background:rgba(248,216,96,.10);
+  border:1px solid rgba(248,216,96,.30);
+  border-radius:8px;
+  margin-bottom:14px;
+  font-size:14px;color:var(--text-primary);
+}
+.mural-unicas-icon{
+  font-size:20px;
+  filter:drop-shadow(0 0 8px var(--rar-mitico));
+}
+.mural-unicas-text strong{color:var(--rar-mitico);font-weight:700}
+
+.mural-title{
+  font-family:'Cinzel',serif;font-size:13px;font-weight:600;
+  letter-spacing:2px;color:var(--gold);text-transform:uppercase;
+  margin-bottom:10px;
+  display:flex;align-items:center;gap:8px;
+}
+.mural-title-icon{font-size:16px}
+
+.mural-strip{
+  display:flex;gap:12px;
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:6px;
+  scrollbar-width:thin;
+  scrollbar-color:var(--gold-strong) transparent;
+}
+.mural-strip::-webkit-scrollbar{height:6px}
+.mural-strip::-webkit-scrollbar-track{background:transparent}
+.mural-strip::-webkit-scrollbar-thumb{background:var(--gold-strong);border-radius:3px}
+
+.mural-card{
+  position:relative;flex:0 0 200px;aspect-ratio:3/4;
+  background:var(--bg-card);
+  border:2px solid;border-radius:10px;
+  overflow:hidden;cursor:pointer;
+  scroll-snap-align:start;
+  transition:transform .3s,box-shadow .3s;
+  min-height:44px;
+}
+.mural-card:hover,.mural-card:active{
+  transform:translateY(-4px) scale(1.03);
+}
+.mural-card.rar-comum    { border-color:var(--rar-comum);    box-shadow:0 0 20px rgba(160,160,176,.25) }
+.mural-card.rar-incomum  { border-color:var(--rar-incomum);  box-shadow:0 0 20px rgba(110,192,112,.25) }
+.mural-card.rar-raro     { border-color:var(--rar-raro);     box-shadow:0 0 20px rgba(92,158,232,.30) }
+.mural-card.rar-epico    { border-color:var(--rar-epico);    box-shadow:0 0 22px rgba(184,120,232,.35) }
+.mural-card.rar-lendario { border-color:var(--rar-lendario); box-shadow:0 0 24px rgba(240,140,64,.40) }
+.mural-card.rar-mitico   { border-color:var(--rar-mitico);   box-shadow:0 0 28px rgba(248,216,96,.50) }
+
+.mural-card-img{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center top;
+}
+.mural-card-shade{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 50%,rgba(15,17,21,.95) 100%);
+}
+.mural-card-info{
+  position:absolute;bottom:0;left:0;right:0;padding:10px 12px;
+}
+.mural-card-name{
+  font-family:'Cinzel',serif;font-size:13px;font-weight:600;
+  color:var(--text-primary);line-height:1.2;
+  text-shadow:0 1px 6px rgba(0,0,0,.9);
+}
+.mural-unico-badge{
+  position:absolute;top:8px;right:8px;z-index:2;
+  background:var(--rar-mitico);color:var(--bg);
+  font-family:'Inter',sans-serif;font-size:10px;font-weight:700;
+  letter-spacing:1.5px;padding:4px 8px;border-radius:4px;
+  box-shadow:0 0 14px var(--rar-mitico);
+}
+
+/* ═════ BOTÃO COMPARTILHAR ═════ */
+.btn-share{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  width:100%;margin-top:1.25rem;
+  font-family:'Inter',sans-serif;font-size:14px;font-weight:600;
+  letter-spacing:.5px;color:var(--text-primary);
+  background:var(--bg-surface);border:1px solid var(--border-strong);
+  padding:13px 18px;border-radius:8px;cursor:pointer;
+  transition:all .2s;
+  min-height:48px;
+}
+.btn-share:hover,.btn-share:active{
+  background:var(--accent-soft);border-color:var(--accent);color:var(--accent);
+}
+.btn-share.copiado{
+  background:rgba(110,192,112,.15);border-color:var(--rar-incomum);color:var(--rar-incomum);
+}
+
 /* ═════ STATS COMPACTOS (3 LINHAS) ═════ */
 .stats-compact{
   max-width:1100px;margin:0 auto;
@@ -623,6 +727,12 @@ button.rar-pill{
   .cat-mini{padding:6px 8px;font-size:12px;flex:1;min-width:0}
   .cat-mini-icon{font-size:13px}
   .stats-row3-name{font-size:14px}
+
+  /* Mural no mobile */
+  .mural-block{padding:12px 1rem 14px}
+  .mural-card{flex:0 0 150px}
+  .mural-card-name{font-size:12px}
+  .mural-unicas{font-size:13px;padding:9px 12px}
 
   .page-nav{top:60px;padding:9px 12px}
   .nav-btn{flex:1;font-size:12px;padding:11px 14px;letter-spacing:1px}

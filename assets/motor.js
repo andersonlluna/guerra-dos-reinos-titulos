@@ -587,10 +587,12 @@ function openGaleriaModal(num){
       <div class="modal-section-title">Quem possui (${donos.length}/9)</div>
       ${donosHtml}
       <div class="modal-desc">${escapeHtml(info.lore || '')}</div>
+      <button class="btn-share" id="btn-share-${num}" onclick="copiarLinkFigurinha(${num})">🔗 Copiar link</button>
     </div>
   `;
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
+  atualizarUrlCard(num);
 }
 
 function critPorCategoria(cat, marco){
@@ -673,8 +675,83 @@ function renderJogador(slug, state){
     `;
   }
 
+  renderMural(slug, lord, cfg);
   renderAlbum(slug, lord, cfg);
   renderLore(slug, cfg, lord);
+
+  /* Verifica deep-link ?card=N depois do render */
+  abrirCardDoUrl();
+}
+
+/* ─── Mural de troféus: 3 figurinhas mais raras + dono único ─── */
+function renderMural(slug, lord, cfg){
+  const root = document.getElementById('player-mural');
+  if (!root || !lord) return;
+
+  /* Lista das figurinhas do jogador (Inicial + conquistadas) com info de raridade e quantos donos */
+  const minhas = [
+    { num:1, cat:'inicial', marco:0, nome:'Escudeiro Sem Nome' },
+    ...lord.figurinhas
+  ];
+  const donos = _portalDonos || {};
+
+  /* Ordena por raridade desc, depois por exclusividade (menos donos = mais valioso) */
+  const enriquecidas = minhas.map(f => {
+    const rar = getRaridade(f.num);
+    const numDonos = (donos[f.num] || []).length;
+    return { ...f, rar, numDonos, ehUnico: numDonos === 1 };
+  });
+  enriquecidas.sort((a,b) => b.rar.ord - a.rar.ord || a.numDonos - b.numDonos);
+
+  /* Top 3 raras (só mostra se a maior raridade for >= Incomum, senão fica meio bobo) */
+  const top = enriquecidas.slice(0, 3);
+  const temAlgo = top.some(f => f.rar.ord >= 2);
+
+  /* Conta dono únicos (figurinhas que só esse jogador tem) */
+  const unicas = enriquecidas.filter(f => f.ehUnico && f.num !== 1).length;
+
+  if (!temAlgo && unicas === 0){
+    root.innerHTML = '';
+    return;
+  }
+
+  let html = `<div class="mural-block">`;
+  if (unicas > 0){
+    html += `
+      <div class="mural-unicas">
+        <span class="mural-unicas-icon">✨</span>
+        <span class="mural-unicas-text">Você é dono único de <strong>${unicas} figurinha${unicas === 1 ? '' : 's'}</strong></span>
+      </div>
+    `;
+  }
+
+  if (temAlgo){
+    html += `
+      <div class="mural-title">
+        <span class="mural-title-icon">🏆</span>
+        Suas mais raras
+      </div>
+      <div class="mural-strip">
+    `;
+    for (const f of top){
+      const url = getCardUrlByNum(f.num);
+      html += `
+        <div class="mural-card rar-${f.rar.cls}" onclick="openCardByNum(${f.num})">
+          <img class="mural-card-img" src="${url}" alt="${escapeAttr(f.nome)}" loading="lazy"
+               onerror="this.style.display='none'">
+          <div class="mural-card-shade"></div>
+          ${f.ehUnico ? `<div class="mural-unico-badge">✨ ÚNICO</div>` : ''}
+          <div class="mural-card-info">
+            <span class="rar-pill rar-${f.rar.cls}" style="font-size:9px;padding:3px 7px;margin-bottom:4px;display:inline-block">${f.rar.label}</span>
+            <div class="mural-card-name">${escapeHtml(f.nome)}</div>
+          </div>
+        </div>
+      `;
+    }
+    html += `</div>`;
+  }
+  html += `</div>`;
+  root.innerHTML = html;
 }
 
 function renderAlbum(slug, lord, cfg){
@@ -824,10 +901,12 @@ function openFigurinhaModal(cat, marco){
       <div class="modal-marco">${status}</div>
       <div class="modal-criterio"><strong>Como conquistar:</strong> ${escapeHtml(criterio)}</div>
       <div class="modal-desc">${escapeHtml(lore)}</div>
+      <button class="btn-share" id="btn-share-${num}" onclick="copiarLinkFigurinha(${num})">🔗 Copiar link</button>
     </div>
   `;
   modal.classList.add('open');
   document.body.style.overflow = 'hidden';
+  atualizarUrlCard(num);
 }
 
 function closeCardModal(e){ if (e && e.target !== document.getElementById('modal')) return; closeCardModalDirect(); }
@@ -835,6 +914,89 @@ function closeCardModalDirect(){
   const m = document.getElementById('modal');
   if (m) m.classList.remove('open');
   document.body.style.overflow = '';
+  /* Limpa o ?card= da URL ao fechar */
+  if (window.location.search.includes('card=')){
+    const url = new URL(window.location);
+    url.searchParams.delete('card');
+    window.history.replaceState({}, '', url.pathname + (url.search ? url.search : ''));
+  }
+}
+
+/* ─── DEEP LINK + SHARE ─── */
+function abrirCardDoUrl(){
+  const params = new URLSearchParams(window.location.search);
+  const cardId = params.get('card');
+  if (!cardId) return;
+  const num = parseInt(cardId);
+  if (isNaN(num) || num < 1 || num > 38) return;
+  /* Pequeno delay pra garantir que tudo já renderizou */
+  setTimeout(() => openCardByNum(num), 200);
+}
+
+/* Abre o modal apropriado a partir do número da figurinha */
+function openCardByNum(num){
+  if (_ctx){
+    /* Estamos numa página de jogador — usa o modal da figurinha (mostra status do jogador) */
+    if (num === 1){
+      openFigurinhaModal('inicial', 0);
+      atualizarUrlCard(num);
+      return;
+    }
+    /* Procura cat+marco pelo número */
+    for (const cat of Object.keys(CARD_NUM)){
+      if (cat === 'inicial') continue;
+      const entry = Object.entries(CARD_NUM[cat]).find(([m, n]) => n === num);
+      if (entry){
+        openFigurinhaModal(cat, parseInt(entry[0]));
+        atualizarUrlCard(num);
+        return;
+      }
+    }
+    /* Prêmio final — usa o modal da galeria */
+    if (num >= 31){
+      openGaleriaModal(num);
+      atualizarUrlCard(num);
+      return;
+    }
+  } else {
+    /* Estamos no portal — usa o modal da galeria */
+    openGaleriaModal(num);
+    atualizarUrlCard(num);
+  }
+}
+
+function atualizarUrlCard(num){
+  const url = new URL(window.location);
+  url.searchParams.set('card', String(num).padStart(2,'0'));
+  window.history.replaceState({}, '', url.pathname + url.search);
+}
+
+async function copiarLinkFigurinha(num){
+  const baseUrl = window.location.origin + window.location.pathname.replace(/\/jogador\/.*$/, '/');
+  /* Sempre aponta pro index do site (mais portátil) */
+  const link = `${baseUrl}index.html?card=${String(num).padStart(2,'0')}`;
+  const btn = document.getElementById('btn-share-' + num);
+  try {
+    await navigator.clipboard.writeText(link);
+    if (btn){
+      const orig = btn.innerHTML;
+      btn.innerHTML = '✓ Link copiado!';
+      btn.classList.add('copiado');
+      setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copiado'); }, 2500);
+    }
+  } catch(e){
+    /* Fallback: cria input temporário */
+    const ta = document.createElement('textarea');
+    ta.value = link;
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch {}
+    document.body.removeChild(ta);
+    if (btn){
+      btn.innerHTML = '✓ Copiado!';
+      setTimeout(() => { btn.innerHTML = '🔗 Copiar link'; }, 2500);
+    }
+  }
 }
 
 function showSection(id, btn){
@@ -875,6 +1037,7 @@ async function initPortal(){
     document.getElementById('hm-conquistadas').textContent = totalFigurinhas;
   }
   renderPortal(state);
+  abrirCardDoUrl();
 }
 
 async function initJogador(slug){
