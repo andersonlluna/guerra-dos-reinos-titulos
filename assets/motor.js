@@ -247,7 +247,7 @@ function processarLiga(csv){
     };
 
     const acumPos = jogadoresCsv.map(j => ({name:j, pm:calcPM(j), ptsCartola:estado[j].ptsCartola}))
-      .sort((a,b) => b.pm - a.pm || b.ptsCartola - a.ptsCartola);
+      .sort((a,b) => b.ptsCartola - a.ptsCartola);
 
     if (vale){
       for (const j of jogadoresCsv){
@@ -261,9 +261,9 @@ function processarLiga(csv){
             const ab = acumAntes.findIndex(x => x.name === adv.name);
             const aa = acumPos.findIndex(x => x.name === adv.name);
             if (ab < posBefore && aa > posAfter){
-              const myPm = acumPos.find(x => x.name === j).pm;
-              const advPm = acumPos.find(x => x.name === adv.name).pm;
-              if (Math.abs(myPm - advPm) >= 10){ ok = true; break; }
+              const myPts = acumPos.find(x => x.name === j).ptsCartola;
+              const advPts = acumPos.find(x => x.name === adv.name).ptsCartola;
+              if (Math.abs(myPts - advPts) >= 10){ ok = true; break; }
             }
           }
           if (ok){
@@ -275,7 +275,7 @@ function processarLiga(csv){
     }
 
     acumAntes = jogadoresCsv.map(j => ({name:j, pm:calcPM(j), ptsCartola:estado[j].ptsCartola}))
-      .sort((a,b) => b.pm - a.pm || b.ptsCartola - a.ptsCartola);
+      .sort((a,b) => b.ptsCartola - a.ptsCartola);
     acumAntes.forEach((entry, posIdx) => {
       estado[entry.name].posPorRodada.push({rodada:r, pos:posIdx+1});
     });
