@@ -1,6 +1,5 @@
 /* ════════════════════════════════════════════════════════════════
-   GUERRA DOS REINOS — Motor CSS · v1
-   Estilos compartilhados: portal, página de jogador, regulamento
+   GUERRA DOS REINOS — Motor CSS · v3 · Álbum
    ════════════════════════════════════════════════════════════════ */
 
 :root {
@@ -9,14 +8,21 @@
   --border:rgba(255,255,255,.08); --border-strong:rgba(255,255,255,.20);
   --gold:#e8c87a; --gold-soft:rgba(232,200,122,.10); --gold-strong:rgba(232,200,122,.40);
 
-  /* Tiers heráldicos */
+  /* Tiers heráldicos (categorias) */
   --tier-s:#e8c87a; --tier-s-rgb:232,200,122;
   --tier-a:#d96060; --tier-a-rgb:217,96,96;
   --tier-b:#6a9cd0; --tier-b-rgb:106,156,208;
   --tier-c:#a878d0; --tier-c-rgb:168,120,208;
   --tier-d:#6a6a7a; --tier-d-rgb:106,106,122;
 
-  /* Override por página */
+  /* Raridade na Galeria da Liga */
+  --rar-mythic:#f8d878;    /* dourado intenso */
+  --rar-legend:#e8c87a;    /* dourado */
+  --rar-epic:#c878e8;      /* roxo */
+  --rar-rare:#6aa8e8;      /* azul */
+  --rar-uncommon:#7ac070;  /* verde */
+  --rar-common:#8a8a98;    /* cinza */
+
   --accent: var(--gold);
   --accent-soft: var(--gold-soft);
   --accent-strong: var(--gold-strong);
@@ -58,7 +64,6 @@ body{
   transition:all .2s;display:inline-flex;align-items:center;gap:6px;
 }
 .top-nav-link:hover{color:var(--gold);border-color:var(--gold)}
-.top-nav-link.primary{color:var(--gold);border-color:var(--gold);background:var(--gold-soft)}
 
 /* ═════ HEADER ═════ */
 .header{
@@ -91,10 +96,6 @@ body{
   font-size:13px;color:var(--text-secondary);margin-top:.75rem;
   font-family:'JetBrains Mono',monospace;letter-spacing:2px;text-transform:uppercase;
 }
-.header-title-current{
-  font-family:'Cinzel',serif;font-size:1.1rem;font-weight:500;
-  color:var(--text-primary);margin-top:1rem;font-style:italic;
-}
 .header-sub{
   font-size:16px;color:var(--text-secondary);
   margin-top:.75rem;max-width:600px;margin-left:auto;margin-right:auto;
@@ -117,29 +118,74 @@ body{
   font-size:18px;font-weight:600;color:var(--accent);margin-top:4px;
 }
 
-/* ═════ STATS BAR (página de jogador) ═════ */
-.stats-bar{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
-  gap:0;background:var(--bg-card);border-bottom:1px solid var(--border);
+/* ═════ COMPLETUDE BLOCK (ex stats-bar) ═════ */
+.completude-block{
+  background:var(--bg-card);border-bottom:1px solid var(--border);
+  padding:1.25rem 1.5rem;
 }
-.stat-item{
-  padding:14px 16px;text-align:center;
-  border-right:1px solid var(--border);
+.completude-row{
+  max-width:1100px;margin:0 auto;
+  display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
 }
-.stat-item:last-child{border-right:none}
-.stat-val{
-  display:block;font-family:'Cinzel',serif;font-size:22px;font-weight:700;
-  color:var(--accent);
+.completude-label{
+  font-family:'Inter',sans-serif;font-size:10px;font-weight:600;
+  letter-spacing:2px;color:var(--text-tertiary);text-transform:uppercase;
 }
-.stat-val.neg{color:var(--tier-c)}
-.stat-val.zero{color:var(--text-tertiary)}
-.stat-label{
-  display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;
-  color:var(--text-tertiary);text-transform:uppercase;margin-top:4px;
+.completude-val{
+  font-family:'Cinzel',serif;font-size:28px;font-weight:700;color:var(--accent);
+}
+.completude-pct{
+  font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600;
+  color:var(--text-secondary);margin-left:auto;
+}
+.completude-bar{
+  max-width:1100px;margin:.75rem auto 0;
+  height:6px;background:var(--bg-surface);border-radius:3px;overflow:hidden;
+}
+.completude-bar-fill{
+  height:100%;background:linear-gradient(90deg,var(--accent),var(--accent));
+  border-radius:3px;transition:width .8s cubic-bezier(.2,.8,.2,1);
+  box-shadow:0 0 16px var(--accent-strong);
+}
+.completude-last{
+  max-width:1100px;margin:.75rem auto 0;
+  display:flex;gap:8px;flex-wrap:wrap;align-items:baseline;
+  font-size:13px;
+}
+.completude-last-label{color:var(--text-tertiary);font-weight:500}
+.completude-last-name{font-family:'Cinzel',serif;font-weight:600;color:var(--accent)}
+.completude-last-meta{
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-tertiary);
 }
 
-/* ═════ NAV INTERNO (abas dentro da página) ═════ */
+/* Progresso por categoria (sticker book vibes) */
+.progresso-cats{
+  max-width:1100px;margin:1rem auto 0;
+  display:grid;gap:6px;
+}
+.progresso-cat{
+  display:grid;grid-template-columns:90px 1fr 50px;
+  align-items:center;gap:12px;
+  padding:6px 0;
+}
+.progresso-label{
+  font-family:'Inter',sans-serif;font-size:10px;font-weight:600;
+  letter-spacing:1.5px;color:var(--text-tertiary);text-transform:uppercase;
+}
+.progresso-stickers{
+  display:flex;gap:6px;flex-wrap:wrap;
+}
+.sticker{
+  font-size:14px;display:inline-block;line-height:1;
+  filter:drop-shadow(0 0 4px currentColor);
+}
+.sticker.empty{color:var(--text-tertiary);opacity:.4;filter:none;font-size:12px}
+.progresso-count{
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-secondary);
+  text-align:right;
+}
+
+/* ═════ NAV INTERNO ═════ */
 .page-nav{
   position:sticky;top:53px;z-index:50;
   background:rgba(15,17,21,.96);backdrop-filter:blur(8px);
@@ -181,7 +227,6 @@ body{
   max-width:680px;margin:0 auto 2rem;
 }
 
-/* ═════ GROUP TITLE (subgrupos por categoria) ═════ */
 .group-title{
   font-family:'Cinzel',serif;font-size:11px;font-weight:600;
   letter-spacing:3px;color:var(--gt-color,var(--accent));text-transform:uppercase;
@@ -190,37 +235,73 @@ body{
 .group-title::before,.group-title::after{
   content:'';flex:1;height:1px;background:var(--gt-color,var(--accent));opacity:.25;
 }
-.group-title-icon{font-size:10px}
+.group-title-icon{font-size:12px}
 
-/* ═════ CREATURE CARDS (cards de conquistas) ═════ */
+/* ═════ FIGURINHAS — ÁLBUM ═════ */
 .creature-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-  gap:18px;margin-bottom:1.5rem;
+  grid-template-columns:repeat(auto-fill,minmax(200px,1fr));
+  gap:16px;margin-bottom:1.5rem;
 }
 .creature-card{
   position:relative;background:var(--bg-card);
   border:1px solid var(--border);border-radius:12px;overflow:hidden;
-  cursor:pointer;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .25s;
+  cursor:pointer;
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .25s;
   aspect-ratio:3/4;display:block;
 }
-.creature-card:hover{
-  transform:translateY(-6px);
-  border-color:var(--card-color,var(--accent-strong));
-  box-shadow:0 16px 36px rgba(0,0,0,.55);
-}
-.creature-card.locked{opacity:.32;cursor:default;filter:grayscale(.7)}
-.creature-card.locked:hover{transform:none;box-shadow:none}
 
-.card-image-wrap{
-  position:relative;width:100%;height:100%;overflow:hidden;
+/* CONQUISTADA — brilhante, badge, borda viva */
+.creature-card.unlocked{
+  border-color:var(--card-color,var(--accent-strong));
+  box-shadow:0 4px 18px rgba(0,0,0,.4),0 0 0 1px rgba(var(--tier-s-rgb),.05);
 }
+.creature-card.unlocked:hover{
+  transform:translateY(-6px) scale(1.02);
+  box-shadow:0 18px 38px rgba(0,0,0,.55),0 0 24px var(--card-color,var(--accent-strong));
+}
+
+/* SILHUETA (bloqueada) — escura, dessaturada, intrigante */
+.creature-card.silhouette{
+  border-style:dashed;border-color:var(--border);
+}
+.creature-card.silhouette .card-image{
+  filter:grayscale(1) brightness(.32) contrast(1.15);
+  opacity:.55;
+}
+.creature-card.silhouette:hover{
+  transform:translateY(-3px);
+  border-style:solid;
+  border-color:var(--card-color,var(--border-strong));
+}
+.creature-card.silhouette:hover .card-image{
+  filter:grayscale(.7) brightness(.45) contrast(1.1);
+  opacity:.7;
+}
+
+/* PRÊMIO FINAL — estilo silhouette mas com glow dourado */
+.creature-card.premio{
+  border-color:rgba(var(--tier-s-rgb),.25);border-style:solid;
+}
+.creature-card.premio .card-image{
+  filter:grayscale(.4) brightness(.55) contrast(1.05);
+  opacity:.75;
+}
+.creature-card.premio:hover .card-image{
+  filter:grayscale(0) brightness(.85) contrast(1);opacity:.95;
+}
+.creature-card.premio:hover{
+  border-color:var(--tier-s);
+  box-shadow:0 14px 30px rgba(0,0,0,.5),0 0 28px rgba(var(--tier-s-rgb),.35);
+}
+
+.card-image-wrap{position:relative;width:100%;height:100%;overflow:hidden}
 .card-image{
   position:absolute;inset:0;width:100%;height:100%;
   object-fit:cover;object-position:center top;
-  transition:transform .55s,opacity .35s;opacity:.92;
+  transition:transform .55s,opacity .35s,filter .35s;
 }
-.creature-card:hover .card-image{transform:scale(1.06);opacity:1}
+.creature-card.unlocked:hover .card-image{transform:scale(1.06)}
 .card-image-fallback{
   position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;
@@ -231,18 +312,72 @@ body{
   position:absolute;inset:0;
   background:linear-gradient(180deg,rgba(15,17,21,.18) 0%,rgba(15,17,21,.50) 50%,rgba(15,17,21,.96) 100%);
 }
+.creature-card.silhouette .card-image-shade{
+  background:linear-gradient(180deg,rgba(15,17,21,.55) 0%,rgba(15,17,21,.78) 60%,rgba(15,17,21,.98) 100%);
+}
 .card-tier-line{
   position:absolute;top:0;left:0;right:0;height:3px;
   background:var(--card-color,var(--accent));z-index:2;
 }
-.card-tier-badge{
-  position:absolute;top:10px;right:10px;z-index:2;
-  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
-  padding:4px 9px;border-radius:4px;
+.card-num-badge{
+  position:absolute;top:10px;right:10px;z-index:3;
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  padding:3px 7px;border-radius:4px;
   background:rgba(15,17,21,.85);backdrop-filter:blur(6px);
   color:var(--card-color,var(--accent));
   border:1px solid var(--card-color,var(--accent));letter-spacing:1px;
 }
+/* Estampa de "conquistado" — selo Panini */
+.card-stamp{
+  position:absolute;top:10px;left:10px;z-index:3;
+  width:32px;height:32px;border-radius:50%;
+  background:var(--card-color,var(--accent));color:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;font-weight:700;
+  box-shadow:0 0 16px var(--card-color,var(--accent));
+  animation:stampPulse 3s ease-in-out infinite;
+}
+.card-stamp.small{width:26px;height:26px;font-size:12px}
+.card-stamp.gold{background:var(--gold);box-shadow:0 0 20px var(--gold)}
+@keyframes stampPulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.08)}
+}
+/* Cadeado central pra silhuetas */
+.card-locked-overlay{
+  position:absolute;top:50%;left:50%;z-index:3;
+  transform:translate(-50%,-65%);
+  width:48px;height:48px;border-radius:50%;
+  background:rgba(15,17,21,.7);backdrop-filter:blur(6px);
+  border:1px solid var(--border-strong);
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;color:var(--text-tertiary);
+}
+.creature-card.silhouette:hover .card-locked-overlay{
+  background:rgba(15,17,21,.5);
+  border-color:var(--card-color,var(--border-strong));
+  color:var(--card-color,var(--text-secondary));
+}
+/* Badges de prêmios */
+.lidera-tag{
+  position:absolute;top:10px;left:10px;z-index:3;
+  font-size:9px;font-weight:700;letter-spacing:1.5px;
+  padding:4px 9px;border-radius:4px;
+  background:var(--gold);color:var(--bg);text-transform:uppercase;
+  box-shadow:0 0 14px var(--gold-strong);
+}
+.lider-tag{
+  position:absolute;top:10px;left:10px;z-index:3;
+  font-size:10px;font-weight:600;
+  padding:3px 8px;border-radius:4px;
+  background:rgba(232,200,122,.15);color:var(--tier-s);
+  border:1px solid rgba(232,200,122,.3);
+}
+.lider-tag.empty{
+  background:rgba(15,17,21,.7);color:var(--text-tertiary);
+  border-color:var(--border);
+}
+
 .card-info{
   position:absolute;bottom:0;left:0;right:0;padding:14px 16px;z-index:2;
 }
@@ -252,25 +387,83 @@ body{
   margin-bottom:5px;
 }
 .card-name{
-  font-family:'Cinzel',serif;font-size:18px;font-weight:600;
-  color:var(--text-primary);line-height:1.15;
+  font-family:'Cinzel',serif;font-size:17px;font-weight:600;
+  color:var(--text-primary);line-height:1.2;
   text-shadow:0 1px 8px rgba(0,0,0,.85);
 }
-.card-pts{
-  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
-  color:var(--text-secondary);margin-top:4px;letter-spacing:.5px;
+.card-name.silhouette-name{
+  color:var(--text-tertiary);font-style:italic;
 }
-.card-locked-tag{
-  position:absolute;top:10px;left:10px;z-index:2;
-  font-size:10px;font-weight:600;letter-spacing:1.5px;
-  padding:3px 8px;border-radius:4px;
-  background:rgba(15,17,21,.75);color:var(--text-tertiary);text-transform:uppercase;
+.card-falta{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--text-secondary);margin-bottom:5px;
+  background:rgba(15,17,21,.6);padding:2px 6px;border-radius:3px;
+  display:inline-block;letter-spacing:.5px;
 }
-.card-unlocked-tag{
-  position:absolute;top:10px;left:10px;z-index:2;
-  font-size:10px;font-weight:700;letter-spacing:1.5px;
-  padding:3px 8px;border-radius:4px;
-  background:var(--card-color,var(--accent));color:var(--bg);text-transform:uppercase;
+
+/* ═════ GALERIA DA LIGA ═════ */
+.raridade-legenda{
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+  margin-bottom:2rem;
+}
+.rar-pill{
+  font-family:'Inter',sans-serif;font-size:10px;font-weight:700;
+  letter-spacing:1.2px;text-transform:uppercase;
+  padding:5px 11px;border-radius:4px;border:1px solid;
+  background:rgba(15,17,21,.6);
+}
+.rar-pill.rar-mythic   { color:var(--rar-mythic);   border-color:var(--rar-mythic) }
+.rar-pill.rar-legend   { color:var(--rar-legend);   border-color:var(--rar-legend) }
+.rar-pill.rar-epic     { color:var(--rar-epic);     border-color:var(--rar-epic) }
+.rar-pill.rar-rare     { color:var(--rar-rare);     border-color:var(--rar-rare) }
+.rar-pill.rar-uncommon { color:var(--rar-uncommon); border-color:var(--rar-uncommon) }
+.rar-pill.rar-common   { color:var(--rar-common);   border-color:var(--rar-common) }
+
+.galeria-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:14px;
+}
+.galeria-card{
+  position:relative;background:var(--bg-card);
+  border:1px solid var(--border);border-radius:10px;overflow:hidden;
+  cursor:pointer;
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .25s;
+  aspect-ratio:3/4;
+}
+.galeria-card:hover{
+  transform:translateY(-4px) scale(1.02);
+  box-shadow:0 12px 28px rgba(0,0,0,.5);
+}
+.galeria-card.rar-mythic   { border-color:var(--rar-mythic) }
+.galeria-card.rar-legend   { border-color:var(--rar-legend) }
+.galeria-card.rar-epic     { border-color:var(--rar-epic) }
+.galeria-card.rar-rare     { border-color:var(--rar-rare) }
+.galeria-card.rar-uncommon { border-color:var(--rar-uncommon) }
+.galeria-card.rar-common   { border-color:var(--rar-common) }
+
+.galeria-card:not(.meu) .card-image{
+  filter:grayscale(.6) brightness(.7);opacity:.7;
+}
+.galeria-card.meu .card-image{
+  filter:none;opacity:1;
+}
+.galeria-card.meu{box-shadow:0 0 0 2px var(--accent),0 4px 18px rgba(0,0,0,.4)}
+.galeria-card:not(.meu):hover .card-image{filter:grayscale(.2) brightness(.9);opacity:.92}
+
+.rar-line{
+  position:absolute;top:0;left:0;right:0;height:3px;z-index:2;
+}
+.rar-tag{
+  position:absolute;top:10px;right:10px;z-index:3;
+  font-family:'Inter',sans-serif;font-size:9px;font-weight:700;letter-spacing:1.2px;
+  padding:3px 7px;border-radius:4px;text-transform:uppercase;
+  background:rgba(15,17,21,.85);backdrop-filter:blur(6px);
+  border:1px solid;
+}
+.rar-count{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  color:var(--text-tertiary);margin-top:5px;letter-spacing:.5px;
 }
 
 /* ═════ MODAL ═════ */
@@ -299,6 +492,7 @@ body{
   width:100%;aspect-ratio:3/4;object-fit:cover;
   background:var(--bg-surface);
 }
+.modal-img.silhouette-img{filter:grayscale(1) brightness(.4) contrast(1.15);opacity:.7}
 .modal-body{padding:1.5rem 1.75rem 1.75rem}
 .modal-tier{margin-bottom:.5rem}
 .modal-name{
@@ -307,46 +501,25 @@ body{
 }
 .modal-marco{
   font-family:'JetBrains Mono',monospace;font-size:11px;
-  color:var(--text-tertiary);letter-spacing:1.5px;
-  text-transform:uppercase;margin-top:6px;margin-bottom:1rem;
+  color:var(--text-tertiary);letter-spacing:1px;
+  margin-top:6px;margin-bottom:1rem;line-height:1.5;
 }
+.modal-marco strong{color:var(--text-primary)}
 .modal-desc{font-size:14px;color:var(--text-secondary);line-height:1.7}
+.modal-donos{
+  display:flex;flex-wrap:wrap;gap:6px;margin-top:.5rem;
+}
+.modal-dono{
+  font-family:'Cinzel',serif;font-size:12px;font-weight:600;
+  padding:5px 11px;border-radius:4px;
+  background:var(--bg-surface);border:1px solid var(--border);color:var(--text-secondary);
+}
+.modal-dono.me{
+  background:var(--accent-soft);color:var(--accent);
+  border-color:var(--accent-strong);
+}
 
-/* ═════ HISTÓRICO (timeline) ═════ */
-.historico-table{
-  width:100%;border-collapse:collapse;
-  background:var(--bg-card);border:1px solid var(--border);
-  border-radius:10px;overflow:hidden;
-}
-.historico-table th{
-  text-align:left;padding:12px 14px;
-  font-family:'Inter',sans-serif;font-size:10px;font-weight:600;
-  letter-spacing:1.5px;color:var(--text-tertiary);text-transform:uppercase;
-  border-bottom:1px solid var(--border-strong);background:var(--bg-surface);
-}
-.historico-table td{
-  padding:12px 14px;border-bottom:1px solid var(--border);
-  color:var(--text-primary);font-size:14px;
-  font-family:'JetBrains Mono',monospace;
-}
-.historico-table tr:last-child td{border-bottom:none}
-.historico-table tr:hover{background:var(--bg-surface)}
-.historico-table .pos-1{color:var(--tier-s);font-weight:700}
-.historico-table .pos-last{color:var(--tier-c);font-weight:700}
-.historico-table .conq-tags{display:flex;gap:4px;flex-wrap:wrap;font-family:'Inter',sans-serif}
-.conq-tag{
-  font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;
-  letter-spacing:.5px;
-}
-.conq-tag.mvp{background:rgba(var(--tier-s-rgb),.18);color:var(--tier-s)}
-.conq-tag.podio{background:rgba(var(--tier-b-rgb),.18);color:var(--tier-b)}
-.conq-tag.mitada{background:rgba(var(--tier-a-rgb),.18);color:var(--tier-a)}
-.conq-tag.recuperacao{background:rgba(var(--tier-b-rgb),.18);color:var(--tier-b)}
-.conq-tag.massacre{background:rgba(var(--tier-a-rgb),.18);color:var(--tier-a)}
-.conq-tag.lanterna{background:rgba(var(--tier-c-rgb),.18);color:var(--tier-c)}
-.conq-tag.g2{background:var(--gold-soft);color:var(--gold);border:1px solid var(--gold-strong)}
-
-/* ═════ PORTAL — grid de jogadores ═════ */
+/* ═════ PORTAL — cards de jogadores ═════ */
 .portal-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
@@ -381,13 +554,19 @@ body{
   position:relative;z-index:2;height:100%;padding:1.5rem 1.4rem;
   display:flex;flex-direction:column;justify-content:space-between;
 }
-.portal-rank{
-  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
-  color:var(--text-tertiary);letter-spacing:2px;text-transform:uppercase;
+.portal-meta{
+  display:flex;justify-content:space-between;align-items:center;gap:12px;
 }
-.portal-rank.top1{color:var(--gold)}
+.portal-region{
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;
+  color:var(--text-tertiary);letter-spacing:1.5px;text-transform:uppercase;
+}
+.portal-completude{
+  font-family:'Cinzel',serif;font-size:18px;font-weight:700;
+  color:var(--portal-color,var(--accent));
+}
 .portal-brasao{
-  font-size:3rem;line-height:1;
+  font-size:3rem;line-height:1;margin-bottom:.5rem;
   filter:drop-shadow(0 0 20px var(--portal-color,var(--accent-strong)));
 }
 .portal-name{
@@ -395,20 +574,26 @@ body{
   color:var(--portal-color,var(--accent));letter-spacing:1px;line-height:1.1;
   text-shadow:0 2px 12px rgba(0,0,0,.6);
 }
-.portal-title{
-  font-size:13px;color:var(--text-primary);line-height:1.4;
-  margin-top:.4rem;text-shadow:0 1px 6px rgba(0,0,0,.7);font-style:italic;
+.portal-bar{
+  margin-top:.85rem;height:4px;background:rgba(255,255,255,.08);
+  border-radius:2px;overflow:hidden;
 }
-.portal-stats{
-  display:flex;align-items:baseline;gap:8px;margin-top:.85rem;
+.portal-bar-fill{
+  height:100%;background:var(--portal-color,var(--accent));
+  border-radius:2px;transition:width .8s cubic-bezier(.2,.8,.2,1);
 }
-.portal-pm{
-  font-family:'Cinzel',serif;font-size:24px;font-weight:700;
-  color:var(--portal-color,var(--accent));
+.portal-rare{
+  margin-top:.75rem;font-size:11px;
+  display:flex;flex-direction:column;gap:1px;
 }
-.portal-pm-label{
-  font-size:9px;color:var(--text-tertiary);
-  letter-spacing:1.5px;text-transform:uppercase;font-weight:600;
+.rare-label{
+  font-family:'Inter',sans-serif;font-size:9px;font-weight:700;
+  letter-spacing:1.5px;text-transform:uppercase;
+}
+.rare-name{
+  font-family:'Cinzel',serif;font-size:12px;font-weight:600;
+  color:var(--text-primary);text-shadow:0 1px 6px rgba(0,0,0,.7);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .portal-arrow{
   position:absolute;top:14px;right:14px;z-index:3;
@@ -423,50 +608,7 @@ body{
   border-color:transparent;transform:translateX(3px);
 }
 
-/* ═════ ÚLTIMA RODADA — destaques (portal) ═════ */
-.last-round{
-  display:grid;gap:12px;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  margin-bottom:1rem;
-}
-.lr-card{
-  background:var(--bg-card);border:1px solid var(--border);
-  border-radius:10px;padding:16px 18px;
-  border-left:3px solid var(--tier-d);
-}
-.lr-card.mvp{border-left-color:var(--tier-s);background:linear-gradient(135deg,rgba(var(--tier-s-rgb),.06),transparent 60%)}
-.lr-card.mitada{border-left-color:var(--tier-a);background:linear-gradient(135deg,rgba(var(--tier-a-rgb),.06),transparent 60%)}
-.lr-card.lanterna{border-left-color:var(--tier-c);background:linear-gradient(135deg,rgba(var(--tier-c-rgb),.06),transparent 60%)}
-.lr-icon{font-size:22px;margin-bottom:6px}
-.lr-label{
-  font-size:10px;font-weight:600;letter-spacing:2px;
-  color:var(--text-tertiary);text-transform:uppercase;margin-bottom:6px;
-}
-.lr-name{font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--text-primary)}
-.lr-stat{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-secondary);margin-top:4px}
-
-/* ═════ RANKING COMPACTO ═════ */
-.ranking-mini{display:grid;gap:4px;max-width:680px;margin:0 auto 1rem}
-.rank-row{
-  display:grid;grid-template-columns:36px 1fr auto auto;
-  gap:14px;padding:12px 18px;
-  background:var(--bg-card);border:1px solid var(--border);
-  border-radius:6px;align-items:center;
-  text-decoration:none;color:inherit;
-  transition:transform .15s,border-color .2s;
-}
-.rank-row:hover{transform:translateX(3px);border-color:var(--border-strong)}
-.rank-row.top1{background:var(--gold-soft);border-color:var(--gold-strong)}
-.rank-row.top2,.rank-row.top3{border-color:rgba(168,168,184,.18)}
-.rank-pos{font-family:'Cinzel',serif;font-size:17px;font-weight:700;color:var(--text-secondary);text-align:center}
-.rank-row.top1 .rank-pos{color:var(--gold)}
-.rank-name{font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--text-primary)}
-.rank-row.top1 .rank-name{color:var(--gold)}
-.rank-pm{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--text-primary)}
-.rank-row.top1 .rank-pm{color:var(--gold)}
-.rank-pm-label{font-size:9px;color:var(--text-tertiary);letter-spacing:1.5px;text-transform:uppercase;display:block;font-family:'Inter',sans-serif;text-align:right}
-
-/* ═════ EMPTY STATE ═════ */
+/* ═════ EMPTY ═════ */
 .empty{
   text-align:center;padding:3rem 1.5rem;color:var(--text-tertiary);
   background:var(--bg-card);border:1px dashed var(--border);border-radius:10px;
@@ -487,7 +629,6 @@ body{
 /* ═════ RESPONSIVE ═════ */
 @media(max-width:700px){
   .top-nav{padding:10px 12px}
-  .top-nav-inner{gap:8px}
   .top-nav-brand{font-size:12px}
   .top-nav-link{font-size:11px;padding:8px 10px;letter-spacing:1px}
   .header{padding:2rem 1rem 1.5rem}
@@ -495,17 +636,19 @@ body{
   .brasao-grande{font-size:3.2rem}
   .header-meta-item{min-width:50%;border-right:none;border-bottom:1px solid var(--border)}
   .header-meta-item:nth-child(odd){border-right:1px solid var(--border)}
-  .stats-bar{grid-template-columns:repeat(3,1fr)}
-  .stat-item{border-bottom:1px solid var(--border)}
-  .stat-val{font-size:18px}
+  .completude-block{padding:1rem 1rem}
+  .completude-val{font-size:22px}
+  .progresso-cat{grid-template-columns:80px 1fr 40px;gap:8px}
+  .progresso-stickers{gap:4px}
+  .sticker{font-size:11px}
   .page-nav{top:53px;padding:8px 12px}
   .nav-btn{flex:1;font-size:11px;padding:7px 10px}
   .content{padding:1.5rem 1rem 2.5rem}
   .creature-grid{grid-template-columns:repeat(2,1fr);gap:12px}
-  .card-name{font-size:15px}
+  .galeria-grid{grid-template-columns:repeat(2,1fr);gap:10px}
+  .card-name{font-size:14px}
+  .card-stamp{width:26px;height:26px;font-size:11px}
   .portal-grid{grid-template-columns:1fr;gap:14px}
   .portal-card{aspect-ratio:16/10}
-  .last-round{grid-template-columns:1fr}
-  .historico-table th,.historico-table td{padding:8px 10px;font-size:12px}
   .footer{padding:1.5rem 1rem}
 }

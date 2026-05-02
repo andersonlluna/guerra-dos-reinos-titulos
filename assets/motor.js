@@ -1,71 +1,43 @@
 /* ════════════════════════════════════════════════════════════════
-   GUERRA DOS REINOS — Motor JS · v2
-   Engine de cálculo + renderização (portal e página de jogador)
+   GUERRA DOS REINOS — Motor JS · v3 · Álbum Colecionável
    ════════════════════════════════════════════════════════════════ */
 
-/* ─── Configuração base de imagens ─── */
 const IMG_BASE = 'https://cdn.jsdelivr.net/gh/andersonlluna/guerra-dos-reinos-titulos@main/imagens';
-const IMG_EXT  = 'jpg';   // troque para 'png' se necessário
+const IMG_EXT  = 'jpg';
 
-/* ─── Tabelas de pontuação (step function) ─── */
-const PONTOS = {
-  mvp:         [[15,200],[10,135],[7,95],[5,65],[3,40],[2,20],[1,10]],
-  mitada:      [[10,100],[7,70],[5,45],[3,23],[2,10],[1,5]],
-  podio:       [[15,75],[10,45],[8,34],[5,20],[4,12],[3,9],[2,6],[1,3]],
-  recuperacao: [[7,96],[5,65],[3,36],[2,16],[1,8]],
-  massacre:    [[7,62],[5,40],[3,22],[2,12],[1,6]],
-  lanterna:    [[10,-100],[7,-70],[5,-45],[3,-23],[2,-10],[1,-5]],
-};
+/* ─── Engine (mantém regras de cálculo do Cartola) ─── */
 const G2_THRESHOLDS = [[110,14],[100,8],[90,4]];
 const PRIORIDADE = ['mvp','mitada','recuperacao','massacre','podio','lanterna'];
 const PRIMEIRA_RODADA_VALIDA = 6;
 
-/* ─── Tabelas de títulos progressivos (marco → nome) ─── */
 const TITULOS = {
   mvp: [
-    [15,'Portador de Glamdring'],
-    [10,'O Rei que Voltou'],
-    [7,'Rei Coroado de Gondor'],
-    [5,'Herdeiro de Isildur'],
-    [3,'Senhor dos Cavaleiros de Rohan'],
-    [1,'Cavaleiro da Companhia'],
+    [15,'Portador de Glamdring'], [10,'O Rei que Voltou'],
+    [7,'Rei Coroado de Gondor'],  [5,'Herdeiro de Isildur'],
+    [3,'Senhor dos Cavaleiros de Rohan'], [1,'Cavaleiro da Companhia'],
   ],
   mitada: [
-    [10,'Portador da Espada de Fogo'],
-    [7,'Portador da Garra Longa'],
-    [5,'Cavaleiro do Amanhecer'],
-    [3,'Empunhador de Andúril'],
-    [1,'Portador da Ferroada'],
+    [10,'Portador da Espada de Fogo'], [7,'Portador da Garra Longa'],
+    [5,'Cavaleiro do Amanhecer'], [3,'Empunhador de Andúril'], [1,'Portador da Ferroada'],
   ],
   recuperacao: [
-    [7,'Ressurgido das Trevas'],
-    [5,'Jon Snow Ressuscitado'],
-    [3,'Renascido no Fogo'],
-    [1,'Cavaleiro do Corvo Branco'],
+    [7,'Ressurgido das Trevas'], [5,'Jon Snow Ressuscitado'],
+    [3,'Renascido no Fogo'], [1,'Cavaleiro do Corvo Branco'],
   ],
   massacre: [
-    [7,'Terror de Westeros'],
-    [5,'Flagelo dos Reinos'],
-    [3,'O Senhor do Aço Negro'],
-    [1,'Conquistador de Terras'],
+    [7,'Terror de Westeros'], [5,'Flagelo dos Reinos'],
+    [3,'O Senhor do Aço Negro'], [1,'Conquistador de Terras'],
   ],
   podio: [
-    [15,'Protetor dos Sete Reinos'],
-    [10,'Mão do Rei'],
-    [8,'Lorde Comandante da Muralha'],
-    [5,'Cavaleiro da Guarda Real'],
-    [1,'Guardião da Torre Branca'],
+    [15,'Protetor dos Sete Reinos'], [10,'Mão do Rei'],
+    [8,'Lorde Comandante da Muralha'], [5,'Cavaleiro da Guarda Real'], [1,'Guardião da Torre Branca'],
   ],
   lanterna: [
-    [10,'Rei da Noite Eterna'],
-    [7,'Prisioneiro de Mordor'],
-    [5,'Servo de Sauron'],
-    [3,'Habitante das Terras Sombrias'],
-    [1,'Banido para o Exílio'],
+    [10,'Rei da Noite Eterna'], [7,'Prisioneiro de Mordor'],
+    [5,'Servo de Sauron'], [3,'Habitante das Terras Sombrias'], [1,'Banido para o Exílio'],
   ],
 };
 
-/* ─── Mapeamento (categoria, marco) → número do arquivo (01-30) ─── */
 const CARD_NUM = {
   inicial:     { 0: 1 },
   mvp:         { 1: 2,  3: 3,  5: 4,  7: 5,  10: 6,  15: 7  },
@@ -76,19 +48,17 @@ const CARD_NUM = {
   lanterna:    { 1: 26, 3: 27, 5: 28, 7: 29, 10: 30 },
 };
 
-/* ─── Prêmios Finais (31-38) ─── */
 const PREMIOS_FINAIS = [
-  { id:'imperador',      num:31, nome:'Imperador dos Sete Reinos',     desc:'1º lugar geral ao final da temporada',      grupo:'podio'    },
-  { id:'principe',       num:32, nome:'Príncipe de Pedra do Dragão',   desc:'2º lugar geral ao final da temporada',      grupo:'podio'    },
-  { id:'senhor_winter',  num:33, nome:'Senhor de Winterfell',          desc:'3º lugar geral ao final da temporada',      grupo:'podio'    },
-  { id:'esquecido',      num:34, nome:'O Esquecido pelas Crônicas',    desc:'Último lugar geral ao final da temporada',  grupo:'podio'    },
-  { id:'rei_gondor',     num:35, nome:'Rei de Gondor',                 desc:'1º geral sem nunca ter sido Lanterna',      grupo:'especial' },
-  { id:'vhagar',         num:36, nome:'Cavaleiro de Vhagar',           desc:'Campeão vindo do 6º lugar ou abaixo',       grupo:'especial' },
-  { id:'balerion',       num:37, nome:'Domador de Balerion',           desc:'Mais MVPs na temporada',                    grupo:'especial' },
-  { id:'perfeicao',      num:38, nome:'Perfeição Encarnada',           desc:'Maior média de pontos Cartola na temporada',grupo:'especial' },
+  { id:'imperador',     num:31, nome:'Imperador dos Sete Reinos',     desc:'1º lugar geral ao final da temporada',     grupo:'podio'    },
+  { id:'principe',      num:32, nome:'Príncipe de Pedra do Dragão',   desc:'2º lugar geral ao final da temporada',     grupo:'podio'    },
+  { id:'senhor_winter', num:33, nome:'Senhor de Winterfell',          desc:'3º lugar geral ao final da temporada',     grupo:'podio'    },
+  { id:'esquecido',     num:34, nome:'O Esquecido pelas Crônicas',    desc:'Último lugar geral ao final da temporada', grupo:'podio'    },
+  { id:'rei_gondor',    num:35, nome:'Rei de Gondor',                 desc:'1º geral sem nunca ter sido Lanterna',     grupo:'especial' },
+  { id:'vhagar',        num:36, nome:'Cavaleiro de Vhagar',           desc:'Campeão vindo do 6º lugar ou abaixo',      grupo:'especial' },
+  { id:'balerion',      num:37, nome:'Domador de Balerion',           desc:'Mais MVPs na temporada',                   grupo:'especial' },
+  { id:'perfeicao',     num:38, nome:'Perfeição Encarnada',           desc:'Maior média de pontos Cartola na temporada', grupo:'especial' },
 ];
 
-/* ─── Lore curto por título ─── */
 const TITULOS_LORE = {
   'Escudeiro Sem Nome': 'O ponto de partida. Sem feitos para reivindicar — mas com toda a temporada pela frente.',
   'Cavaleiro da Companhia': 'O primeiro juramento de combate. Você venceu uma rodada — agora tem nome entre os cavaleiros.',
@@ -130,9 +100,9 @@ const TITULOS_LORE = {
   'Perfeição Encarnada': 'Não a vitória estridente, mas a constância de quem nunca pontua mal. A média não mente.',
 };
 
-/* ─── Funções de cálculo ─── */
-function pontosPorContagem(cat, count){
-  for (const [c,p] of PONTOS[cat]) if (count >= c) return p;
+/* ─── Helpers ─── */
+function bonusG2(pts){
+  for (const [thr,b] of G2_THRESHOLDS) if (pts >= thr) return b;
   return 0;
 }
 function tituloPorContagem(cat, count){
@@ -146,10 +116,6 @@ function proximoMarco(cat, count){
   }
   return null;
 }
-function bonusG2(pts){
-  for (const [thr,b] of G2_THRESHOLDS) if (pts >= thr) return b;
-  return 0;
-}
 function getCardUrl(cat, marco){
   const n = CARD_NUM[cat]?.[marco];
   return n ? `${IMG_BASE}/${String(n).padStart(2,'0')}.${IMG_EXT}` : null;
@@ -157,8 +123,13 @@ function getCardUrl(cat, marco){
 function getCardUrlByNum(num){
   return `${IMG_BASE}/${String(num).padStart(2,'0')}.${IMG_EXT}`;
 }
+function escapeHtml(s){
+  if (s == null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function escapeAttr(s){ return escapeHtml(s).replace(/"/g,'&quot;'); }
 
-/* ─── Parse CSV ─── */
+/* ─── Parse CSV + processarLiga ─── */
 function parseCSV(csv){
   const linhas = csv.trim().split(/\r?\n/);
   const dados = {};
@@ -177,7 +148,6 @@ function parseCSV(csv){
   return {dados, jogadoresCsv:[...jogadoresCsv].sort()};
 }
 
-/* ─── Processa toda a liga ─── */
 function processarLiga(csv){
   const {dados, jogadoresCsv} = parseCSV(csv);
   if (jogadoresCsv.length === 0) return null;
@@ -186,12 +156,28 @@ function processarLiga(csv){
   jogadoresCsv.forEach(j => {
     estado[j] = {
       name:j, mvp:0, mitada:0, recuperacao:0, massacre:0, podio:0, lanterna:0,
-      g2:0, ptsCartola:0, pts:[], historico:[],
-      posPorRodada:[],
+      g2:0, ptsCartola:0, pts:[], posPorRodada:[],
+      figurinhas:[],   // [{cat, marco, nome, num, rodada}]
     };
   });
 
-  let acumAntes = jogadoresCsv.map(j => ({name:j, pm:0, ptsCartola:0}));
+  /* Helper: registra desbloqueios verificando se um marco foi atingido na rodada */
+  function checkDesbloqueio(j, cat, antes, depois, rodada){
+    if (!CARD_NUM[cat]) return;
+    Object.entries(CARD_NUM[cat]).forEach(([marco, num]) => {
+      const m = parseInt(marco);
+      if (antes < m && depois >= m){
+        const titEntry = TITULOS[cat]?.find(t => t[0] === m);
+        if (titEntry){
+          estado[j].figurinhas.push({
+            cat, marco:m, nome:titEntry[1], num, rodada
+          });
+        }
+      }
+    });
+  }
+
+  let acumAntes = jogadoresCsv.map(j => ({name:j, mvp:0, mitada:0, recuperacao:0, massacre:0, podio:0, lanterna:0, g2:0, ptsCartola:0}));
   const rodadas = Object.keys(dados).map(Number).sort((a,b) => a-b);
 
   for (const r of rodadas){
@@ -205,33 +191,49 @@ function processarLiga(csv){
 
     sorted.forEach((td, idx) => {
       const lord = estado[td.time];
-      const conqEntry = {rodada:r, pts:td.pts, posRodada:idx+1, totalNaRodada:sorted.length, conquistas:[], g2:0};
-      if (vale){
-        if (idx === 0){ lord.mvp++; conqEntry.conquistas.push('mvp'); }
-        if (idx === 1 || idx === 2){ lord.podio++; conqEntry.conquistas.push('podio'); }
-        if (idx === sorted.length - 1){ lord.lanterna++; conqEntry.conquistas.push('lanterna'); }
-        if (td.pts >= 80){ lord.mitada++; conqEntry.conquistas.push('mitada'); }
-        const ptsAnt = lord.pts[r-2];
-        if (ptsAnt !== undefined && (td.pts - ptsAnt) >= 50){
-          lord.recuperacao++;
-          conqEntry.conquistas.push('recuperacao');
-        }
-        const g2 = bonusG2(td.pts);
-        if (g2 > 0){ lord.g2 += g2; conqEntry.g2 = g2; }
-      }
-      lord.historico.push(conqEntry);
+      if (!vale) return;
+      const before = {mvp:lord.mvp, mitada:lord.mitada, recuperacao:lord.recuperacao, podio:lord.podio, lanterna:lord.lanterna};
+      if (idx === 0) lord.mvp++;
+      if (idx === 1 || idx === 2) lord.podio++;
+      if (idx === sorted.length - 1) lord.lanterna++;
+      if (td.pts >= 80) lord.mitada++;
+      const ptsAnt = lord.pts[r-2];
+      if (ptsAnt !== undefined && (td.pts - ptsAnt) >= 50) lord.recuperacao++;
+      const g2 = bonusG2(td.pts);
+      if (g2 > 0) lord.g2 += g2;
+
+      checkDesbloqueio(td.time, 'mvp',         before.mvp,         lord.mvp,         r);
+      checkDesbloqueio(td.time, 'mitada',      before.mitada,      lord.mitada,      r);
+      checkDesbloqueio(td.time, 'recuperacao', before.recuperacao, lord.recuperacao, r);
+      checkDesbloqueio(td.time, 'podio',       before.podio,       lord.podio,       r);
+      checkDesbloqueio(td.time, 'lanterna',    before.lanterna,    lord.lanterna,    r);
     });
 
-    const acumPos = jogadoresCsv.map(j => {
+    /* Cálculo do massacre (escalada de ranking) */
+    const calcPM = j => {
       const l = estado[j];
-      const pm = pontosPorContagem('mvp',l.mvp) + pontosPorContagem('mitada',l.mitada)
-        + pontosPorContagem('recuperacao',l.recuperacao) + pontosPorContagem('massacre',l.massacre)
-        + pontosPorContagem('podio',l.podio) + pontosPorContagem('lanterna',l.lanterna) + l.g2;
-      return {name:j, pm, ptsCartola:l.ptsCartola};
-    }).sort((a,b) => b.pm - a.pm || b.ptsCartola - a.ptsCartola);
+      const ptsCat = (cat, c) => {
+        const tab = {
+          mvp:[[15,200],[10,135],[7,95],[5,65],[3,40],[2,20],[1,10]],
+          mitada:[[10,100],[7,70],[5,45],[3,23],[2,10],[1,5]],
+          recuperacao:[[7,96],[5,65],[3,36],[2,16],[1,8]],
+          massacre:[[7,62],[5,40],[3,22],[2,12],[1,6]],
+          podio:[[15,75],[10,45],[8,34],[5,20],[4,12],[3,9],[2,6],[1,3]],
+          lanterna:[[10,-100],[7,-70],[5,-45],[3,-23],[2,-10],[1,-5]],
+        };
+        for (const [count,p] of tab[cat]) if (c >= count) return p;
+        return 0;
+      };
+      return ptsCat('mvp',l.mvp) + ptsCat('mitada',l.mitada) + ptsCat('recuperacao',l.recuperacao)
+           + ptsCat('massacre',l.massacre) + ptsCat('podio',l.podio) + ptsCat('lanterna',l.lanterna) + l.g2;
+    };
+
+    const acumPos = jogadoresCsv.map(j => ({name:j, pm:calcPM(j), ptsCartola:estado[j].ptsCartola}))
+      .sort((a,b) => b.pm - a.pm || b.ptsCartola - a.ptsCartola);
 
     if (vale){
       for (const j of jogadoresCsv){
+        const beforeMassacre = estado[j].massacre;
         const posBefore = acumAntes.findIndex(x => x.name === j);
         const posAfter = acumPos.findIndex(x => x.name === j);
         if (posAfter < posBefore){
@@ -248,212 +250,213 @@ function processarLiga(csv){
           }
           if (ok){
             estado[j].massacre++;
-            const last = estado[j].historico[estado[j].historico.length - 1];
-            if (last && last.rodada === r) last.conquistas.push('massacre');
+            checkDesbloqueio(j, 'massacre', beforeMassacre, estado[j].massacre, r);
           }
         }
       }
     }
 
-    acumAntes = jogadoresCsv.map(j => {
-      const l = estado[j];
-      const pm = pontosPorContagem('mvp',l.mvp) + pontosPorContagem('mitada',l.mitada)
-        + pontosPorContagem('recuperacao',l.recuperacao) + pontosPorContagem('massacre',l.massacre)
-        + pontosPorContagem('podio',l.podio) + pontosPorContagem('lanterna',l.lanterna) + l.g2;
-      return {name:j, pm, ptsCartola:l.ptsCartola};
-    }).sort((a,b) => b.pm - a.pm || b.ptsCartola - a.ptsCartola);
-
+    /* Atualiza acumAntes pra próxima rodada e registra posição */
+    acumAntes = jogadoresCsv.map(j => ({name:j, pm:calcPM(j), ptsCartola:estado[j].ptsCartola}))
+      .sort((a,b) => b.pm - a.pm || b.ptsCartola - a.ptsCartola);
     acumAntes.forEach((entry, posIdx) => {
       estado[entry.name].posPorRodada.push({rodada:r, pos:posIdx+1});
     });
   }
 
+  /* Estado final */
   const finais = jogadoresCsv.map(j => {
     const l = estado[j];
     const breakdown = {};
     PRIORIDADE.forEach(cat => {
       breakdown[cat] = {
         count: l[cat],
-        pontos: pontosPorContagem(cat, l[cat]),
-        titulo: tituloPorContagem(cat, l[cat]),
         proximo: proximoMarco(cat, l[cat]),
       };
     });
-    const pm = Object.values(breakdown).reduce((a,b) => a + b.pontos, 0) + l.g2;
-    const rodadasJogadas = l.historico.length;
+    const rodadasJogadas = l.pts.filter(p => p !== undefined).length;
     const mediaCartola = rodadasJogadas > 0 ? l.ptsCartola / rodadasJogadas : 0;
-    return {...l, breakdown, pm, mediaCartola, rodadasJogadas};
+    return {...l, breakdown, mediaCartola, rodadasJogadas};
   });
-  finais.sort((a,b) => b.pm - a.pm || b.ptsCartola - a.ptsCartola);
+
+  /* Posição final pra cálculos de prêmios (sem expor pro UI) */
+  const calcPM_final = j => {
+    const ptsCat = (cat, c) => {
+      const tab = {
+        mvp:[[15,200],[10,135],[7,95],[5,65],[3,40],[2,20],[1,10]],
+        mitada:[[10,100],[7,70],[5,45],[3,23],[2,10],[1,5]],
+        recuperacao:[[7,96],[5,65],[3,36],[2,16],[1,8]],
+        massacre:[[7,62],[5,40],[3,22],[2,12],[1,6]],
+        podio:[[15,75],[10,45],[8,34],[5,20],[4,12],[3,9],[2,6],[1,3]],
+        lanterna:[[10,-100],[7,-70],[5,-45],[3,-23],[2,-10],[1,-5]],
+      };
+      for (const [count,p] of tab[cat]) if (c >= count) return p;
+      return 0;
+    };
+    return ptsCat('mvp',j.mvp) + ptsCat('mitada',j.mitada) + ptsCat('recuperacao',j.recuperacao)
+         + ptsCat('massacre',j.massacre) + ptsCat('podio',j.podio) + ptsCat('lanterna',j.lanterna) + j.g2;
+  };
+  finais.forEach(f => f._pm = calcPM_final(f));
+  finais.sort((a,b) => b._pm - a._pm || b.ptsCartola - a.ptsCartola);
 
   return {
     finais, rodadas,
     ultimaRodada: rodadas[rodadas.length-1],
-    dadosUltimaRodada: dados[rodadas[rodadas.length-1]],
     estado,
   };
 }
 
-function tituloDominante(jogador){
-  for (const cat of PRIORIDADE){
-    if (jogador.breakdown[cat].titulo) return {cat, ...jogador.breakdown[cat].titulo};
-  }
-  return null;
+/* ─── Cálculo de Raridade Global ─── */
+const RARIDADE_TIERS = [
+  { min:0, max:0, label:'Mítica',   cls:'mythic',   color:'var(--rar-mythic)' },
+  { min:1, max:1, label:'Lendária', cls:'legend',   color:'var(--rar-legend)' },
+  { min:2, max:2, label:'Épica',    cls:'epic',     color:'var(--rar-epic)' },
+  { min:3, max:4, label:'Rara',     cls:'rare',     color:'var(--rar-rare)' },
+  { min:5, max:7, label:'Incomum',  cls:'uncommon', color:'var(--rar-uncommon)' },
+  { min:8, max:99,label:'Comum',    cls:'common',   color:'var(--rar-common)' },
+];
+
+function tierRaridade(count){
+  return RARIDADE_TIERS.find(t => count >= t.min && count <= t.max) || RARIDADE_TIERS[RARIDADE_TIERS.length-1];
 }
 
-/* ─── Calcula líderes atuais dos Prêmios Finais ─── */
+function calcularRaridades(state){
+  /* Pra cada figurinha (1-30 + 31-38), conta quantos jogadores conquistaram */
+  const counts = {};   // num → { donos:[name, name], count:N }
+  const donosPorFigurinha = {};
+
+  /* Inicializa todas 38 com count 0 */
+  for (let n = 1; n <= 38; n++) donosPorFigurinha[n] = [];
+
+  /* Inicial (#01): todo mundo tem */
+  state.finais.forEach(j => donosPorFigurinha[1].push(j.name));
+
+  /* Progressivos (figurinhas conquistadas via figurinhas[]) */
+  state.finais.forEach(j => {
+    j.figurinhas.forEach(fig => {
+      donosPorFigurinha[fig.num].push(j.name);
+    });
+  });
+
+  /* Prêmios Finais (31-38): líder atual "tem" preview */
+  const lideres = calcularPremiosFinais(state);
+  PREMIOS_FINAIS.forEach(p => {
+    if (lideres[p.id]) donosPorFigurinha[p.num].push(lideres[p.id]);
+  });
+
+  return donosPorFigurinha;
+}
+
 function calcularPremiosFinais(state){
   if (!state || state.finais.length === 0) return {};
   const finais = state.finais;
   const result = {};
-
   result.imperador     = finais[0]?.name || null;
   result.principe      = finais[1]?.name || null;
   result.senhor_winter = finais[2]?.name || null;
   result.esquecido     = finais[finais.length-1]?.name || null;
-
   const lider = finais[0];
   result.rei_gondor = (lider && lider.lanterna === 0) ? lider.name : null;
-
   if (lider){
     const jaCaiu = lider.posPorRodada.some(p => p.pos >= 6);
     result.vhagar = jaCaiu ? lider.name : null;
   } else result.vhagar = null;
-
   let maxMvp = -1; let topMvp = null;
   finais.forEach(j => { if (j.mvp > maxMvp){ maxMvp = j.mvp; topMvp = j.name; } });
   result.balerion = (maxMvp > 0) ? topMvp : null;
-
   let maxMedia = -1; let topMedia = null;
   finais.forEach(j => { if (j.mediaCartola > maxMedia){ maxMedia = j.mediaCartola; topMedia = j.name; } });
   result.perfeicao = topMedia;
-
   return result;
+}
+
+/* ─── Stats por jogador (álbum-foco) ─── */
+function statsAlbum(jogador){
+  const totalConquistadas = 1 + jogador.figurinhas.length;  // +1 do Inicial
+  const completude = totalConquistadas;
+  const ultimaFig = jogador.figurinhas.length > 0
+    ? jogador.figurinhas[jogador.figurinhas.length - 1]
+    : null;
+  return { completude, total: 38, ultimaFig };
+}
+
+function figurinhaMaisRara(jogador, donosPorFigurinha){
+  /* Procura a figurinha do jogador com menor número de donos (mais rara) */
+  const minhas = [{cat:'inicial', marco:0, num:1, nome:'Escudeiro Sem Nome'}, ...jogador.figurinhas];
+  let mais = null; let minDonos = 999;
+  minhas.forEach(fig => {
+    const c = donosPorFigurinha[fig.num]?.length || 0;
+    /* desempate: figurinha com maior marco (mais difícil) */
+    if (c < minDonos || (c === minDonos && fig.marco > (mais?.marco || 0))){
+      minDonos = c; mais = {...fig, donos:c};
+    }
+  });
+  return mais;
 }
 
 const CATEGORIA_LABEL = {
   inicial:'Inicial', mvp:'MVP', mitada:'Mitada', recuperacao:'Recuperação',
-  massacre:'Massacre', podio:'Pódio', lanterna:'Lanterna', premios:'Prêmios Finais'
+  massacre:'Massacre', podio:'Pódio', lanterna:'Lanterna',
 };
 const CATEGORIA_TIER = {
   inicial:'d', mvp:'s', mitada:'a', massacre:'a',
-  podio:'b', recuperacao:'b', lanterna:'c', premios:'s'
+  podio:'b', recuperacao:'b', lanterna:'c',
 };
 const CATEGORIA_ICON = {
-  inicial:'📰', mvp:'👑', mitada:'💀', recuperacao:'📈',
-  massacre:'🗡', podio:'🥇', lanterna:'🕯', premios:'⭐'
+  inicial:'📜', mvp:'👑', mitada:'💀', recuperacao:'📈',
+  massacre:'🗡', podio:'🥇', lanterna:'🕯',
 };
 
-function escapeHtml(s){
-  if (s == null) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-function escapeAttr(s){ return escapeHtml(s).replace(/"/g,'&quot;'); }
-
 /* ════════════════════════════════════════════════════════════════
-   RENDER — PORTAL (index.html)
+   PORTAL
    ════════════════════════════════════════════════════════════════ */
 
 function renderPortal(state){
-  const liga = document.getElementById('home-viva');
-  if (!state){
-    liga.innerHTML = `<div class="empty"><div class="empty-icon">⏳</div><div class="empty-title">Aguardando dados</div></div>`;
-    return;
-  }
-
-  let html = '';
-
-  if (state.ultimaRodada >= PRIMEIRA_RODADA_VALIDA){
-    const ord = [...state.dadosUltimaRodada].sort((a,b) => b.pts - a.pts);
-    const mvp = ord[0];
-    const lanterna = ord[ord.length - 1];
-    const mitadas = ord.filter(t => t.pts >= 80);
-    html += `
-      <div class="section-title"><span style="color:var(--gold)">◆</span>Rodada ${state.ultimaRodada}<span style="color:var(--gold)">◆</span></div>
-      <div class="last-round">
-        <div class="lr-card mvp">
-          <div class="lr-icon">👑</div>
-          <div class="lr-label">MVP da Rodada</div>
-          <div class="lr-name">${escapeHtml(mvp.time)}</div>
-          <div class="lr-stat">${mvp.pts.toFixed(2)} pts</div>
-        </div>
-        <div class="lr-card mitada">
-          <div class="lr-icon">💀</div>
-          <div class="lr-label">${mitadas.length} Mitada${mitadas.length === 1 ? '' : 's'}</div>
-          <div class="lr-name">${mitadas.length > 0 ? escapeHtml(mitadas.map(m => m.time).join(', ')) : '<em style="color:var(--text-tertiary)">Nenhuma</em>'}</div>
-          <div class="lr-stat">≥ 80 pts</div>
-        </div>
-        <div class="lr-card lanterna">
-          <div class="lr-icon">🕯</div>
-          <div class="lr-label">Lanterna</div>
-          <div class="lr-name">${escapeHtml(lanterna.time)}</div>
-          <div class="lr-stat">${lanterna.pts.toFixed(2)} pts</div>
-        </div>
-      </div>
-    `;
-  } else {
-    html += `<div class="empty"><div class="empty-icon">⚔</div><div class="empty-title">Conquistas valem a partir da Rodada 6</div><div>R1–R5 são fase de calibragem.</div></div>`;
-  }
-
-  html += `
-    <div class="section-title spaced"><span style="color:var(--gold)">◆</span>Classificação Geral<span style="color:var(--gold)">◆</span></div>
-    <div class="ranking-mini">
-  `;
-  state.finais.forEach((lord, i) => {
-    const slug = CSVKEY_TO_SLUG[lord.name];
-    const cls = i === 0 ? 'top1' : (i === 1 ? 'top2' : (i === 2 ? 'top3' : ''));
-    html += `
-      <a class="rank-row ${cls}" href="./jogador/${slug}.html">
-        <div class="rank-pos">${i+1}</div>
-        <div class="rank-name">${JOGADORES[slug]?.brasao || ''} ${escapeHtml(lord.name)}</div>
-        <div class="rank-pm">${lord.pm}</div>
-        <div><span class="rank-pm-label">PM</span></div>
-      </a>
-    `;
-  });
-  html += `</div>`;
-
-  liga.innerHTML = html;
+  if (!state) return;
+  const donos = calcularRaridades(state);
 
   const portal = document.getElementById('portal-grid');
-  if (portal){
-    const ranking = {};
-    state.finais.forEach((j, i) => ranking[j.name] = i + 1);
+  if (!portal) return;
 
-    let pHtml = '';
-    for (const slug of ORDEM_JOGADORES){
-      const cfg = JOGADORES[slug];
-      const lord = state.finais.find(f => f.name === cfg.csvKey);
-      if (!lord){
-        pHtml += renderPortalCardEmpty(slug, cfg);
-        continue;
-      }
-      const tEx = tituloDominante(lord);
-      const pos = ranking[lord.name];
-      const cls = pos === 1 ? 'top1' : '';
-      pHtml += `
-        <a class="portal-card" href="./jogador/${slug}.html" style="--portal-color:${cfg.color}">
-          <div class="portal-bg"></div>
-          <div class="portal-shade"></div>
-          <div class="portal-line"></div>
-          <div class="portal-arrow">→</div>
-          <div class="portal-content">
-            <div class="portal-rank ${cls}">${pos}º · ${escapeHtml(cfg.region)}</div>
-            <div>
-              <div class="portal-brasao">${cfg.brasao}</div>
-              <div class="portal-name">${escapeHtml(cfg.name)}</div>
-              <div class="portal-title">${tEx ? escapeHtml(tEx.nome) : '<em>Escudeiro Sem Nome</em>'}</div>
-              <div class="portal-stats">
-                <span class="portal-pm">${lord.pm}</span>
-                <span class="portal-pm-label">Pontos Medievais</span>
-              </div>
-            </div>
-          </div>
-        </a>
-      `;
+  let html = '';
+  for (const slug of ORDEM_JOGADORES){
+    const cfg = JOGADORES[slug];
+    const lord = state.finais.find(f => f.name === cfg.csvKey);
+    if (!lord){
+      html += renderPortalCardEmpty(slug, cfg);
+      continue;
     }
-    portal.innerHTML = pHtml;
+    const stats = statsAlbum(lord);
+    const rara = figurinhaMaisRara(lord, donos);
+    const raraTier = rara ? tierRaridade(donos[rara.num].length) : null;
+    const completudePct = Math.round((stats.completude / stats.total) * 100);
+
+    html += `
+      <a class="portal-card" href="./jogador/${slug}.html" style="--portal-color:${cfg.color}">
+        <div class="portal-bg"></div>
+        <div class="portal-shade"></div>
+        <div class="portal-line"></div>
+        <div class="portal-arrow">→</div>
+        <div class="portal-content">
+          <div class="portal-meta">
+            <span class="portal-region">${escapeHtml(cfg.region)}</span>
+            <span class="portal-completude">${stats.completude}/${stats.total}</span>
+          </div>
+          <div>
+            <div class="portal-brasao">${cfg.brasao}</div>
+            <div class="portal-name">${escapeHtml(cfg.name)}</div>
+            <div class="portal-bar"><div class="portal-bar-fill" style="width:${completudePct}%"></div></div>
+            ${rara ? `
+              <div class="portal-rare">
+                <span class="rare-label" style="color:${raraTier.color}">${raraTier.label}</span>
+                <span class="rare-name">${escapeHtml(rara.nome)}</span>
+              </div>` : `<div class="portal-rare"><span style="color:var(--text-tertiary);font-style:italic;font-size:11px">só Escudeiro Sem Nome</span></div>`}
+          </div>
+        </div>
+      </a>
+    `;
   }
+  portal.innerHTML = html;
 }
 
 function renderPortalCardEmpty(slug, cfg){
@@ -463,11 +466,14 @@ function renderPortalCardEmpty(slug, cfg){
       <div class="portal-shade"></div>
       <div class="portal-line"></div>
       <div class="portal-content">
-        <div class="portal-rank">— · ${escapeHtml(cfg.region)}</div>
+        <div class="portal-meta">
+          <span class="portal-region">${escapeHtml(cfg.region)}</span>
+          <span class="portal-completude">—</span>
+        </div>
         <div>
           <div class="portal-brasao">${cfg.brasao}</div>
           <div class="portal-name">${escapeHtml(cfg.name)}</div>
-          <div class="portal-title"><em>Sem dados ainda</em></div>
+          <div class="portal-rare"><em>Sem dados ainda</em></div>
         </div>
       </div>
     </div>
@@ -475,28 +481,25 @@ function renderPortalCardEmpty(slug, cfg){
 }
 
 /* ════════════════════════════════════════════════════════════════
-   RENDER — PÁGINA DE JOGADOR
+   PÁGINA DO JOGADOR
    ════════════════════════════════════════════════════════════════ */
 
-let _currentPlayer = null;
-let _currentState = null;
+let _ctx = null;   // { slug, cfg, lord, state, donos }
 
 function renderJogador(slug, state){
   const cfg = JOGADORES[slug];
-  if (!cfg){ console.error('Jogador desconhecido:', slug); return; }
-
+  if (!cfg) return;
   const lord = state ? state.finais.find(f => f.name === cfg.csvKey) : null;
-  _currentPlayer = {slug, cfg, lord, state};
-  _currentState = state;
+  const donos = state ? calcularRaridades(state) : {};
+  _ctx = { slug, cfg, lord, state, donos };
 
   document.documentElement.style.setProperty('--accent', cfg.color);
   document.documentElement.style.setProperty('--accent-soft', hexToRgba(cfg.color, .10));
   document.documentElement.style.setProperty('--accent-strong', hexToRgba(cfg.color, .40));
 
+  /* HEADER */
   const hd = document.getElementById('player-header');
-  const tDom = lord ? tituloDominante(lord) : null;
-  const ranking = state ? state.finais.findIndex(f => f.name === cfg.csvKey) + 1 : '—';
-
+  const stats = lord ? statsAlbum(lord) : null;
   hd.innerHTML = `
     <a href="../index.html" class="back-link">← Portal</a>
     <a href="../regulamento.html" class="back-link" style="left:auto;right:1rem">Regulamento →</a>
@@ -504,48 +507,76 @@ function renderJogador(slug, state){
     <span class="brasao-grande">${cfg.brasao}</span>
     <h1>${escapeHtml(cfg.name)}</h1>
     <div class="header-region">${escapeHtml(cfg.region)}</div>
-    <div class="header-title-current">
-      ${tDom ? '"' + escapeHtml(tDom.nome) + '"' : '<em>"Escudeiro Sem Nome"</em>'}
-    </div>
   `;
 
+  /* COMPLETUDE BAR */
   const sb = document.getElementById('player-stats');
-  if (lord){
+  if (lord && stats){
+    const pct = Math.round((stats.completude / stats.total) * 100);
     sb.innerHTML = `
-      <div class="stat-item"><span class="stat-val">${ranking}º</span><span class="stat-label">Posição</span></div>
-      <div class="stat-item"><span class="stat-val ${lord.pm < 0 ? 'neg' : (lord.pm === 0 ? 'zero' : '')}">${lord.pm}</span><span class="stat-label">Pontos Medievais</span></div>
-      <div class="stat-item"><span class="stat-val">${lord.mvp}</span><span class="stat-label">MVP</span></div>
-      <div class="stat-item"><span class="stat-val">${lord.mitada}</span><span class="stat-label">Mitada</span></div>
-      <div class="stat-item"><span class="stat-val">${lord.podio}</span><span class="stat-label">Pódio</span></div>
-      <div class="stat-item"><span class="stat-val">${lord.recuperacao}</span><span class="stat-label">Recuperação</span></div>
-      <div class="stat-item"><span class="stat-val">${lord.massacre}</span><span class="stat-label">Massacre</span></div>
-      <div class="stat-item"><span class="stat-val ${lord.lanterna > 0 ? 'neg' : 'zero'}">${lord.lanterna}</span><span class="stat-label">Lanterna</span></div>
-      <div class="stat-item"><span class="stat-val">+${lord.g2}</span><span class="stat-label">G2</span></div>
+      <div class="completude-block">
+        <div class="completude-row">
+          <span class="completude-label">Coleção</span>
+          <span class="completude-val">${stats.completude}<span style="opacity:.5">/${stats.total}</span></span>
+          <span class="completude-pct">${pct}%</span>
+        </div>
+        <div class="completude-bar"><div class="completude-bar-fill" style="width:${pct}%"></div></div>
+        ${stats.ultimaFig ? `
+          <div class="completude-last">
+            <span class="completude-last-label">Última figurinha:</span>
+            <span class="completude-last-name">${escapeHtml(stats.ultimaFig.nome)}</span>
+            <span class="completude-last-meta">na R${stats.ultimaFig.rodada}</span>
+          </div>` : `
+          <div class="completude-last">
+            <span style="color:var(--text-tertiary);font-style:italic">Apenas o Escudeiro Sem Nome até agora</span>
+          </div>`}
+      </div>
+      ${renderProgressoPorCategoria(lord)}
     `;
   } else {
-    sb.innerHTML = `<div class="stat-item" style="grid-column:1/-1;border-right:none"><span class="stat-val">—</span><span class="stat-label">Sem dados</span></div>`;
+    sb.innerHTML = `<div class="completude-block"><div class="completude-row"><span style="color:var(--text-tertiary)">Sem dados</span></div></div>`;
   }
 
-  renderConquistas(slug, lord, cfg);
-  renderHistorico(slug, lord);
-  renderLore(slug, cfg, lord);
+  renderAlbum(slug, lord, cfg);
+  renderGaleria(slug, lord, cfg, state, donos);
   renderPremios(slug, lord, cfg, state);
+  renderLore(slug, cfg, lord);
 }
 
-function renderConquistas(slug, lord, cfg){
-  const root = document.getElementById('s-conquistas');
-  let html = `<div class="section-intro">Os títulos forjados em sua jornada. Cards desbloqueados brilham — os bloqueados ainda esperam o feito necessário.</div>`;
+function renderProgressoPorCategoria(lord){
+  let html = `<div class="progresso-cats">`;
+  for (const cat of PRIORIDADE){
+    const total = TITULOS[cat].length;
+    const tab = [...TITULOS[cat]].sort((a,b) => a[0] - b[0]);
+    const conquistadas = tab.filter(([m]) => lord[cat] >= m).length;
+    const stickers = tab.map(([m]) =>
+      lord[cat] >= m ? `<span class="sticker filled" style="color:var(--tier-${CATEGORIA_TIER[cat]})">${CATEGORIA_ICON[cat]}</span>`
+                     : `<span class="sticker empty">○</span>`
+    ).join('');
+    html += `
+      <div class="progresso-cat">
+        <span class="progresso-label">${CATEGORIA_LABEL[cat]}</span>
+        <span class="progresso-stickers">${stickers}</span>
+        <span class="progresso-count">${conquistadas}/${total}</span>
+      </div>
+    `;
+  }
+  html += `</div>`;
+  return html;
+}
+
+function renderAlbum(slug, lord, cfg){
+  const root = document.getElementById('s-album');
+  let html = `<div class="section-intro">O álbum dos seus feitos. Figurinhas conquistadas brilham — as bloqueadas são silhuetas, esperando o feito necessário.</div>`;
 
   /* INICIAL */
-  const tierD = `var(--tier-d)`;
-  const escudeiroDesc = lord && tituloDominante(lord) ? 'Você já passou desse ponto — mas ele é o início de toda jornada.' : 'Seu título atual. Nenhuma conquista desbloqueada ainda.';
   html += `
-    <div class="group-title" style="--gt-color:${tierD}">
-      <span class="group-title-icon">📰</span>
-      Tier Inicial · ponto de partida
+    <div class="group-title" style="--gt-color:var(--tier-d)">
+      <span class="group-title-icon">📜</span>
+      Tier Inicial
     </div>
     <div class="creature-grid">
-      ${renderCard('inicial', 0, 'Escudeiro Sem Nome', true, 0, escudeiroDesc)}
+      ${renderFigurinha('inicial', 0, 'Escudeiro Sem Nome', true, 0)}
     </div>
   `;
 
@@ -553,37 +584,37 @@ function renderConquistas(slug, lord, cfg){
     const tier = CATEGORIA_TIER[cat];
     const tierColor = `var(--tier-${tier})`;
     const counts = lord ? lord[cat] : 0;
-    const titArr = TITULOS[cat];
+    const conquistadas = TITULOS[cat].filter(([m]) => counts >= m).length;
+    const total = TITULOS[cat].length;
 
     html += `
       <div class="group-title" style="--gt-color:${tierColor}">
         <span class="group-title-icon">${CATEGORIA_ICON[cat]}</span>
-        ${CATEGORIA_LABEL[cat]} · ${counts} ocorrência${counts === 1 ? '' : 's'}${lord ? ` · ${pontosPorContagem(cat, counts) >= 0 ? '+' : ''}${pontosPorContagem(cat, counts)} pts` : ''}
+        ${CATEGORIA_LABEL[cat]} · ${conquistadas}/${total}
       </div>
       <div class="creature-grid">
     `;
-
-    const ordenados = [...titArr].sort((a,b) => a[0] - b[0]);
-    for (const [marco, nome] of ordenados){
-      const desbloqueado = counts >= marco;
-      html += renderCard(cat, marco, nome, desbloqueado, counts);
+    const ord = [...TITULOS[cat]].sort((a,b) => a[0] - b[0]);
+    for (const [marco, nome] of ord){
+      const desbloq = counts >= marco;
+      html += renderFigurinha(cat, marco, nome, desbloq, counts);
     }
     html += `</div>`;
   }
-
   root.innerHTML = html;
 }
 
-function renderCard(cat, marco, nome, desbloqueado, counts, customMsg){
+function renderFigurinha(cat, marco, nome, desbloqueado, counts){
   const tier = CATEGORIA_TIER[cat];
   const tierColor = `var(--tier-${tier})`;
   const url = getCardUrl(cat, marco);
-  const ptsTitulo = cat === 'inicial' ? 0 : ((PONTOS[cat]?.find(p => p[0] === marco) || [marco, 0])[1]);
-  const ptsLabel = cat === 'inicial' ? 'sem pontos' : (ptsTitulo > 0 ? `+${ptsTitulo} pts` : (ptsTitulo < 0 ? `${ptsTitulo} pts` : '0 pts'));
   const num = CARD_NUM[cat]?.[marco] || '';
+  const numLabel = num ? `#${String(num).padStart(2,'0')}` : '';
+  const faltam = cat === 'inicial' ? 0 : (marco - counts);
+  const faltamLabel = faltam > 0 ? `Falta ${faltam} ${CATEGORIA_LABEL[cat]}${faltam === 1 ? '' : 's'}` : '';
 
   return `
-    <div class="creature-card ${desbloqueado ? '' : 'locked'}" style="--card-color:${tierColor}" onclick="openCardModal('${cat}', ${marco})">
+    <div class="creature-card ${desbloqueado ? 'unlocked' : 'silhouette'}" style="--card-color:${tierColor}" onclick="openFigurinhaModal('${cat}', ${marco})">
       <div class="card-image-wrap">
         ${url ? `
           <img class="card-image" src="${url}" alt="${escapeAttr(nome)}" loading="lazy"
@@ -591,15 +622,83 @@ function renderCard(cat, marco, nome, desbloqueado, counts, customMsg){
           <div class="card-image-fallback" style="display:none">${CATEGORIA_ICON[cat]}</div>
         ` : `<div class="card-image-fallback">${CATEGORIA_ICON[cat]}</div>`}
         <div class="card-image-shade"></div>
-        <div class="card-tier-line"></div>
-        <div class="card-tier-badge">${cat === 'inicial' ? '·' : marco + '×'}</div>
-        ${desbloqueado
-          ? `<div class="card-unlocked-tag">✦ Conquistado</div>`
-          : `<div class="card-locked-tag">🔒 Bloqueado</div>`}
+        ${desbloqueado ? '<div class="card-tier-line"></div>' : ''}
+        ${desbloqueado ? `<div class="card-num-badge">${numLabel}</div>` : ''}
+        ${desbloqueado ? `<div class="card-stamp">✦</div>` : `<div class="card-locked-overlay"><span>🔒</span></div>`}
         <div class="card-info">
-          <div class="card-marco">${num ? '#' + String(num).padStart(2,'0') + ' · ' : ''}${cat === 'inicial' ? 'INICIAL' : cat.toUpperCase() + ' · ' + marco + '×'}</div>
-          <div class="card-name">${escapeHtml(nome)}</div>
-          <div class="card-pts">${ptsLabel}</div>
+          ${!desbloqueado ? `<div class="card-falta">${escapeHtml(faltamLabel)}</div>` : ''}
+          <div class="card-name ${desbloqueado ? '' : 'silhouette-name'}">${escapeHtml(nome)}</div>
+          ${desbloqueado ? `<div class="card-marco">${cat === 'inicial' ? 'Inicial' : marco + '× ' + CATEGORIA_LABEL[cat]}</div>` : ''}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderGaleria(slug, lord, cfg, state, donos){
+  const root = document.getElementById('s-galeria');
+  if (!root || !state) return;
+
+  let html = `
+    <div class="section-intro">
+      As 38 figurinhas da liga. Ao lado de cada uma, sua <strong>raridade</strong> baseada em quantos invocadores já conquistaram.
+      As que <strong>você possui</strong> ficam destacadas.
+    </div>
+    <div class="raridade-legenda">
+      ${RARIDADE_TIERS.map(t => `<span class="rar-pill rar-${t.cls}">${t.label}</span>`).join('')}
+    </div>
+  `;
+
+  /* Agrupa: Inicial + Progressivas + Prêmios */
+  /* Renderiza em 1 grid grande agrupado por categoria */
+  const ordemNum = [];
+  ordemNum.push({num:1, cat:'inicial', marco:0, nome:'Escudeiro Sem Nome'});
+  for (const cat of ['mvp','podio','mitada','massacre','recuperacao','lanterna']){
+    const ord = [...TITULOS[cat]].sort((a,b) => a[0] - b[0]);
+    for (const [marco, nome] of ord){
+      const num = CARD_NUM[cat]?.[marco];
+      if (num) ordemNum.push({num, cat, marco, nome});
+    }
+  }
+  /* Prêmios finais */
+  PREMIOS_FINAIS.forEach(p => ordemNum.push({num:p.num, cat:'premio', marco:0, nome:p.nome, premio:p}));
+
+  html += `<div class="galeria-grid">`;
+  for (const fig of ordemNum){
+    html += renderGaleriaCard(fig, donos, cfg);
+  }
+  html += `</div>`;
+
+  root.innerHTML = html;
+}
+
+function renderGaleriaCard(fig, donos, jogadorCfg){
+  const lista = donos[fig.num] || [];
+  const tier = tierRaridade(lista.length);
+  const url = getCardUrlByNum(fig.num);
+  const ehMeu = lista.includes(jogadorCfg.csvKey);
+  const ehPremio = fig.cat === 'premio';
+
+  const numLabel = `#${String(fig.num).padStart(2,'0')}`;
+  let subtitulo;
+  if (fig.cat === 'inicial') subtitulo = 'Inicial';
+  else if (ehPremio) subtitulo = 'Prêmio Final · R38';
+  else subtitulo = `${fig.marco}× ${CATEGORIA_LABEL[fig.cat]}`;
+
+  return `
+    <div class="galeria-card ${ehMeu ? 'meu' : ''} rar-${tier.cls}" onclick="openGaleriaModal(${fig.num})">
+      <div class="card-image-wrap">
+        <img class="card-image" src="${url}" alt="${escapeAttr(fig.nome)}" loading="lazy"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="card-image-fallback" style="display:none">⭐</div>
+        <div class="card-image-shade"></div>
+        <div class="rar-line" style="background:${tier.color}"></div>
+        <div class="rar-tag" style="color:${tier.color};border-color:${tier.color}">${tier.label}</div>
+        ${ehMeu ? `<div class="card-stamp small">✦</div>` : ''}
+        <div class="card-info">
+          <div class="card-marco" style="color:${tier.color}">${numLabel} · ${escapeHtml(subtitulo)}</div>
+          <div class="card-name">${escapeHtml(fig.nome)}</div>
+          <div class="rar-count">${lista.length}/9 invocadores</div>
         </div>
       </div>
     </div>
@@ -614,15 +713,14 @@ function renderPremios(slug, lord, cfg, state){
 
   let html = `
     <div class="section-intro">
-      Os <strong>8 prêmios finais</strong> são concedidos apenas ao final da temporada (Rodada 38).
+      Os <strong>8 prêmios finais</strong> são revelados apenas na <strong>Rodada 38</strong>.
       Abaixo, os líderes atuais — sujeitos a mudança até a última rodada.
     </div>
   `;
-
   html += `
     <div class="group-title" style="--gt-color:${tierS}">
       <span class="group-title-icon">🏛</span>
-      Pódio Final · classificação geral
+      Pódio Final
     </div>
     <div class="creature-grid">
   `;
@@ -630,11 +728,10 @@ function renderPremios(slug, lord, cfg, state){
     html += renderPremioCard(p, lideres, cfg.csvKey);
   }
   html += `</div>`;
-
   html += `
     <div class="group-title" style="--gt-color:${tierS}">
       <span class="group-title-icon">⭐</span>
-      Especiais · feitos extraordinários
+      Especiais
     </div>
     <div class="creature-grid">
   `;
@@ -642,7 +739,6 @@ function renderPremios(slug, lord, cfg, state){
     html += renderPremioCard(p, lideres, cfg.csvKey);
   }
   html += `</div>`;
-
   root.innerHTML = html;
 }
 
@@ -650,61 +746,31 @@ function renderPremioCard(premio, lideres, jogadorAtual){
   const liderAtual = lideres[premio.id];
   const ehLider = liderAtual === jogadorAtual;
   const url = getCardUrlByNum(premio.num);
-  const tierS = `var(--tier-s)`;
 
   return `
-    <div class="creature-card locked" style="--card-color:${tierS};opacity:1;filter:none" onclick="openPremioModal('${premio.id}')">
+    <div class="creature-card silhouette premio" style="--card-color:var(--tier-s)" onclick="openPremioModal('${premio.id}')">
       <div class="card-image-wrap">
         <img class="card-image" src="${url}" alt="${escapeAttr(premio.nome)}" loading="lazy"
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div class="card-image-fallback" style="display:none">⭐</div>
         <div class="card-image-shade"></div>
         <div class="card-tier-line"></div>
-        <div class="card-tier-badge">R38</div>
+        <div class="card-num-badge">#${String(premio.num).padStart(2,'0')}</div>
         ${ehLider
-          ? `<div class="card-unlocked-tag" style="background:var(--tier-s);color:var(--bg)">✦ Você lidera</div>`
-          : (liderAtual
-              ? `<div class="card-locked-tag" style="background:rgba(232,200,122,.15);color:var(--tier-s);border:1px solid rgba(232,200,122,.3)">↳ ${escapeHtml(liderAtual)}</div>`
-              : `<div class="card-locked-tag">— sem favorito</div>`)}
+          ? `<div class="card-stamp gold">★</div><div class="lidera-tag">VOCÊ LIDERA</div>`
+          : (liderAtual ? `<div class="lider-tag">↳ ${escapeHtml(liderAtual)}</div>` : `<div class="lider-tag empty">— sem favorito</div>`)}
         <div class="card-info">
-          <div class="card-marco">#${String(premio.num).padStart(2,'0')} · PRÊMIO FINAL</div>
+          <div class="card-marco" style="color:var(--tier-s)">PRÊMIO FINAL · R38</div>
           <div class="card-name">${escapeHtml(premio.nome)}</div>
-          <div class="card-pts">${escapeHtml(premio.desc)}</div>
+          <div class="card-falta">${escapeHtml(premio.desc)}</div>
         </div>
       </div>
     </div>
   `;
 }
 
-function renderHistorico(slug, lord){
-  const root = document.getElementById('s-historico');
-  if (!lord || lord.historico.length === 0){
-    root.innerHTML = `<div class="empty"><div class="empty-icon">⏳</div><div class="empty-title">Sem histórico</div></div>`;
-    return;
-  }
-
-  let html = `<div class="section-intro">Cada rodada vivida. R1–R5 não geram pontos (calibragem); a partir da R6, o jogo começa.</div>`;
-  html += `<table class="historico-table"><thead><tr><th>R</th><th>Pts</th><th>Posição</th><th>Conquistas</th></tr></thead><tbody>`;
-  for (const h of lord.historico){
-    const posCls = h.posRodada === 1 ? 'pos-1' : (h.posRodada === h.totalNaRodada ? 'pos-last' : '');
-    const tags = h.conquistas.map(c => `<span class="conq-tag ${c}">${CATEGORIA_LABEL[c]}</span>`).join('');
-    const g2Tag = h.g2 > 0 ? `<span class="conq-tag g2">+${h.g2} G2</span>` : '';
-    html += `
-      <tr>
-        <td>${h.rodada}</td>
-        <td>${h.pts.toFixed(2)}</td>
-        <td class="${posCls}">${h.posRodada}º / ${h.totalNaRodada}</td>
-        <td><div class="conq-tags">${tags}${g2Tag || (tags === '' ? '<span style="color:var(--text-tertiary);font-size:11px">—</span>' : '')}</div></td>
-      </tr>
-    `;
-  }
-  html += `</tbody></table>`;
-  root.innerHTML = html;
-}
-
 function renderLore(slug, cfg, lord){
   const root = document.getElementById('s-lore');
-  const tDom = lord ? tituloDominante(lord) : null;
   let html = `
     <div class="section-intro">${escapeHtml(cfg.lore || '')}</div>
     <div style="text-align:center;padding:2rem 0">
@@ -712,83 +778,125 @@ function renderLore(slug, cfg, lord){
       <div style="font-family:'Cinzel',serif;color:var(--accent);font-size:14px;letter-spacing:3px;margin-top:.5rem;text-transform:uppercase">${escapeHtml(cfg.region)}</div>
     </div>
   `;
-
-  let url, nome, lore, label;
-  if (tDom){
-    url = getCardUrl(tDom.cat, tDom.marco);
-    nome = tDom.nome;
-    lore = TITULOS_LORE[nome] || '';
-    label = 'Título do Momento';
-  } else {
-    url = getCardUrlByNum(1);
-    nome = 'Escudeiro Sem Nome';
-    lore = TITULOS_LORE[nome];
-    label = 'Título Atual';
-  }
-  html += `
-    <div style="max-width:340px;margin:2rem auto 0;background:var(--bg-card);border:1px solid var(--border-strong);border-top:3px solid var(--accent);border-radius:12px;overflow:hidden">
-      ${url ? `<img src="${url}" alt="" style="width:100%;aspect-ratio:3/4;object-fit:cover;background:var(--bg-surface)" onerror="this.outerHTML='<div style=&quot;width:100%;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;font-size:5rem;color:var(--accent);background:var(--bg-surface)&quot;>${tDom ? CATEGORIA_ICON[tDom.cat] : '📰'}</div>'">` : ''}
-      <div style="padding:1.25rem;text-align:center">
-        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-tertiary);letter-spacing:1.5px;text-transform:uppercase">${label}</div>
-        <div style="font-family:'Cinzel',serif;font-size:1.3rem;font-weight:700;color:var(--accent);margin-top:.4rem">${escapeHtml(nome)}</div>
-        <div style="font-size:13px;color:var(--text-secondary);margin-top:.75rem;font-style:italic">${escapeHtml(lore)}</div>
+  if (lord && lord.figurinhas.length > 0){
+    const ult = lord.figurinhas[lord.figurinhas.length - 1];
+    const url = getCardUrlByNum(ult.num);
+    const lore = TITULOS_LORE[ult.nome] || '';
+    html += `
+      <div style="max-width:340px;margin:2rem auto 0;background:var(--bg-card);border:1px solid var(--border-strong);border-top:3px solid var(--accent);border-radius:12px;overflow:hidden">
+        <img src="${url}" alt="" style="width:100%;aspect-ratio:3/4;object-fit:cover;background:var(--bg-surface)" onerror="this.outerHTML='<div style=&quot;width:100%;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;font-size:5rem;color:var(--accent);background:var(--bg-surface)&quot;>${CATEGORIA_ICON[ult.cat]}</div>'">
+        <div style="padding:1.25rem;text-align:center">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-tertiary);letter-spacing:1.5px;text-transform:uppercase">Última Figurinha · R${ult.rodada}</div>
+          <div style="font-family:'Cinzel',serif;font-size:1.3rem;font-weight:700;color:var(--accent);margin-top:.4rem">${escapeHtml(ult.nome)}</div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-top:.75rem;font-style:italic">${escapeHtml(lore)}</div>
+        </div>
       </div>
-    </div>
-  `;
+    `;
+  }
   root.innerHTML = html;
 }
 
 /* ─── Modais ─── */
-function openCardModal(cat, marco){
-  const tier = CATEGORIA_TIER[cat];
-  const tierColor = `var(--tier-${tier})`;
-  let nome, url, pts, lore;
-
+function openFigurinhaModal(cat, marco){
+  let nome, url, lore, num, subtitulo;
   if (cat === 'inicial'){
     nome = 'Escudeiro Sem Nome';
     url = getCardUrlByNum(1);
-    pts = 0;
-    lore = TITULOS_LORE[nome] || '';
+    num = 1;
+    subtitulo = 'Tier Inicial';
+    lore = TITULOS_LORE[nome];
   } else {
-    const titArr = TITULOS[cat];
-    const titEntry = titArr.find(t => t[0] === marco);
-    if (!titEntry) return;
-    nome = titEntry[1];
+    const t = TITULOS[cat]?.find(t => t[0] === marco);
+    if (!t) return;
+    nome = t[1];
     url = getCardUrl(cat, marco);
-    pts = (PONTOS[cat].find(p => p[0] === marco) || [marco, 0])[1];
+    num = CARD_NUM[cat]?.[marco];
+    subtitulo = `${marco}× ${CATEGORIA_LABEL[cat]}`;
     lore = TITULOS_LORE[nome] || '';
   }
-
-  const lord = _currentPlayer?.lord;
+  const lord = _ctx?.lord;
   const counts = (lord && cat !== 'inicial') ? lord[cat] : 0;
-  const desbloqueado = (cat === 'inicial') ? true : counts >= marco;
+  const desbloqueado = (cat === 'inicial') || counts >= marco;
+  const faltam = (cat === 'inicial' || desbloqueado) ? 0 : (marco - counts);
+
+  const tierColor = `var(--tier-${CATEGORIA_TIER[cat]})`;
+  const status = desbloqueado
+    ? `<span style="color:${tierColor}">✦ Conquistada</span>${cat !== 'inicial' && lord && lord.figurinhas.find(f => f.cat === cat && f.marco === marco) ? ` · R${lord.figurinhas.find(f => f.cat === cat && f.marco === marco).rodada}` : ''}`
+    : `🔒 Bloqueada — falta${faltam === 1 ? '' : 'm'} <strong>${faltam} ${CATEGORIA_LABEL[cat]}${faltam === 1 ? '' : 's'}</strong>`;
 
   const modal = document.getElementById('modal');
-  const modalBody = document.getElementById('modal-body');
   modal.style.setProperty('--card-color', tierColor);
-
-  let statusHtml;
-  if (cat === 'inicial'){
-    statusHtml = `<span style="color:${tierColor}">✦ Sempre desbloqueado</span> — todo invocador começa aqui`;
-  } else if (desbloqueado){
-    statusHtml = `<span style="color:${tierColor}">✦ Conquistado</span> — você tem ${counts} ocorrência${counts === 1 ? '' : 's'} de ${CATEGORIA_LABEL[cat]}`;
-  } else {
-    statusHtml = `🔒 Bloqueado — faltam ${marco - counts} ${CATEGORIA_LABEL[cat]}${(marco - counts) === 1 ? '' : 's'} para desbloquear`;
-  }
-
-  modalBody.innerHTML = `
-    ${url
-      ? `<img class="modal-img" src="${url}" alt="" onerror="this.outerHTML='<div class=&quot;card-image-fallback&quot; style=&quot;position:relative;height:auto;aspect-ratio:3/4;font-size:5rem&quot;>${CATEGORIA_ICON[cat]}</div>'">`
-      : `<div class="card-image-fallback" style="position:relative;height:auto;aspect-ratio:3/4;font-size:5rem">${CATEGORIA_ICON[cat]}</div>`}
+  document.getElementById('modal-body').innerHTML = `
+    ${url ? `<img class="modal-img ${desbloqueado ? '' : 'silhouette-img'}" src="${url}" alt=""
+         onerror="this.outerHTML='<div class=&quot;card-image-fallback&quot; style=&quot;position:relative;height:auto;aspect-ratio:3/4;font-size:5rem&quot;>${CATEGORIA_ICON[cat]}</div>'">` : ''}
     <div class="modal-body">
       <div class="modal-tier">
         <span style="color:${tierColor};font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase">
-          ${CATEGORIA_LABEL[cat]}${cat === 'inicial' ? '' : ' · ' + marco + '× · ' + (pts > 0 ? '+' : '') + pts + ' pts'}
+          #${String(num).padStart(2,'0')} · ${escapeHtml(subtitulo)}
         </span>
       </div>
       <div class="modal-name" style="color:${tierColor}">${escapeHtml(nome)}</div>
-      <div class="modal-marco">${statusHtml}</div>
+      <div class="modal-marco">${status}</div>
       <div class="modal-desc">${escapeHtml(lore)}</div>
+    </div>
+  `;
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function openGaleriaModal(num){
+  /* Encontra o que é #num */
+  let info = null;
+  if (num === 1){
+    info = {cat:'inicial', marco:0, nome:'Escudeiro Sem Nome', subtitulo:'Tier Inicial', lore:TITULOS_LORE['Escudeiro Sem Nome']};
+  } else if (num >= 31){
+    const p = PREMIOS_FINAIS.find(x => x.num === num);
+    if (!p) return;
+    info = {cat:'premio', marco:0, nome:p.nome, subtitulo:`Prêmio Final · ${p.desc}`, lore:TITULOS_LORE[p.nome]};
+  } else {
+    /* Procura nos progressivos */
+    for (const cat of Object.keys(CARD_NUM)){
+      if (cat === 'inicial') continue;
+      const entry = Object.entries(CARD_NUM[cat]).find(([m, n]) => n === num);
+      if (entry){
+        const marco = parseInt(entry[0]);
+        const nome = TITULOS[cat]?.find(t => t[0] === marco)?.[1];
+        info = {cat, marco, nome, subtitulo:`${marco}× ${CATEGORIA_LABEL[cat]}`, lore:TITULOS_LORE[nome] || ''};
+        break;
+      }
+    }
+  }
+  if (!info) return;
+
+  const donos = _ctx?.donos[num] || [];
+  const tier = tierRaridade(donos.length);
+  const url = getCardUrlByNum(num);
+
+  const modal = document.getElementById('modal');
+  modal.style.setProperty('--card-color', tier.color);
+
+  const donosHtml = donos.length > 0
+    ? `<div class="modal-donos">
+         ${donos.map(d => `<span class="modal-dono ${d === _ctx?.cfg?.csvKey ? 'me' : ''}">${escapeHtml(d)}</span>`).join('')}
+       </div>`
+    : `<div style="color:var(--text-tertiary);font-style:italic">Nenhum invocador conquistou ainda</div>`;
+
+  document.getElementById('modal-body').innerHTML = `
+    <img class="modal-img" src="${url}" alt=""
+         onerror="this.outerHTML='<div class=&quot;card-image-fallback&quot; style=&quot;position:relative;height:auto;aspect-ratio:3/4;font-size:5rem&quot;>⭐</div>'">
+    <div class="modal-body">
+      <div class="modal-tier">
+        <span style="color:${tier.color};font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase">
+          #${String(num).padStart(2,'0')} · ${escapeHtml(info.subtitulo)}
+        </span>
+      </div>
+      <div class="modal-name" style="color:${tier.color}">${escapeHtml(info.nome)}</div>
+      <div class="modal-marco">
+        <span class="rar-pill rar-${tier.cls}" style="margin-right:8px">${tier.label}</span>
+        ${donos.length}/9 invocadores
+      </div>
+      ${donosHtml}
+      <div class="modal-desc" style="margin-top:1rem">${escapeHtml(info.lore || '')}</div>
     </div>
   `;
   modal.classList.add('open');
@@ -799,35 +907,29 @@ function openPremioModal(id){
   const premio = PREMIOS_FINAIS.find(p => p.id === id);
   if (!premio) return;
   const tierColor = `var(--tier-s)`;
-  const lideres = calcularPremiosFinais(_currentState);
+  const lideres = calcularPremiosFinais(_ctx?.state);
   const lider = lideres[premio.id];
-  const ehLider = lider === _currentPlayer?.cfg?.csvKey;
+  const ehLider = lider === _ctx?.cfg?.csvKey;
   const lore = TITULOS_LORE[premio.nome] || '';
 
   const modal = document.getElementById('modal');
-  const modalBody = document.getElementById('modal-body');
   modal.style.setProperty('--card-color', tierColor);
 
-  let statusHtml;
-  if (ehLider){
-    statusHtml = `<span style="color:${tierColor}">✦ Você lidera atualmente</span> — defenda até a Rodada 38`;
-  } else if (lider){
-    statusHtml = `Líder atual: <strong style="color:${tierColor}">${escapeHtml(lider)}</strong>`;
-  } else {
-    statusHtml = `Sem favorito definido ainda`;
-  }
+  const status = ehLider
+    ? `<span style="color:${tierColor}">★ Você lidera atualmente</span> — defenda até R38`
+    : (lider ? `Líder atual: <strong style="color:${tierColor}">${escapeHtml(lider)}</strong>` : 'Sem favorito definido');
 
-  modalBody.innerHTML = `
+  document.getElementById('modal-body').innerHTML = `
     <img class="modal-img" src="${getCardUrlByNum(premio.num)}" alt=""
          onerror="this.outerHTML='<div class=&quot;card-image-fallback&quot; style=&quot;position:relative;height:auto;aspect-ratio:3/4;font-size:5rem&quot;>⭐</div>'">
     <div class="modal-body">
       <div class="modal-tier">
         <span style="color:${tierColor};font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase">
-          Prêmio Final · #${String(premio.num).padStart(2,'0')} · Rodada 38
+          #${String(premio.num).padStart(2,'0')} · Prêmio Final · R38
         </span>
       </div>
       <div class="modal-name" style="color:${tierColor}">${escapeHtml(premio.nome)}</div>
-      <div class="modal-marco">${statusHtml}</div>
+      <div class="modal-marco">${status}</div>
       <div class="modal-desc"><strong>Critério:</strong> ${escapeHtml(premio.desc)}<br><br><em>${escapeHtml(lore)}</em></div>
     </div>
   `;
@@ -835,10 +937,7 @@ function openPremioModal(id){
   document.body.style.overflow = 'hidden';
 }
 
-function closeCardModal(e){
-  if (e && e.target !== document.getElementById('modal')) return;
-  closeCardModalDirect();
-}
+function closeCardModal(e){ if (e && e.target !== document.getElementById('modal')) return; closeCardModalDirect(); }
 function closeCardModalDirect(){
   const m = document.getElementById('modal');
   if (m) m.classList.remove('open');
@@ -863,27 +962,25 @@ function hexToRgba(hex, alpha){
 }
 
 async function carregarCSV(){
-  try {
-    const res = await fetch('../dados.csv?t=' + Date.now());
-    if (res.ok) return await res.text();
-  } catch (e) {}
-  try {
-    const res = await fetch('./dados.csv?t=' + Date.now());
-    if (res.ok) return await res.text();
-  } catch (e) {}
+  for (const p of ['../dados.csv', './dados.csv']){
+    try { const r = await fetch(p + '?t=' + Date.now()); if (r.ok) return await r.text(); } catch {}
+  }
   return null;
 }
 
 async function initPortal(){
   const csv = await carregarCSV();
   if (!csv){
-    document.getElementById('home-viva').innerHTML = `<div class="empty"><div class="empty-icon">⚠</div><div class="empty-title">Não foi possível carregar dados.csv</div><div>Sirva os arquivos via HTTP. Ex.: <code>python3 -m http.server</code></div></div>`;
+    document.getElementById('portal-grid').innerHTML = `<div class="empty"><div class="empty-icon">⚠</div><div class="empty-title">Não foi possível carregar dados.csv</div><div>Sirva os arquivos via HTTP. Ex.: <code>python3 -m http.server</code></div></div>`;
     return;
   }
   const state = processarLiga(csv);
   if (state){
     document.getElementById('hm-rodadas').textContent = state.rodadas.length;
     document.getElementById('hm-jogadores').textContent = state.finais.length;
+    /* Estatística leve no header: total de figurinhas distribuídas */
+    const totalFigurinhas = state.finais.reduce((acc, j) => acc + j.figurinhas.length + 1, 0);
+    document.getElementById('hm-conquistadas').textContent = totalFigurinhas;
   }
   renderPortal(state);
 }
