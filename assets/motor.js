@@ -526,8 +526,6 @@ function renderGaleriaCard(fig, donos){
              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div class="card-image-fallback" style="display:none">⭐</div>
         <div class="card-image-shade"></div>
-        <div class="rar-line" style="background:${rar.cor}"></div>
-        <div class="rar-tag rar-${rar.cls}">${rar.label}</div>
         <div class="card-info">
           <div class="card-marco">${numLabel} · ${escapeHtml(subtitulo)}</div>
           <div class="card-name">${escapeHtml(fig.nome)}</div>
@@ -801,9 +799,10 @@ function renderFigurinha(cat, marco, nome, desbloqueado, counts){
   const faltam = cat === 'inicial' ? 0 : (marco - counts);
   const faltamLabel = faltam > 0 ? `Falta ${faltam} ${CATEGORIA_LABEL[cat]}${faltam === 1 ? '' : 's'}` : '';
   const rar = num ? getRaridade(num) : null;
+  const rarCls = rar ? `rar-${rar.cls}` : '';
 
   return `
-    <div class="creature-card ${desbloqueado ? 'unlocked' : 'silhouette'}" style="--card-color:${tierColor}" onclick="openFigurinhaModal('${cat}', ${marco})">
+    <div class="creature-card ${desbloqueado ? 'unlocked' : 'silhouette'} ${rarCls}" style="--card-color:${tierColor}" onclick="openFigurinhaModal('${cat}', ${marco})">
       <div class="card-image-wrap">
         ${url ? `
           <img class="card-image" src="${url}" alt="${escapeAttr(nome)}" loading="lazy"
@@ -811,8 +810,6 @@ function renderFigurinha(cat, marco, nome, desbloqueado, counts){
           <div class="card-image-fallback" style="display:none">${CATEGORIA_ICON[cat]}</div>
         ` : `<div class="card-image-fallback">${CATEGORIA_ICON[cat]}</div>`}
         <div class="card-image-shade"></div>
-        ${desbloqueado ? '<div class="card-tier-line"></div>' : ''}
-        ${desbloqueado && rar ? `<div class="rar-tag rar-${rar.cls}" style="position:absolute;top:10px;right:10px">${rar.label}</div>` : ''}
         ${desbloqueado ? `<div class="card-stamp">✦</div>` : `<div class="card-locked-overlay"><span>🔒</span></div>`}
         <div class="card-info">
           <div class="card-marco">${numLabel}${cat === 'inicial' ? '' : ' · ' + marco + '× ' + CATEGORIA_LABEL[cat]}</div>

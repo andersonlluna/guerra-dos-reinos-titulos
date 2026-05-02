@@ -75,6 +75,28 @@ body{
   background:radial-gradient(ellipse at 50% 0%,var(--accent-soft) 0%,transparent 65%);
   position:relative;
 }
+/* Header reduzido nas páginas internas (jogador/regulamento) */
+.header.header-internal{
+  padding:1.5rem 1rem 1.25rem;
+}
+.header.header-internal .header-ornament{margin-bottom:.5rem}
+.header.header-internal .header-ornament::before,
+.header.header-internal .header-ornament::after{width:50px}
+.header.header-internal .brasao-grande{
+  font-size:2.6rem;margin-bottom:.25rem;
+  filter:drop-shadow(0 0 18px var(--accent-strong));
+}
+.header.header-internal h1{
+  font-size:clamp(1.5rem,4vw,2rem);
+  letter-spacing:2.5px;
+}
+.header.header-internal .header-region{
+  font-size:12px;margin-top:.4rem;
+}
+.header.header-internal .back-link{
+  top:.65rem;padding:8px 11px;font-size:11px;letter-spacing:.8px;
+  min-height:38px;
+}
 .back-link{
   position:absolute;top:1rem;left:1rem;
   font-family:'Inter',sans-serif;font-size:13px;font-weight:600;
@@ -344,33 +366,55 @@ body{
 }
 .creature-card{
   position:relative;background:var(--bg-card);
-  border:1px solid var(--border);border-radius:12px;overflow:hidden;
+  border:2px solid var(--border);border-radius:12px;overflow:hidden;
   cursor:pointer;
   transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .25s;
   aspect-ratio:3/4;display:block;
   min-height:44px;
 }
 
-.creature-card.unlocked{
-  border-color:var(--card-color,var(--accent-strong));
-  box-shadow:0 4px 18px rgba(0,0,0,.4);
-}
+/* CONQUISTADA — borda colorida pela RARIDADE, glow sutil */
+.creature-card.unlocked.rar-comum    { border-color:var(--rar-comum);    box-shadow:0 4px 14px rgba(0,0,0,.4) }
+.creature-card.unlocked.rar-incomum  { border-color:var(--rar-incomum);  box-shadow:0 4px 14px rgba(0,0,0,.4),0 0 12px rgba(110,192,112,.15) }
+.creature-card.unlocked.rar-raro     { border-color:var(--rar-raro);     box-shadow:0 4px 14px rgba(0,0,0,.4),0 0 14px rgba(92,158,232,.20) }
+.creature-card.unlocked.rar-epico    { border-color:var(--rar-epico);    box-shadow:0 4px 16px rgba(0,0,0,.45),0 0 18px rgba(184,120,232,.28) }
+.creature-card.unlocked.rar-lendario { border-color:var(--rar-lendario); box-shadow:0 6px 18px rgba(0,0,0,.45),0 0 22px rgba(240,140,64,.35) }
+.creature-card.unlocked.rar-mitico   { border-color:var(--rar-mitico);   box-shadow:0 6px 22px rgba(0,0,0,.5),0 0 28px rgba(248,216,96,.45) }
+
 .creature-card.unlocked:hover,.creature-card.unlocked:active{
   transform:translateY(-6px) scale(1.02);
-  box-shadow:0 18px 38px rgba(0,0,0,.55),0 0 24px var(--card-color,var(--accent-strong));
+  filter:brightness(1.08);
 }
+.creature-card.unlocked.rar-mitico:hover{box-shadow:0 12px 32px rgba(0,0,0,.55),0 0 40px rgba(248,216,96,.65)}
+.creature-card.unlocked.rar-lendario:hover{box-shadow:0 12px 32px rgba(0,0,0,.55),0 0 32px rgba(240,140,64,.55)}
 
+/* SILHUETA (bloqueada) — limpa, sem decoração */
 .creature-card.silhouette{
-  border-style:dashed;border-color:var(--border);
+  border:2px dashed var(--border);
+  opacity:.85;
 }
 .creature-card.silhouette .card-image{
   filter:grayscale(1) brightness(.32) contrast(1.15);opacity:.55;
 }
 .creature-card.silhouette:hover,.creature-card.silhouette:active{
   transform:translateY(-3px);
-  border-style:solid;border-color:var(--card-color,var(--border-strong));
+  border-style:solid;
+  opacity:1;
 }
+.creature-card.silhouette.rar-mitico:hover   { border-color:var(--rar-mitico) }
+.creature-card.silhouette.rar-lendario:hover { border-color:var(--rar-lendario) }
+.creature-card.silhouette.rar-epico:hover    { border-color:var(--rar-epico) }
+.creature-card.silhouette.rar-raro:hover     { border-color:var(--rar-raro) }
+.creature-card.silhouette.rar-incomum:hover  { border-color:var(--rar-incomum) }
+.creature-card.silhouette.rar-comum:hover    { border-color:var(--rar-comum) }
 .creature-card.silhouette:hover .card-image{filter:grayscale(.7) brightness(.45) contrast(1.1);opacity:.7}
+
+/* HIERARQUIA POR RARIDADE — Mítica e Lendária ocupam 2 colunas */
+.creature-card.rar-mitico,
+.creature-card.rar-lendario{
+  grid-column:span 2;
+  aspect-ratio:5/3;
+}
 
 .card-image-wrap{position:relative;width:100%;height:100%;overflow:hidden}
 .card-image{
@@ -392,17 +436,14 @@ body{
 .creature-card.silhouette .card-image-shade{
   background:linear-gradient(180deg,rgba(15,17,21,.55) 0%,rgba(15,17,21,.78) 60%,rgba(15,17,21,.98) 100%);
 }
-.card-tier-line{
-  position:absolute;top:0;left:0;right:0;height:3px;
-  background:var(--card-color,var(--accent));z-index:2;
-}
+.card-tier-line{display:none}
 .card-stamp{
-  position:absolute;top:10px;left:10px;z-index:3;
-  width:36px;height:36px;border-radius:50%;
+  position:absolute;top:10px;right:10px;z-index:3;
+  width:32px;height:32px;border-radius:50%;
   background:var(--card-color,var(--accent));color:var(--bg);
   display:flex;align-items:center;justify-content:center;
-  font-size:16px;font-weight:700;
-  box-shadow:0 0 16px var(--card-color,var(--accent));
+  font-size:14px;font-weight:700;
+  box-shadow:0 0 12px var(--card-color,var(--accent));
 }
 .card-locked-overlay{
   position:absolute;top:50%;left:50%;z-index:3;
@@ -494,27 +535,33 @@ button.rar-pill{
   transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s;
   aspect-ratio:3/4;
 }
-.galeria-card.rar-comum    { border-color:var(--rar-comum) }
-.galeria-card.rar-incomum  { border-color:var(--rar-incomum) }
-.galeria-card.rar-raro     { border-color:var(--rar-raro) }
-.galeria-card.rar-epico    { border-color:var(--rar-epico) }
-.galeria-card.rar-lendario { border-color:var(--rar-lendario) }
-.galeria-card.rar-mitico   { border-color:var(--rar-mitico) }
+.galeria-card.rar-comum    { border-color:var(--rar-comum);    box-shadow:0 4px 14px rgba(0,0,0,.35) }
+.galeria-card.rar-incomum  { border-color:var(--rar-incomum);  box-shadow:0 4px 14px rgba(0,0,0,.35),0 0 12px rgba(110,192,112,.15) }
+.galeria-card.rar-raro     { border-color:var(--rar-raro);     box-shadow:0 4px 16px rgba(0,0,0,.4),0 0 14px rgba(92,158,232,.20) }
+.galeria-card.rar-epico    { border-color:var(--rar-epico);    box-shadow:0 4px 18px rgba(0,0,0,.45),0 0 18px rgba(184,120,232,.28) }
+.galeria-card.rar-lendario { border-color:var(--rar-lendario); box-shadow:0 6px 20px rgba(0,0,0,.45),0 0 22px rgba(240,140,64,.35) }
+.galeria-card.rar-mitico   { border-color:var(--rar-mitico);   box-shadow:0 6px 24px rgba(0,0,0,.5),0 0 28px rgba(248,216,96,.45) }
+
+/* Hierarquia: Mítica/Lendária ocupam 2 colunas */
+.galeria-card.rar-mitico,
+.galeria-card.rar-lendario{
+  grid-column:span 2;
+  aspect-ratio:5/3;
+}
+
 .galeria-card:hover,.galeria-card:active{
   transform:translateY(-5px) scale(1.02);
-  box-shadow:0 14px 32px rgba(0,0,0,.55);
+  filter:brightness(1.08);
 }
+.galeria-card.rar-mitico:hover{box-shadow:0 12px 32px rgba(0,0,0,.55),0 0 40px rgba(248,216,96,.65)}
+.galeria-card.rar-lendario:hover{box-shadow:0 12px 32px rgba(0,0,0,.55),0 0 32px rgba(240,140,64,.55)}
+
 .galeria-card.ninguem .card-image{
   filter:grayscale(1) brightness(.4);opacity:.5;
 }
 .galeria-card.ninguem:hover .card-image{filter:grayscale(.5) brightness(.6);opacity:.7}
 
-.rar-line{
-  position:absolute;top:0;left:0;right:0;height:4px;z-index:2;
-}
-.galeria-card .rar-tag{
-  position:absolute;top:12px;right:12px;z-index:3;
-}
+.rar-line{display:none}
 .card-donos{
   margin-top:6px;
 }
@@ -741,6 +788,13 @@ button.rar-pill{
   /* Grid de figurinhas: 2 colunas no mobile com tamanho legível */
   .creature-grid{grid-template-columns:repeat(2,1fr);gap:12px}
   .galeria-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+  /* Mítica/Lendária ocupam linha inteira no mobile com aspect-ratio adequado */
+  .creature-card.rar-mitico,
+  .creature-card.rar-lendario,
+  .galeria-card.rar-mitico,
+  .galeria-card.rar-lendario{
+    aspect-ratio:16/10;
+  }
   .card-name{font-size:14px}
   .card-marco{font-size:10px}
   .card-falta{font-size:11px}
