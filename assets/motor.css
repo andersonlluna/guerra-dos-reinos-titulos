@@ -1,0 +1,511 @@
+/* ════════════════════════════════════════════════════════════════
+   GUERRA DOS REINOS — Motor CSS · v1
+   Estilos compartilhados: portal, página de jogador, regulamento
+   ════════════════════════════════════════════════════════════════ */
+
+:root {
+  --bg:#0f1115; --bg-card:#1a1d26; --bg-surface:#232633; --bg-elevated:#2c2f3d;
+  --text-primary:#e4e4ec; --text-secondary:#a8a8b8; --text-tertiary:#6a6a7a;
+  --border:rgba(255,255,255,.08); --border-strong:rgba(255,255,255,.20);
+  --gold:#e8c87a; --gold-soft:rgba(232,200,122,.10); --gold-strong:rgba(232,200,122,.40);
+
+  /* Tiers heráldicos */
+  --tier-s:#e8c87a; --tier-s-rgb:232,200,122;
+  --tier-a:#d96060; --tier-a-rgb:217,96,96;
+  --tier-b:#6a9cd0; --tier-b-rgb:106,156,208;
+  --tier-c:#a878d0; --tier-c-rgb:168,120,208;
+  --tier-d:#6a6a7a; --tier-d-rgb:106,106,122;
+
+  /* Override por página */
+  --accent: var(--gold);
+  --accent-soft: var(--gold-soft);
+  --accent-strong: var(--gold-strong);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);color:var(--text-primary);
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:16px;line-height:1.65;min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  display:flex;flex-direction:column;
+}
+::selection{background:var(--accent);color:var(--bg)}
+
+/* ═════ TOP NAV ═════ */
+.top-nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(15,17,21,.96);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--border);
+  padding:12px 1rem;
+}
+.top-nav-inner{
+  max-width:1100px;margin:0 auto;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;flex-wrap:wrap;
+}
+.top-nav-brand{
+  font-family:'Cinzel',serif;font-size:14px;font-weight:700;
+  color:var(--gold);letter-spacing:2px;text-transform:uppercase;
+  display:inline-flex;align-items:center;gap:8px;text-decoration:none;
+}
+.top-nav-links{display:flex;gap:6px}
+.top-nav-link{
+  font-family:'Inter',sans-serif;font-size:12px;font-weight:600;
+  letter-spacing:1.2px;color:var(--text-secondary);text-decoration:none;
+  border:1px solid var(--border-strong);
+  padding:9px 14px;border-radius:6px;text-transform:uppercase;
+  transition:all .2s;display:inline-flex;align-items:center;gap:6px;
+}
+.top-nav-link:hover{color:var(--gold);border-color:var(--gold)}
+.top-nav-link.primary{color:var(--gold);border-color:var(--gold);background:var(--gold-soft)}
+
+/* ═════ HEADER ═════ */
+.header{
+  text-align:center;padding:3rem 1.5rem 2.5rem;
+  border-bottom:1px solid var(--border);
+  background:radial-gradient(ellipse at 50% 0%,var(--accent-soft) 0%,transparent 65%);
+  position:relative;
+}
+.back-link{
+  position:absolute;top:1rem;left:1rem;
+  font-family:'Inter',sans-serif;font-size:11px;font-weight:600;
+  letter-spacing:1.5px;color:var(--text-tertiary);text-decoration:none;
+  border:1px solid var(--border);padding:8px 12px;border-radius:6px;
+  text-transform:uppercase;transition:all .2s;
+}
+.back-link:hover{color:var(--accent);border-color:var(--accent-strong);background:var(--accent-soft)}
+.header-ornament{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:1rem;color:var(--accent);opacity:.55}
+.header-ornament::before,.header-ornament::after{content:'';width:80px;height:1px;background:linear-gradient(90deg,transparent,currentColor,transparent)}
+.brasao-grande{
+  font-size:4rem;line-height:1;display:block;margin-bottom:.5rem;
+  filter:drop-shadow(0 0 32px var(--accent-strong));
+}
+.header h1{
+  font-family:'Cinzel',serif;
+  font-size:clamp(2rem,6vw,3.4rem);
+  font-weight:700;color:var(--accent);
+  letter-spacing:4px;line-height:1;text-transform:uppercase;
+}
+.header-region{
+  font-size:13px;color:var(--text-secondary);margin-top:.75rem;
+  font-family:'JetBrains Mono',monospace;letter-spacing:2px;text-transform:uppercase;
+}
+.header-title-current{
+  font-family:'Cinzel',serif;font-size:1.1rem;font-weight:500;
+  color:var(--text-primary);margin-top:1rem;font-style:italic;
+}
+.header-sub{
+  font-size:16px;color:var(--text-secondary);
+  margin-top:.75rem;max-width:600px;margin-left:auto;margin-right:auto;
+}
+.header-meta{
+  display:flex;justify-content:center;margin-top:1.75rem;
+  border:1px solid var(--border);border-radius:10px;
+  background:var(--bg-card);max-width:680px;
+  margin-left:auto;margin-right:auto;overflow:hidden;
+}
+.header-meta-item{
+  flex:1;min-width:120px;padding:12px 14px;
+  font-size:10px;font-weight:600;letter-spacing:1.5px;
+  color:var(--text-tertiary);text-transform:uppercase;
+  border-right:1px solid var(--border);text-align:center;
+}
+.header-meta-item:last-child{border-right:none}
+.header-meta-item span{
+  display:block;font-family:'Cinzel',serif;
+  font-size:18px;font-weight:600;color:var(--accent);margin-top:4px;
+}
+
+/* ═════ STATS BAR (página de jogador) ═════ */
+.stats-bar{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
+  gap:0;background:var(--bg-card);border-bottom:1px solid var(--border);
+}
+.stat-item{
+  padding:14px 16px;text-align:center;
+  border-right:1px solid var(--border);
+}
+.stat-item:last-child{border-right:none}
+.stat-val{
+  display:block;font-family:'Cinzel',serif;font-size:22px;font-weight:700;
+  color:var(--accent);
+}
+.stat-val.neg{color:var(--tier-c)}
+.stat-val.zero{color:var(--text-tertiary)}
+.stat-label{
+  display:block;font-size:9px;font-weight:600;letter-spacing:1.5px;
+  color:var(--text-tertiary);text-transform:uppercase;margin-top:4px;
+}
+
+/* ═════ NAV INTERNO (abas dentro da página) ═════ */
+.page-nav{
+  position:sticky;top:53px;z-index:50;
+  background:rgba(15,17,21,.96);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border);
+  padding:10px 1rem;
+}
+.page-nav-inner{
+  max-width:1100px;margin:0 auto;
+  display:flex;gap:6px;justify-content:center;flex-wrap:wrap;
+}
+.nav-btn{
+  font-family:'Inter',sans-serif;font-size:12px;font-weight:600;
+  letter-spacing:1.2px;color:var(--text-secondary);
+  background:transparent;border:1px solid var(--border-strong);
+  padding:8px 16px;border-radius:6px;cursor:pointer;text-transform:uppercase;
+  transition:all .2s;
+}
+.nav-btn:hover{color:var(--accent);border-color:var(--accent-strong)}
+.nav-btn.active{color:var(--accent);border-color:var(--accent);background:var(--accent-soft)}
+
+/* ═════ CONTENT ═════ */
+.content{max-width:1100px;margin:0 auto;width:100%;padding:2rem 1.5rem 4rem;flex:1}
+.section{display:none}
+.section.active{display:block}
+
+.section-title{
+  display:flex;align-items:center;justify-content:center;gap:16px;
+  font-family:'Cinzel',serif;font-size:13px;font-weight:700;
+  letter-spacing:4px;color:var(--text-primary);
+  margin:0 0 1.5rem;text-transform:uppercase;
+}
+.section-title::before,.section-title::after{
+  content:'';flex:1;max-width:200px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.35;
+}
+.section-title.spaced{margin-top:3rem}
+.section-intro{
+  text-align:center;color:var(--text-secondary);font-size:15px;
+  max-width:680px;margin:0 auto 2rem;
+}
+
+/* ═════ GROUP TITLE (subgrupos por categoria) ═════ */
+.group-title{
+  font-family:'Cinzel',serif;font-size:11px;font-weight:600;
+  letter-spacing:3px;color:var(--gt-color,var(--accent));text-transform:uppercase;
+  margin:2rem 0 1rem;display:flex;align-items:center;gap:12px;
+}
+.group-title::before,.group-title::after{
+  content:'';flex:1;height:1px;background:var(--gt-color,var(--accent));opacity:.25;
+}
+.group-title-icon{font-size:10px}
+
+/* ═════ CREATURE CARDS (cards de conquistas) ═════ */
+.creature-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:18px;margin-bottom:1.5rem;
+}
+.creature-card{
+  position:relative;background:var(--bg-card);
+  border:1px solid var(--border);border-radius:12px;overflow:hidden;
+  cursor:pointer;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .25s;
+  aspect-ratio:3/4;display:block;
+}
+.creature-card:hover{
+  transform:translateY(-6px);
+  border-color:var(--card-color,var(--accent-strong));
+  box-shadow:0 16px 36px rgba(0,0,0,.55);
+}
+.creature-card.locked{opacity:.32;cursor:default;filter:grayscale(.7)}
+.creature-card.locked:hover{transform:none;box-shadow:none}
+
+.card-image-wrap{
+  position:relative;width:100%;height:100%;overflow:hidden;
+}
+.card-image{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center top;
+  transition:transform .55s,opacity .35s;opacity:.92;
+}
+.creature-card:hover .card-image{transform:scale(1.06);opacity:1}
+.card-image-fallback{
+  position:absolute;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--card-color,var(--bg-surface)) 0%,var(--bg-card) 100%);
+  font-size:3.5rem;opacity:.5;
+}
+.card-image-shade{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(15,17,21,.18) 0%,rgba(15,17,21,.50) 50%,rgba(15,17,21,.96) 100%);
+}
+.card-tier-line{
+  position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--card-color,var(--accent));z-index:2;
+}
+.card-tier-badge{
+  position:absolute;top:10px;right:10px;z-index:2;
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+  padding:4px 9px;border-radius:4px;
+  background:rgba(15,17,21,.85);backdrop-filter:blur(6px);
+  color:var(--card-color,var(--accent));
+  border:1px solid var(--card-color,var(--accent));letter-spacing:1px;
+}
+.card-info{
+  position:absolute;bottom:0;left:0;right:0;padding:14px 16px;z-index:2;
+}
+.card-marco{
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;
+  color:var(--card-color,var(--accent));letter-spacing:2px;text-transform:uppercase;
+  margin-bottom:5px;
+}
+.card-name{
+  font-family:'Cinzel',serif;font-size:18px;font-weight:600;
+  color:var(--text-primary);line-height:1.15;
+  text-shadow:0 1px 8px rgba(0,0,0,.85);
+}
+.card-pts{
+  font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;
+  color:var(--text-secondary);margin-top:4px;letter-spacing:.5px;
+}
+.card-locked-tag{
+  position:absolute;top:10px;left:10px;z-index:2;
+  font-size:10px;font-weight:600;letter-spacing:1.5px;
+  padding:3px 8px;border-radius:4px;
+  background:rgba(15,17,21,.75);color:var(--text-tertiary);text-transform:uppercase;
+}
+.card-unlocked-tag{
+  position:absolute;top:10px;left:10px;z-index:2;
+  font-size:10px;font-weight:700;letter-spacing:1.5px;
+  padding:3px 8px;border-radius:4px;
+  background:var(--card-color,var(--accent));color:var(--bg);text-transform:uppercase;
+}
+
+/* ═════ MODAL ═════ */
+.modal-overlay{
+  position:fixed;inset:0;z-index:1000;
+  background:rgba(0,0,0,.85);backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;padding:1rem;
+  opacity:0;pointer-events:none;transition:opacity .25s;
+}
+.modal-overlay.open{opacity:1;pointer-events:auto}
+.modal{
+  background:var(--bg-card);border:1px solid var(--border-strong);
+  border-radius:16px;max-width:560px;width:100%;max-height:90vh;
+  overflow-y:auto;position:relative;
+  border-top:3px solid var(--card-color,var(--accent));
+}
+.modal-close{
+  position:absolute;top:14px;right:14px;z-index:5;
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(15,17,21,.7);border:1px solid var(--border);
+  color:var(--text-secondary);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:18px;
+}
+.modal-close:hover{color:var(--accent);border-color:var(--accent-strong)}
+.modal-img{
+  width:100%;aspect-ratio:3/4;object-fit:cover;
+  background:var(--bg-surface);
+}
+.modal-body{padding:1.5rem 1.75rem 1.75rem}
+.modal-tier{margin-bottom:.5rem}
+.modal-name{
+  font-family:'Cinzel',serif;font-size:1.5rem;font-weight:700;
+  color:var(--card-color,var(--accent));line-height:1.2;
+}
+.modal-marco{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--text-tertiary);letter-spacing:1.5px;
+  text-transform:uppercase;margin-top:6px;margin-bottom:1rem;
+}
+.modal-desc{font-size:14px;color:var(--text-secondary);line-height:1.7}
+
+/* ═════ HISTÓRICO (timeline) ═════ */
+.historico-table{
+  width:100%;border-collapse:collapse;
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:10px;overflow:hidden;
+}
+.historico-table th{
+  text-align:left;padding:12px 14px;
+  font-family:'Inter',sans-serif;font-size:10px;font-weight:600;
+  letter-spacing:1.5px;color:var(--text-tertiary);text-transform:uppercase;
+  border-bottom:1px solid var(--border-strong);background:var(--bg-surface);
+}
+.historico-table td{
+  padding:12px 14px;border-bottom:1px solid var(--border);
+  color:var(--text-primary);font-size:14px;
+  font-family:'JetBrains Mono',monospace;
+}
+.historico-table tr:last-child td{border-bottom:none}
+.historico-table tr:hover{background:var(--bg-surface)}
+.historico-table .pos-1{color:var(--tier-s);font-weight:700}
+.historico-table .pos-last{color:var(--tier-c);font-weight:700}
+.historico-table .conq-tags{display:flex;gap:4px;flex-wrap:wrap;font-family:'Inter',sans-serif}
+.conq-tag{
+  font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;
+  letter-spacing:.5px;
+}
+.conq-tag.mvp{background:rgba(var(--tier-s-rgb),.18);color:var(--tier-s)}
+.conq-tag.podio{background:rgba(var(--tier-b-rgb),.18);color:var(--tier-b)}
+.conq-tag.mitada{background:rgba(var(--tier-a-rgb),.18);color:var(--tier-a)}
+.conq-tag.recuperacao{background:rgba(var(--tier-b-rgb),.18);color:var(--tier-b)}
+.conq-tag.massacre{background:rgba(var(--tier-a-rgb),.18);color:var(--tier-a)}
+.conq-tag.lanterna{background:rgba(var(--tier-c-rgb),.18);color:var(--tier-c)}
+.conq-tag.g2{background:var(--gold-soft);color:var(--gold);border:1px solid var(--gold-strong)}
+
+/* ═════ PORTAL — grid de jogadores ═════ */
+.portal-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:18px;
+}
+.portal-card{
+  position:relative;background:var(--bg-card);
+  border:1px solid var(--border);border-radius:14px;overflow:hidden;
+  text-decoration:none;color:inherit;cursor:pointer;
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .25s;
+  aspect-ratio:4/5;display:block;
+}
+.portal-card:hover{
+  transform:translateY(-6px);
+  border-color:var(--portal-color,var(--accent-strong));
+  box-shadow:0 16px 36px rgba(0,0,0,.55),0 0 0 1px var(--accent-soft);
+}
+.portal-bg{
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,var(--portal-color,var(--bg-surface)) 0%,var(--bg-card) 70%);
+  opacity:.18;
+}
+.portal-shade{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(15,17,21,.4) 0%,rgba(15,17,21,.85) 100%);
+}
+.portal-line{
+  position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--portal-color,var(--accent));opacity:.85;z-index:2;
+}
+.portal-content{
+  position:relative;z-index:2;height:100%;padding:1.5rem 1.4rem;
+  display:flex;flex-direction:column;justify-content:space-between;
+}
+.portal-rank{
+  font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;
+  color:var(--text-tertiary);letter-spacing:2px;text-transform:uppercase;
+}
+.portal-rank.top1{color:var(--gold)}
+.portal-brasao{
+  font-size:3rem;line-height:1;
+  filter:drop-shadow(0 0 20px var(--portal-color,var(--accent-strong)));
+}
+.portal-name{
+  font-family:'Cinzel',serif;font-size:22px;font-weight:700;
+  color:var(--portal-color,var(--accent));letter-spacing:1px;line-height:1.1;
+  text-shadow:0 2px 12px rgba(0,0,0,.6);
+}
+.portal-title{
+  font-size:13px;color:var(--text-primary);line-height:1.4;
+  margin-top:.4rem;text-shadow:0 1px 6px rgba(0,0,0,.7);font-style:italic;
+}
+.portal-stats{
+  display:flex;align-items:baseline;gap:8px;margin-top:.85rem;
+}
+.portal-pm{
+  font-family:'Cinzel',serif;font-size:24px;font-weight:700;
+  color:var(--portal-color,var(--accent));
+}
+.portal-pm-label{
+  font-size:9px;color:var(--text-tertiary);
+  letter-spacing:1.5px;text-transform:uppercase;font-weight:600;
+}
+.portal-arrow{
+  position:absolute;top:14px;right:14px;z-index:3;
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(15,17,21,.7);border:1px solid var(--border);
+  color:var(--text-secondary);
+  display:flex;align-items:center;justify-content:center;font-size:14px;
+  backdrop-filter:blur(6px);transition:all .25s;
+}
+.portal-card:hover .portal-arrow{
+  background:var(--portal-color,var(--accent));color:var(--bg);
+  border-color:transparent;transform:translateX(3px);
+}
+
+/* ═════ ÚLTIMA RODADA — destaques (portal) ═════ */
+.last-round{
+  display:grid;gap:12px;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  margin-bottom:1rem;
+}
+.lr-card{
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:10px;padding:16px 18px;
+  border-left:3px solid var(--tier-d);
+}
+.lr-card.mvp{border-left-color:var(--tier-s);background:linear-gradient(135deg,rgba(var(--tier-s-rgb),.06),transparent 60%)}
+.lr-card.mitada{border-left-color:var(--tier-a);background:linear-gradient(135deg,rgba(var(--tier-a-rgb),.06),transparent 60%)}
+.lr-card.lanterna{border-left-color:var(--tier-c);background:linear-gradient(135deg,rgba(var(--tier-c-rgb),.06),transparent 60%)}
+.lr-icon{font-size:22px;margin-bottom:6px}
+.lr-label{
+  font-size:10px;font-weight:600;letter-spacing:2px;
+  color:var(--text-tertiary);text-transform:uppercase;margin-bottom:6px;
+}
+.lr-name{font-family:'Cinzel',serif;font-size:18px;font-weight:600;color:var(--text-primary)}
+.lr-stat{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-secondary);margin-top:4px}
+
+/* ═════ RANKING COMPACTO ═════ */
+.ranking-mini{display:grid;gap:4px;max-width:680px;margin:0 auto 1rem}
+.rank-row{
+  display:grid;grid-template-columns:36px 1fr auto auto;
+  gap:14px;padding:12px 18px;
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:6px;align-items:center;
+  text-decoration:none;color:inherit;
+  transition:transform .15s,border-color .2s;
+}
+.rank-row:hover{transform:translateX(3px);border-color:var(--border-strong)}
+.rank-row.top1{background:var(--gold-soft);border-color:var(--gold-strong)}
+.rank-row.top2,.rank-row.top3{border-color:rgba(168,168,184,.18)}
+.rank-pos{font-family:'Cinzel',serif;font-size:17px;font-weight:700;color:var(--text-secondary);text-align:center}
+.rank-row.top1 .rank-pos{color:var(--gold)}
+.rank-name{font-family:'Cinzel',serif;font-size:16px;font-weight:600;color:var(--text-primary)}
+.rank-row.top1 .rank-name{color:var(--gold)}
+.rank-pm{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;color:var(--text-primary)}
+.rank-row.top1 .rank-pm{color:var(--gold)}
+.rank-pm-label{font-size:9px;color:var(--text-tertiary);letter-spacing:1.5px;text-transform:uppercase;display:block;font-family:'Inter',sans-serif;text-align:right}
+
+/* ═════ EMPTY STATE ═════ */
+.empty{
+  text-align:center;padding:3rem 1.5rem;color:var(--text-tertiary);
+  background:var(--bg-card);border:1px dashed var(--border);border-radius:10px;
+}
+.empty-icon{font-size:3rem;margin-bottom:.75rem;opacity:.5}
+.empty-title{font-family:'Cinzel',serif;font-size:1.2rem;color:var(--text-secondary);margin-bottom:.5rem}
+
+/* ═════ FOOTER ═════ */
+.footer{
+  border-top:1px solid var(--border);
+  padding:2rem 1.5rem;text-align:center;background:var(--bg-card);
+}
+.footer-credit{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  color:var(--text-tertiary);letter-spacing:2px;text-transform:uppercase;
+}
+
+/* ═════ RESPONSIVE ═════ */
+@media(max-width:700px){
+  .top-nav{padding:10px 12px}
+  .top-nav-inner{gap:8px}
+  .top-nav-brand{font-size:12px}
+  .top-nav-link{font-size:11px;padding:8px 10px;letter-spacing:1px}
+  .header{padding:2rem 1rem 1.5rem}
+  .header h1{font-size:1.9rem;letter-spacing:2px}
+  .brasao-grande{font-size:3.2rem}
+  .header-meta-item{min-width:50%;border-right:none;border-bottom:1px solid var(--border)}
+  .header-meta-item:nth-child(odd){border-right:1px solid var(--border)}
+  .stats-bar{grid-template-columns:repeat(3,1fr)}
+  .stat-item{border-bottom:1px solid var(--border)}
+  .stat-val{font-size:18px}
+  .page-nav{top:53px;padding:8px 12px}
+  .nav-btn{flex:1;font-size:11px;padding:7px 10px}
+  .content{padding:1.5rem 1rem 2.5rem}
+  .creature-grid{grid-template-columns:repeat(2,1fr);gap:12px}
+  .card-name{font-size:15px}
+  .portal-grid{grid-template-columns:1fr;gap:14px}
+  .portal-card{aspect-ratio:16/10}
+  .last-round{grid-template-columns:1fr}
+  .historico-table th,.historico-table td{padding:8px 10px;font-size:12px}
+  .footer{padding:1.5rem 1rem}
+}
