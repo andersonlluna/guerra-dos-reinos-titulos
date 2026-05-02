@@ -1,11 +1,10 @@
 /* ════════════════════════════════════════════════════════════════
-   GUERRA DOS REINOS — Motor JS · v3 · Álbum Colecionável
+   GUERRA DOS REINOS — Motor JS · v4 · Álbum (Raridade Fixa)
    ════════════════════════════════════════════════════════════════ */
 
 const IMG_BASE = 'https://cdn.jsdelivr.net/gh/andersonlluna/guerra-dos-reinos-titulos@main/imagens';
 const IMG_EXT  = 'jpg';
 
-/* ─── Engine (mantém regras de cálculo do Cartola) ─── */
 const G2_THRESHOLDS = [[110,14],[100,8],[90,4]];
 const PRIORIDADE = ['mvp','mitada','recuperacao','massacre','podio','lanterna'];
 const PRIMEIRA_RODADA_VALIDA = 6;
@@ -59,6 +58,41 @@ const PREMIOS_FINAIS = [
   { id:'perfeicao',     num:38, nome:'Perfeição Encarnada',           desc:'Maior média de pontos Cartola na temporada', grupo:'especial' },
 ];
 
+/* ─── Raridade FIXA por figurinha (baseada em dificuldade histórica) ─── */
+const RARIDADE_FIXA = {
+  /* Inicial */
+  1: 'comum',
+  /* MVP */
+  2: 'comum', 3: 'incomum', 4: 'raro', 5: 'epico', 6: 'lendario', 7: 'mitico',
+  /* Pódio */
+  8: 'comum', 9: 'incomum', 10: 'raro', 11: 'epico', 12: 'lendario',
+  /* Mitada */
+  13: 'comum', 14: 'incomum', 15: 'raro', 16: 'epico', 17: 'lendario',
+  /* Massacre */
+  18: 'incomum', 19: 'raro', 20: 'epico', 21: 'mitico',
+  /* Recuperação */
+  22: 'incomum', 23: 'raro', 24: 'epico', 25: 'mitico',
+  /* Lanterna */
+  26: 'comum', 27: 'incomum', 28: 'raro', 29: 'epico', 30: 'mitico',
+  /* Prêmios Finais */
+  31: 'mitico', 32: 'lendario', 33: 'epico', 34: 'raro',
+  35: 'mitico', 36: 'lendario', 37: 'epico', 38: 'raro',
+};
+
+const RARIDADE_INFO = {
+  comum:    { label: 'Comum',    cls:'comum',    cor:'var(--rar-comum)',    ord: 1 },
+  incomum:  { label: 'Incomum',  cls:'incomum',  cor:'var(--rar-incomum)',  ord: 2 },
+  raro:     { label: 'Raro',     cls:'raro',     cor:'var(--rar-raro)',     ord: 3 },
+  epico:    { label: 'Épico',    cls:'epico',    cor:'var(--rar-epico)',    ord: 4 },
+  lendario: { label: 'Lendário', cls:'lendario', cor:'var(--rar-lendario)', ord: 5 },
+  mitico:   { label: 'Mítico',   cls:'mitico',   cor:'var(--rar-mitico)',   ord: 6 },
+};
+
+function getRaridade(num){
+  const key = RARIDADE_FIXA[num] || 'comum';
+  return RARIDADE_INFO[key];
+}
+
 const TITULOS_LORE = {
   'Escudeiro Sem Nome': 'O ponto de partida. Sem feitos para reivindicar — mas com toda a temporada pela frente.',
   'Cavaleiro da Companhia': 'O primeiro juramento de combate. Você venceu uma rodada — agora tem nome entre os cavaleiros.',
@@ -105,17 +139,6 @@ function bonusG2(pts){
   for (const [thr,b] of G2_THRESHOLDS) if (pts >= thr) return b;
   return 0;
 }
-function tituloPorContagem(cat, count){
-  for (const [c,t] of TITULOS[cat]) if (count >= c) return {marco:c, nome:t};
-  return null;
-}
-function proximoMarco(cat, count){
-  const tab = TITULOS[cat];
-  for (let i = tab.length - 1; i >= 0; i--){
-    if (count < tab[i][0]) return {marco:tab[i][0], nome:tab[i][1]};
-  }
-  return null;
-}
 function getCardUrl(cat, marco){
   const n = CARD_NUM[cat]?.[marco];
   return n ? `${IMG_BASE}/${String(n).padStart(2,'0')}.${IMG_EXT}` : null;
@@ -129,7 +152,7 @@ function escapeHtml(s){
 }
 function escapeAttr(s){ return escapeHtml(s).replace(/"/g,'&quot;'); }
 
-/* ─── Parse CSV + processarLiga ─── */
+/* ─── Engine de cálculo ─── */
 function parseCSV(csv){
   const linhas = csv.trim().split(/\r?\n/);
   const dados = {};
@@ -156,12 +179,10 @@ function processarLiga(csv){
   jogadoresCsv.forEach(j => {
     estado[j] = {
       name:j, mvp:0, mitada:0, recuperacao:0, massacre:0, podio:0, lanterna:0,
-      g2:0, ptsCartola:0, pts:[], posPorRodada:[],
-      figurinhas:[],   // [{cat, marco, nome, num, rodada}]
+      g2:0, ptsCartola:0, pts:[], posPorRodada:[], figurinhas:[],
     };
   });
 
-  /* Helper: registra desbloqueios verificando se um marco foi atingido na rodada */
   function checkDesbloqueio(j, cat, antes, depois, rodada){
     if (!CARD_NUM[cat]) return;
     Object.entries(CARD_NUM[cat]).forEach(([marco, num]) => {
@@ -169,15 +190,13 @@ function processarLiga(csv){
       if (antes < m && depois >= m){
         const titEntry = TITULOS[cat]?.find(t => t[0] === m);
         if (titEntry){
-          estado[j].figurinhas.push({
-            cat, marco:m, nome:titEntry[1], num, rodada
-          });
+          estado[j].figurinhas.push({cat, marco:m, nome:titEntry[1], num, rodada});
         }
       }
     });
   }
 
-  let acumAntes = jogadoresCsv.map(j => ({name:j, mvp:0, mitada:0, recuperacao:0, massacre:0, podio:0, lanterna:0, g2:0, ptsCartola:0}));
+  let acumAntes = jogadoresCsv.map(j => ({name:j, pm:0, ptsCartola:0}));
   const rodadas = Object.keys(dados).map(Number).sort((a,b) => a-b);
 
   for (const r of rodadas){
@@ -209,7 +228,6 @@ function processarLiga(csv){
       checkDesbloqueio(td.time, 'lanterna',    before.lanterna,    lord.lanterna,    r);
     });
 
-    /* Cálculo do massacre (escalada de ranking) */
     const calcPM = j => {
       const l = estado[j];
       const ptsCat = (cat, c) => {
@@ -256,7 +274,6 @@ function processarLiga(csv){
       }
     }
 
-    /* Atualiza acumAntes pra próxima rodada e registra posição */
     acumAntes = jogadoresCsv.map(j => ({name:j, pm:calcPM(j), ptsCartola:estado[j].ptsCartola}))
       .sort((a,b) => b.pm - a.pm || b.ptsCartola - a.ptsCartola);
     acumAntes.forEach((entry, posIdx) => {
@@ -264,23 +281,45 @@ function processarLiga(csv){
     });
   }
 
-  /* Estado final */
   const finais = jogadoresCsv.map(j => {
     const l = estado[j];
-    const breakdown = {};
-    PRIORIDADE.forEach(cat => {
-      breakdown[cat] = {
-        count: l[cat],
-        proximo: proximoMarco(cat, l[cat]),
-      };
-    });
     const rodadasJogadas = l.pts.filter(p => p !== undefined).length;
     const mediaCartola = rodadasJogadas > 0 ? l.ptsCartola / rodadasJogadas : 0;
-    return {...l, breakdown, mediaCartola, rodadasJogadas};
+    return {...l, mediaCartola, rodadasJogadas};
   });
 
-  /* Posição final pra cálculos de prêmios (sem expor pro UI) */
-  const calcPM_final = j => {
+  /* Ordena por completude do álbum (desempate: maior raridade entre figurinhas) */
+  finais.forEach(f => {
+    f.completude = 1 + f.figurinhas.length;
+    f.maiorRaridade = Math.max(0, ...f.figurinhas.map(fig => RARIDADE_INFO[RARIDADE_FIXA[fig.num]].ord));
+  });
+  finais.sort((a,b) => b.completude - a.completude || b.maiorRaridade - a.maiorRaridade);
+
+  return {
+    finais, rodadas,
+    ultimaRodada: rodadas[rodadas.length-1],
+    estado,
+  };
+}
+
+/* ─── Mapa "quem possui figurinha N" ─── */
+function donosPorFigurinha(state){
+  const donos = {};
+  for (let n = 1; n <= 38; n++) donos[n] = [];
+  /* Inicial: todos */
+  state.finais.forEach(j => donos[1].push(j.name));
+  /* Conquistadas */
+  state.finais.forEach(j => j.figurinhas.forEach(f => donos[f.num].push(j.name)));
+  /* Prêmios Finais: líder atual "tem" preview */
+  const lid = liderePremios(state);
+  PREMIOS_FINAIS.forEach(p => { if (lid[p.id]) donos[p.num].push(lid[p.id]); });
+  return donos;
+}
+
+function liderePremios(state){
+  if (!state || state.finais.length === 0) return {};
+  /* Pra prêmios, precisamos do ranking POR PM (não por completude do álbum) */
+  const calcPM = j => {
     const ptsCat = (cat, c) => {
       const tab = {
         mvp:[[15,200],[10,135],[7,95],[5,65],[3,40],[2,20],[1,10]],
@@ -296,102 +335,26 @@ function processarLiga(csv){
     return ptsCat('mvp',j.mvp) + ptsCat('mitada',j.mitada) + ptsCat('recuperacao',j.recuperacao)
          + ptsCat('massacre',j.massacre) + ptsCat('podio',j.podio) + ptsCat('lanterna',j.lanterna) + j.g2;
   };
-  finais.forEach(f => f._pm = calcPM_final(f));
-  finais.sort((a,b) => b._pm - a._pm || b.ptsCartola - a.ptsCartola);
+  const porPM = [...state.finais].sort((a,b) => calcPM(b) - calcPM(a) || b.ptsCartola - a.ptsCartola);
 
-  return {
-    finais, rodadas,
-    ultimaRodada: rodadas[rodadas.length-1],
-    estado,
-  };
-}
-
-/* ─── Cálculo de Raridade Global ─── */
-const RARIDADE_TIERS = [
-  { min:0, max:0, label:'Mítica',   cls:'mythic',   color:'var(--rar-mythic)' },
-  { min:1, max:1, label:'Lendária', cls:'legend',   color:'var(--rar-legend)' },
-  { min:2, max:2, label:'Épica',    cls:'epic',     color:'var(--rar-epic)' },
-  { min:3, max:4, label:'Rara',     cls:'rare',     color:'var(--rar-rare)' },
-  { min:5, max:7, label:'Incomum',  cls:'uncommon', color:'var(--rar-uncommon)' },
-  { min:8, max:99,label:'Comum',    cls:'common',   color:'var(--rar-common)' },
-];
-
-function tierRaridade(count){
-  return RARIDADE_TIERS.find(t => count >= t.min && count <= t.max) || RARIDADE_TIERS[RARIDADE_TIERS.length-1];
-}
-
-function calcularRaridades(state){
-  /* Pra cada figurinha (1-30 + 31-38), conta quantos jogadores conquistaram */
-  const counts = {};   // num → { donos:[name, name], count:N }
-  const donosPorFigurinha = {};
-
-  /* Inicializa todas 38 com count 0 */
-  for (let n = 1; n <= 38; n++) donosPorFigurinha[n] = [];
-
-  /* Inicial (#01): todo mundo tem */
-  state.finais.forEach(j => donosPorFigurinha[1].push(j.name));
-
-  /* Progressivos (figurinhas conquistadas via figurinhas[]) */
-  state.finais.forEach(j => {
-    j.figurinhas.forEach(fig => {
-      donosPorFigurinha[fig.num].push(j.name);
-    });
-  });
-
-  /* Prêmios Finais (31-38): líder atual "tem" preview */
-  const lideres = calcularPremiosFinais(state);
-  PREMIOS_FINAIS.forEach(p => {
-    if (lideres[p.id]) donosPorFigurinha[p.num].push(lideres[p.id]);
-  });
-
-  return donosPorFigurinha;
-}
-
-function calcularPremiosFinais(state){
-  if (!state || state.finais.length === 0) return {};
-  const finais = state.finais;
   const result = {};
-  result.imperador     = finais[0]?.name || null;
-  result.principe      = finais[1]?.name || null;
-  result.senhor_winter = finais[2]?.name || null;
-  result.esquecido     = finais[finais.length-1]?.name || null;
-  const lider = finais[0];
+  result.imperador     = porPM[0]?.name || null;
+  result.principe      = porPM[1]?.name || null;
+  result.senhor_winter = porPM[2]?.name || null;
+  result.esquecido     = porPM[porPM.length-1]?.name || null;
+  const lider = porPM[0];
   result.rei_gondor = (lider && lider.lanterna === 0) ? lider.name : null;
   if (lider){
     const jaCaiu = lider.posPorRodada.some(p => p.pos >= 6);
     result.vhagar = jaCaiu ? lider.name : null;
   } else result.vhagar = null;
   let maxMvp = -1; let topMvp = null;
-  finais.forEach(j => { if (j.mvp > maxMvp){ maxMvp = j.mvp; topMvp = j.name; } });
+  porPM.forEach(j => { if (j.mvp > maxMvp){ maxMvp = j.mvp; topMvp = j.name; } });
   result.balerion = (maxMvp > 0) ? topMvp : null;
   let maxMedia = -1; let topMedia = null;
-  finais.forEach(j => { if (j.mediaCartola > maxMedia){ maxMedia = j.mediaCartola; topMedia = j.name; } });
+  porPM.forEach(j => { if (j.mediaCartola > maxMedia){ maxMedia = j.mediaCartola; topMedia = j.name; } });
   result.perfeicao = topMedia;
   return result;
-}
-
-/* ─── Stats por jogador (álbum-foco) ─── */
-function statsAlbum(jogador){
-  const totalConquistadas = 1 + jogador.figurinhas.length;  // +1 do Inicial
-  const completude = totalConquistadas;
-  const ultimaFig = jogador.figurinhas.length > 0
-    ? jogador.figurinhas[jogador.figurinhas.length - 1]
-    : null;
-  return { completude, total: 38, ultimaFig };
-}
-
-function figurinhaMaisRara(jogador, donosPorFigurinha){
-  /* Procura a figurinha do jogador com menor número de donos (mais rara) */
-  const minhas = [{cat:'inicial', marco:0, num:1, nome:'Escudeiro Sem Nome'}, ...jogador.figurinhas];
-  let mais = null; let minDonos = 999;
-  minhas.forEach(fig => {
-    const c = donosPorFigurinha[fig.num]?.length || 0;
-    /* desempate: figurinha com maior marco (mais difícil) */
-    if (c < minDonos || (c === minDonos && fig.marco > (mais?.marco || 0))){
-      minDonos = c; mais = {...fig, donos:c};
-    }
-  });
-  return mais;
 }
 
 const CATEGORIA_LABEL = {
@@ -411,52 +374,71 @@ const CATEGORIA_ICON = {
    PORTAL
    ════════════════════════════════════════════════════════════════ */
 
+let _portalState = null;
+let _portalDonos = null;
+
 function renderPortal(state){
   if (!state) return;
-  const donos = calcularRaridades(state);
+  const donos = donosPorFigurinha(state);
+  _portalState = state;
+  _portalDonos = donos;
 
+  /* GRID DE JOGADORES */
   const portal = document.getElementById('portal-grid');
-  if (!portal) return;
+  if (portal){
+    let html = '';
+    for (const slug of ORDEM_JOGADORES){
+      const cfg = JOGADORES[slug];
+      const lord = state.finais.find(f => f.name === cfg.csvKey);
+      if (!lord){
+        html += renderPortalCardEmpty(slug, cfg);
+        continue;
+      }
+      const completude = 1 + lord.figurinhas.length;
+      const pct = Math.round((completude / 38) * 100);
+      /* Figurinha mais rara que ele tem */
+      let raraNum = 1;
+      let raraOrd = 1;
+      [{num:1}, ...lord.figurinhas].forEach(f => {
+        const o = RARIDADE_INFO[RARIDADE_FIXA[f.num]].ord;
+        if (o > raraOrd){ raraOrd = o; raraNum = f.num; }
+      });
+      const rarInfo = RARIDADE_INFO[RARIDADE_FIXA[raraNum]];
+      let raraNome = 'Escudeiro Sem Nome';
+      if (raraNum > 1){
+        const fig = lord.figurinhas.find(f => f.num === raraNum);
+        raraNome = fig?.nome || raraNome;
+      }
 
-  let html = '';
-  for (const slug of ORDEM_JOGADORES){
-    const cfg = JOGADORES[slug];
-    const lord = state.finais.find(f => f.name === cfg.csvKey);
-    if (!lord){
-      html += renderPortalCardEmpty(slug, cfg);
-      continue;
-    }
-    const stats = statsAlbum(lord);
-    const rara = figurinhaMaisRara(lord, donos);
-    const raraTier = rara ? tierRaridade(donos[rara.num].length) : null;
-    const completudePct = Math.round((stats.completude / stats.total) * 100);
-
-    html += `
-      <a class="portal-card" href="./jogador/${slug}.html" style="--portal-color:${cfg.color}">
-        <div class="portal-bg"></div>
-        <div class="portal-shade"></div>
-        <div class="portal-line"></div>
-        <div class="portal-arrow">→</div>
-        <div class="portal-content">
-          <div class="portal-meta">
-            <span class="portal-region">${escapeHtml(cfg.region)}</span>
-            <span class="portal-completude">${stats.completude}/${stats.total}</span>
-          </div>
-          <div>
-            <div class="portal-brasao">${cfg.brasao}</div>
-            <div class="portal-name">${escapeHtml(cfg.name)}</div>
-            <div class="portal-bar"><div class="portal-bar-fill" style="width:${completudePct}%"></div></div>
-            ${rara ? `
+      html += `
+        <a class="portal-card" href="./jogador/${slug}.html" style="--portal-color:${cfg.color}">
+          <div class="portal-bg"></div>
+          <div class="portal-shade"></div>
+          <div class="portal-line"></div>
+          <div class="portal-arrow">→</div>
+          <div class="portal-content">
+            <div class="portal-meta">
+              <span class="portal-region">${escapeHtml(cfg.region)}</span>
+              <span class="portal-completude">${completude}/38</span>
+            </div>
+            <div>
+              <div class="portal-brasao">${cfg.brasao}</div>
+              <div class="portal-name">${escapeHtml(cfg.name)}</div>
+              <div class="portal-bar"><div class="portal-bar-fill" style="width:${pct}%"></div></div>
               <div class="portal-rare">
-                <span class="rare-label" style="color:${raraTier.color}">${raraTier.label}</span>
-                <span class="rare-name">${escapeHtml(rara.nome)}</span>
-              </div>` : `<div class="portal-rare"><span style="color:var(--text-tertiary);font-style:italic;font-size:11px">só Escudeiro Sem Nome</span></div>`}
+                <span class="rare-label rar-${rarInfo.cls}">${rarInfo.label} mais alta</span>
+                <span class="rare-name">${escapeHtml(raraNome)}</span>
+              </div>
+            </div>
           </div>
-        </div>
-      </a>
-    `;
+        </a>
+      `;
+    }
+    portal.innerHTML = html;
   }
-  portal.innerHTML = html;
+
+  /* GALERIA NO PORTAL — todas 38 figurinhas */
+  renderGaleriaPortal(state, donos);
 }
 
 function renderPortalCardEmpty(slug, cfg){
@@ -480,27 +462,167 @@ function renderPortalCardEmpty(slug, cfg){
   `;
 }
 
+function renderGaleriaPortal(state, donos){
+  const root = document.getElementById('galeria-portal');
+  if (!root) return;
+
+  /* Lista das 38 figurinhas */
+  const figs = [];
+  figs.push({num:1, cat:'inicial', marco:0, nome:'Escudeiro Sem Nome'});
+  for (const cat of ['mvp','podio','mitada','massacre','recuperacao','lanterna']){
+    const ord = [...TITULOS[cat]].sort((a,b) => a[0] - b[0]);
+    for (const [marco, nome] of ord){
+      const num = CARD_NUM[cat]?.[marco];
+      if (num) figs.push({num, cat, marco, nome});
+    }
+  }
+  PREMIOS_FINAIS.forEach(p => figs.push({num:p.num, cat:'premio', marco:0, nome:p.nome, premio:p}));
+
+  /* Header com filtros */
+  let html = `
+    <div class="galeria-header">
+      <div class="raridade-legenda">
+        ${Object.values(RARIDADE_INFO).map(r => `
+          <button class="rar-pill rar-${r.cls} active" data-filter="${r.cls}" onclick="toggleRarFilter('${r.cls}', this)">${r.label}</button>
+        `).join('')}
+      </div>
+    </div>
+    <div class="galeria-grid" id="galeria-grid-inner">
+  `;
+
+  for (const fig of figs){
+    html += renderGaleriaCard(fig, donos);
+  }
+  html += `</div>`;
+  root.innerHTML = html;
+}
+
+function toggleRarFilter(rar, btn){
+  btn.classList.toggle('active');
+  const ativos = [...document.querySelectorAll('.rar-pill.active')].map(b => b.dataset.filter);
+  document.querySelectorAll('#galeria-grid-inner .galeria-card').forEach(card => {
+    const r = card.dataset.rar;
+    card.style.display = ativos.includes(r) ? '' : 'none';
+  });
+}
+
+function renderGaleriaCard(fig, donos){
+  const lista = donos[fig.num] || [];
+  const rar = getRaridade(fig.num);
+  const url = getCardUrlByNum(fig.num);
+  const ehPremio = fig.cat === 'premio';
+  const ninguem = lista.length === 0;
+
+  const numLabel = `#${String(fig.num).padStart(2,'0')}`;
+  let subtitulo;
+  if (fig.cat === 'inicial') subtitulo = 'Tier Inicial';
+  else if (ehPremio) subtitulo = 'Prêmio Final · R38';
+  else subtitulo = `${fig.marco}× ${CATEGORIA_LABEL[fig.cat]}`;
+
+  return `
+    <div class="galeria-card rar-${rar.cls} ${ninguem ? 'ninguem' : ''}" data-rar="${rar.cls}" onclick="openGaleriaModal(${fig.num})">
+      <div class="card-image-wrap">
+        <img class="card-image" src="${url}" alt="${escapeAttr(fig.nome)}" loading="lazy"
+             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="card-image-fallback" style="display:none">⭐</div>
+        <div class="card-image-shade"></div>
+        <div class="rar-line" style="background:${rar.cor}"></div>
+        <div class="rar-tag rar-${rar.cls}">${rar.label}</div>
+        <div class="card-info">
+          <div class="card-marco">${numLabel} · ${escapeHtml(subtitulo)}</div>
+          <div class="card-name">${escapeHtml(fig.nome)}</div>
+          <div class="card-donos">
+            ${ninguem ? '<span class="donos-empty">— ninguém ainda</span>' : `<span class="donos-count">${lista.length} ${lista.length === 1 ? 'jogador tem' : 'jogadores têm'}</span>`}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function openGaleriaModal(num){
+  let info = null;
+  if (num === 1){
+    info = {cat:'inicial', marco:0, nome:'Escudeiro Sem Nome', subtitulo:'Tier Inicial', criterio:'Todos começam com esta figurinha desbloqueada.', lore:TITULOS_LORE['Escudeiro Sem Nome']};
+  } else if (num >= 31){
+    const p = PREMIOS_FINAIS.find(x => x.num === num);
+    if (!p) return;
+    info = {cat:'premio', marco:0, nome:p.nome, subtitulo:`Prêmio Final · R38`, criterio:p.desc, lore:TITULOS_LORE[p.nome]};
+  } else {
+    for (const cat of Object.keys(CARD_NUM)){
+      if (cat === 'inicial') continue;
+      const entry = Object.entries(CARD_NUM[cat]).find(([m, n]) => n === num);
+      if (entry){
+        const marco = parseInt(entry[0]);
+        const nome = TITULOS[cat]?.find(t => t[0] === marco)?.[1];
+        info = {cat, marco, nome, subtitulo:`${marco}× ${CATEGORIA_LABEL[cat]}`, criterio:critPorCategoria(cat, marco), lore:TITULOS_LORE[nome] || ''};
+        break;
+      }
+    }
+  }
+  if (!info) return;
+
+  const donos = _portalDonos[num] || [];
+  const rar = getRaridade(num);
+  const url = getCardUrlByNum(num);
+  const modal = document.getElementById('modal');
+  modal.style.setProperty('--card-color', rar.cor);
+
+  const donosHtml = donos.length > 0
+    ? `<div class="modal-donos">${donos.map(d => `<span class="modal-dono">${escapeHtml(d)}</span>`).join('')}</div>`
+    : `<div style="color:var(--text-tertiary);font-style:italic">Nenhum jogador conquistou ainda</div>`;
+
+  document.getElementById('modal-body').innerHTML = `
+    <img class="modal-img" src="${url}" alt=""
+         onerror="this.outerHTML='<div class=&quot;card-image-fallback&quot; style=&quot;position:relative;height:auto;aspect-ratio:3/4;font-size:5rem&quot;>⭐</div>'">
+    <div class="modal-body">
+      <div class="modal-tier">
+        <span class="rar-pill rar-${rar.cls}" style="margin-right:8px">${rar.label}</span>
+        <span style="color:var(--text-tertiary);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase">
+          #${String(num).padStart(2,'0')} · ${escapeHtml(info.subtitulo)}
+        </span>
+      </div>
+      <div class="modal-name" style="color:${rar.cor}">${escapeHtml(info.nome)}</div>
+      <div class="modal-criterio"><strong>Como conquistar:</strong> ${escapeHtml(info.criterio || '')}</div>
+      <div class="modal-section-title">Quem possui (${donos.length}/9)</div>
+      ${donosHtml}
+      <div class="modal-desc">${escapeHtml(info.lore || '')}</div>
+    </div>
+  `;
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function critPorCategoria(cat, marco){
+  const labels = {
+    mvp: `${marco} vez${marco === 1 ? '' : 'es'} em 1º lugar na rodada (MVP)`,
+    podio: `${marco} vez${marco === 1 ? '' : 'es'} em 2º ou 3º lugar na rodada (Pódio)`,
+    mitada: `${marco} vez${marco === 1 ? '' : 'es'} pontuando ≥ 80 pts numa rodada`,
+    massacre: `${marco} ultrapassagem${marco === 1 ? '' : 's'} no ranking acumulado com diferença ≥ 10 pts`,
+    recuperacao: `${marco} vez${marco === 1 ? '' : 'es'} pontuando +50 pts a mais que na rodada anterior`,
+    lanterna: `${marco} vez${marco === 1 ? '' : 'es'} em último lugar na rodada`,
+  };
+  return labels[cat] || '';
+}
+
 /* ════════════════════════════════════════════════════════════════
-   PÁGINA DO JOGADOR
+   PÁGINA DO JOGADOR (2 abas: Álbum, Lore)
    ════════════════════════════════════════════════════════════════ */
 
-let _ctx = null;   // { slug, cfg, lord, state, donos }
+let _ctx = null;
 
 function renderJogador(slug, state){
   const cfg = JOGADORES[slug];
   if (!cfg) return;
   const lord = state ? state.finais.find(f => f.name === cfg.csvKey) : null;
-  const donos = state ? calcularRaridades(state) : {};
-  _ctx = { slug, cfg, lord, state, donos };
+  _ctx = { slug, cfg, lord, state };
 
   document.documentElement.style.setProperty('--accent', cfg.color);
   document.documentElement.style.setProperty('--accent-soft', hexToRgba(cfg.color, .10));
   document.documentElement.style.setProperty('--accent-strong', hexToRgba(cfg.color, .40));
 
-  /* HEADER */
-  const hd = document.getElementById('player-header');
-  const stats = lord ? statsAlbum(lord) : null;
-  hd.innerHTML = `
+  /* HEADER compacto */
+  document.getElementById('player-header').innerHTML = `
     <a href="../index.html" class="back-link">← Portal</a>
     <a href="../regulamento.html" class="back-link" style="left:auto;right:1rem">Regulamento →</a>
     <div class="header-ornament"><span style="font-size:11px;letter-spacing:4px">✦</span></div>
@@ -509,71 +631,60 @@ function renderJogador(slug, state){
     <div class="header-region">${escapeHtml(cfg.region)}</div>
   `;
 
-  /* COMPLETUDE BAR */
+  /* STATS COMPACTOS — 3 linhas */
   const sb = document.getElementById('player-stats');
-  if (lord && stats){
-    const pct = Math.round((stats.completude / stats.total) * 100);
-    sb.innerHTML = `
-      <div class="completude-block">
-        <div class="completude-row">
-          <span class="completude-label">Coleção</span>
-          <span class="completude-val">${stats.completude}<span style="opacity:.5">/${stats.total}</span></span>
-          <span class="completude-pct">${pct}%</span>
+  if (lord){
+    const completude = 1 + lord.figurinhas.length;
+    const pct = Math.round((completude / 38) * 100);
+    const ult = lord.figurinhas[lord.figurinhas.length - 1];
+
+    /* Mini progresso por categoria — emoji por figurinha */
+    const catsHtml = PRIORIDADE.map(cat => {
+      const total = TITULOS[cat].length;
+      const ord = [...TITULOS[cat]].sort((a,b) => a[0] - b[0]);
+      const conq = ord.filter(([m]) => lord[cat] >= m).length;
+      return `
+        <div class="cat-mini">
+          <span class="cat-mini-icon">${CATEGORIA_ICON[cat]}</span>
+          <span class="cat-mini-count">${conq}/${total}</span>
         </div>
-        <div class="completude-bar"><div class="completude-bar-fill" style="width:${pct}%"></div></div>
-        ${stats.ultimaFig ? `
-          <div class="completude-last">
-            <span class="completude-last-label">Última figurinha:</span>
-            <span class="completude-last-name">${escapeHtml(stats.ultimaFig.nome)}</span>
-            <span class="completude-last-meta">na R${stats.ultimaFig.rodada}</span>
+      `;
+    }).join('');
+
+    sb.innerHTML = `
+      <div class="stats-compact">
+        <div class="stats-row1">
+          <span class="stats-num">${completude}<span class="stats-num-total">/38</span></span>
+          <span class="stats-label">figurinhas</span>
+          <div class="stats-bar"><div class="stats-bar-fill" style="width:${pct}%"></div></div>
+          <span class="stats-pct">${pct}%</span>
+        </div>
+        <div class="stats-row2">${catsHtml}</div>
+        ${ult ? `
+          <div class="stats-row3">
+            <span class="stats-row3-label">Última conquista:</span>
+            <span class="stats-row3-name">${escapeHtml(ult.nome)}</span>
+            <span class="stats-row3-meta">R${ult.rodada}</span>
           </div>` : `
-          <div class="completude-last">
+          <div class="stats-row3">
             <span style="color:var(--text-tertiary);font-style:italic">Apenas o Escudeiro Sem Nome até agora</span>
           </div>`}
       </div>
-      ${renderProgressoPorCategoria(lord)}
     `;
-  } else {
-    sb.innerHTML = `<div class="completude-block"><div class="completude-row"><span style="color:var(--text-tertiary)">Sem dados</span></div></div>`;
   }
 
   renderAlbum(slug, lord, cfg);
-  renderGaleria(slug, lord, cfg, state, donos);
-  renderPremios(slug, lord, cfg, state);
   renderLore(slug, cfg, lord);
-}
-
-function renderProgressoPorCategoria(lord){
-  let html = `<div class="progresso-cats">`;
-  for (const cat of PRIORIDADE){
-    const total = TITULOS[cat].length;
-    const tab = [...TITULOS[cat]].sort((a,b) => a[0] - b[0]);
-    const conquistadas = tab.filter(([m]) => lord[cat] >= m).length;
-    const stickers = tab.map(([m]) =>
-      lord[cat] >= m ? `<span class="sticker filled" style="color:var(--tier-${CATEGORIA_TIER[cat]})">${CATEGORIA_ICON[cat]}</span>`
-                     : `<span class="sticker empty">○</span>`
-    ).join('');
-    html += `
-      <div class="progresso-cat">
-        <span class="progresso-label">${CATEGORIA_LABEL[cat]}</span>
-        <span class="progresso-stickers">${stickers}</span>
-        <span class="progresso-count">${conquistadas}/${total}</span>
-      </div>
-    `;
-  }
-  html += `</div>`;
-  return html;
 }
 
 function renderAlbum(slug, lord, cfg){
   const root = document.getElementById('s-album');
-  let html = `<div class="section-intro">O álbum dos seus feitos. Figurinhas conquistadas brilham — as bloqueadas são silhuetas, esperando o feito necessário.</div>`;
+  let html = `<div class="section-intro">Suas figurinhas. As conquistadas brilham; as bloqueadas mostram o que falta.</div>`;
 
   /* INICIAL */
   html += `
     <div class="group-title" style="--gt-color:var(--tier-d)">
-      <span class="group-title-icon">📜</span>
-      Tier Inicial
+      <span class="group-title-icon">📜</span>Tier Inicial
     </div>
     <div class="creature-grid">
       ${renderFigurinha('inicial', 0, 'Escudeiro Sem Nome', true, 0)}
@@ -612,6 +723,7 @@ function renderFigurinha(cat, marco, nome, desbloqueado, counts){
   const numLabel = num ? `#${String(num).padStart(2,'0')}` : '';
   const faltam = cat === 'inicial' ? 0 : (marco - counts);
   const faltamLabel = faltam > 0 ? `Falta ${faltam} ${CATEGORIA_LABEL[cat]}${faltam === 1 ? '' : 's'}` : '';
+  const rar = num ? getRaridade(num) : null;
 
   return `
     <div class="creature-card ${desbloqueado ? 'unlocked' : 'silhouette'}" style="--card-color:${tierColor}" onclick="openFigurinhaModal('${cat}', ${marco})">
@@ -623,146 +735,12 @@ function renderFigurinha(cat, marco, nome, desbloqueado, counts){
         ` : `<div class="card-image-fallback">${CATEGORIA_ICON[cat]}</div>`}
         <div class="card-image-shade"></div>
         ${desbloqueado ? '<div class="card-tier-line"></div>' : ''}
-        ${desbloqueado ? `<div class="card-num-badge">${numLabel}</div>` : ''}
+        ${desbloqueado && rar ? `<div class="rar-tag rar-${rar.cls}" style="position:absolute;top:10px;right:10px">${rar.label}</div>` : ''}
         ${desbloqueado ? `<div class="card-stamp">✦</div>` : `<div class="card-locked-overlay"><span>🔒</span></div>`}
         <div class="card-info">
+          <div class="card-marco">${numLabel}${cat === 'inicial' ? '' : ' · ' + marco + '× ' + CATEGORIA_LABEL[cat]}</div>
           ${!desbloqueado ? `<div class="card-falta">${escapeHtml(faltamLabel)}</div>` : ''}
           <div class="card-name ${desbloqueado ? '' : 'silhouette-name'}">${escapeHtml(nome)}</div>
-          ${desbloqueado ? `<div class="card-marco">${cat === 'inicial' ? 'Inicial' : marco + '× ' + CATEGORIA_LABEL[cat]}</div>` : ''}
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function renderGaleria(slug, lord, cfg, state, donos){
-  const root = document.getElementById('s-galeria');
-  if (!root || !state) return;
-
-  let html = `
-    <div class="section-intro">
-      As 38 figurinhas da liga. Ao lado de cada uma, sua <strong>raridade</strong> baseada em quantos invocadores já conquistaram.
-      As que <strong>você possui</strong> ficam destacadas.
-    </div>
-    <div class="raridade-legenda">
-      ${RARIDADE_TIERS.map(t => `<span class="rar-pill rar-${t.cls}">${t.label}</span>`).join('')}
-    </div>
-  `;
-
-  /* Agrupa: Inicial + Progressivas + Prêmios */
-  /* Renderiza em 1 grid grande agrupado por categoria */
-  const ordemNum = [];
-  ordemNum.push({num:1, cat:'inicial', marco:0, nome:'Escudeiro Sem Nome'});
-  for (const cat of ['mvp','podio','mitada','massacre','recuperacao','lanterna']){
-    const ord = [...TITULOS[cat]].sort((a,b) => a[0] - b[0]);
-    for (const [marco, nome] of ord){
-      const num = CARD_NUM[cat]?.[marco];
-      if (num) ordemNum.push({num, cat, marco, nome});
-    }
-  }
-  /* Prêmios finais */
-  PREMIOS_FINAIS.forEach(p => ordemNum.push({num:p.num, cat:'premio', marco:0, nome:p.nome, premio:p}));
-
-  html += `<div class="galeria-grid">`;
-  for (const fig of ordemNum){
-    html += renderGaleriaCard(fig, donos, cfg);
-  }
-  html += `</div>`;
-
-  root.innerHTML = html;
-}
-
-function renderGaleriaCard(fig, donos, jogadorCfg){
-  const lista = donos[fig.num] || [];
-  const tier = tierRaridade(lista.length);
-  const url = getCardUrlByNum(fig.num);
-  const ehMeu = lista.includes(jogadorCfg.csvKey);
-  const ehPremio = fig.cat === 'premio';
-
-  const numLabel = `#${String(fig.num).padStart(2,'0')}`;
-  let subtitulo;
-  if (fig.cat === 'inicial') subtitulo = 'Inicial';
-  else if (ehPremio) subtitulo = 'Prêmio Final · R38';
-  else subtitulo = `${fig.marco}× ${CATEGORIA_LABEL[fig.cat]}`;
-
-  return `
-    <div class="galeria-card ${ehMeu ? 'meu' : ''} rar-${tier.cls}" onclick="openGaleriaModal(${fig.num})">
-      <div class="card-image-wrap">
-        <img class="card-image" src="${url}" alt="${escapeAttr(fig.nome)}" loading="lazy"
-             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-        <div class="card-image-fallback" style="display:none">⭐</div>
-        <div class="card-image-shade"></div>
-        <div class="rar-line" style="background:${tier.color}"></div>
-        <div class="rar-tag" style="color:${tier.color};border-color:${tier.color}">${tier.label}</div>
-        ${ehMeu ? `<div class="card-stamp small">✦</div>` : ''}
-        <div class="card-info">
-          <div class="card-marco" style="color:${tier.color}">${numLabel} · ${escapeHtml(subtitulo)}</div>
-          <div class="card-name">${escapeHtml(fig.nome)}</div>
-          <div class="rar-count">${lista.length}/9 invocadores</div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-function renderPremios(slug, lord, cfg, state){
-  const root = document.getElementById('s-premios');
-  if (!root) return;
-  const lideres = calcularPremiosFinais(state);
-  const tierS = `var(--tier-s)`;
-
-  let html = `
-    <div class="section-intro">
-      Os <strong>8 prêmios finais</strong> são revelados apenas na <strong>Rodada 38</strong>.
-      Abaixo, os líderes atuais — sujeitos a mudança até a última rodada.
-    </div>
-  `;
-  html += `
-    <div class="group-title" style="--gt-color:${tierS}">
-      <span class="group-title-icon">🏛</span>
-      Pódio Final
-    </div>
-    <div class="creature-grid">
-  `;
-  for (const p of PREMIOS_FINAIS.filter(x => x.grupo === 'podio')){
-    html += renderPremioCard(p, lideres, cfg.csvKey);
-  }
-  html += `</div>`;
-  html += `
-    <div class="group-title" style="--gt-color:${tierS}">
-      <span class="group-title-icon">⭐</span>
-      Especiais
-    </div>
-    <div class="creature-grid">
-  `;
-  for (const p of PREMIOS_FINAIS.filter(x => x.grupo === 'especial')){
-    html += renderPremioCard(p, lideres, cfg.csvKey);
-  }
-  html += `</div>`;
-  root.innerHTML = html;
-}
-
-function renderPremioCard(premio, lideres, jogadorAtual){
-  const liderAtual = lideres[premio.id];
-  const ehLider = liderAtual === jogadorAtual;
-  const url = getCardUrlByNum(premio.num);
-
-  return `
-    <div class="creature-card silhouette premio" style="--card-color:var(--tier-s)" onclick="openPremioModal('${premio.id}')">
-      <div class="card-image-wrap">
-        <img class="card-image" src="${url}" alt="${escapeAttr(premio.nome)}" loading="lazy"
-             onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-        <div class="card-image-fallback" style="display:none">⭐</div>
-        <div class="card-image-shade"></div>
-        <div class="card-tier-line"></div>
-        <div class="card-num-badge">#${String(premio.num).padStart(2,'0')}</div>
-        ${ehLider
-          ? `<div class="card-stamp gold">★</div><div class="lidera-tag">VOCÊ LIDERA</div>`
-          : (liderAtual ? `<div class="lider-tag">↳ ${escapeHtml(liderAtual)}</div>` : `<div class="lider-tag empty">— sem favorito</div>`)}
-        <div class="card-info">
-          <div class="card-marco" style="color:var(--tier-s)">PRÊMIO FINAL · R38</div>
-          <div class="card-name">${escapeHtml(premio.nome)}</div>
-          <div class="card-falta">${escapeHtml(premio.desc)}</div>
         </div>
       </div>
     </div>
@@ -782,13 +760,15 @@ function renderLore(slug, cfg, lord){
     const ult = lord.figurinhas[lord.figurinhas.length - 1];
     const url = getCardUrlByNum(ult.num);
     const lore = TITULOS_LORE[ult.nome] || '';
+    const rar = getRaridade(ult.num);
     html += `
       <div style="max-width:340px;margin:2rem auto 0;background:var(--bg-card);border:1px solid var(--border-strong);border-top:3px solid var(--accent);border-radius:12px;overflow:hidden">
         <img src="${url}" alt="" style="width:100%;aspect-ratio:3/4;object-fit:cover;background:var(--bg-surface)" onerror="this.outerHTML='<div style=&quot;width:100%;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;font-size:5rem;color:var(--accent);background:var(--bg-surface)&quot;>${CATEGORIA_ICON[ult.cat]}</div>'">
         <div style="padding:1.25rem;text-align:center">
           <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text-tertiary);letter-spacing:1.5px;text-transform:uppercase">Última Figurinha · R${ult.rodada}</div>
-          <div style="font-family:'Cinzel',serif;font-size:1.3rem;font-weight:700;color:var(--accent);margin-top:.4rem">${escapeHtml(ult.nome)}</div>
-          <div style="font-size:13px;color:var(--text-secondary);margin-top:.75rem;font-style:italic">${escapeHtml(lore)}</div>
+          <div style="font-family:'Cinzel',serif;font-size:1.4rem;font-weight:700;color:var(--accent);margin-top:.4rem">${escapeHtml(ult.nome)}</div>
+          <div style="margin-top:.5rem"><span class="rar-pill rar-${rar.cls}">${rar.label}</span></div>
+          <div style="font-size:14px;color:var(--text-secondary);margin-top:.75rem;font-style:italic">${escapeHtml(lore)}</div>
         </div>
       </div>
     `;
@@ -798,12 +778,13 @@ function renderLore(slug, cfg, lord){
 
 /* ─── Modais ─── */
 function openFigurinhaModal(cat, marco){
-  let nome, url, lore, num, subtitulo;
+  let nome, url, lore, num, subtitulo, criterio;
   if (cat === 'inicial'){
     nome = 'Escudeiro Sem Nome';
     url = getCardUrlByNum(1);
     num = 1;
     subtitulo = 'Tier Inicial';
+    criterio = 'Todos começam com esta figurinha desbloqueada.';
     lore = TITULOS_LORE[nome];
   } else {
     const t = TITULOS[cat]?.find(t => t[0] === marco);
@@ -812,125 +793,37 @@ function openFigurinhaModal(cat, marco){
     url = getCardUrl(cat, marco);
     num = CARD_NUM[cat]?.[marco];
     subtitulo = `${marco}× ${CATEGORIA_LABEL[cat]}`;
+    criterio = critPorCategoria(cat, marco);
     lore = TITULOS_LORE[nome] || '';
   }
   const lord = _ctx?.lord;
   const counts = (lord && cat !== 'inicial') ? lord[cat] : 0;
   const desbloqueado = (cat === 'inicial') || counts >= marco;
   const faltam = (cat === 'inicial' || desbloqueado) ? 0 : (marco - counts);
+  const rar = getRaridade(num);
 
-  const tierColor = `var(--tier-${CATEGORIA_TIER[cat]})`;
+  const figConq = lord?.figurinhas.find(f => f.cat === cat && f.marco === marco);
+
   const status = desbloqueado
-    ? `<span style="color:${tierColor}">✦ Conquistada</span>${cat !== 'inicial' && lord && lord.figurinhas.find(f => f.cat === cat && f.marco === marco) ? ` · R${lord.figurinhas.find(f => f.cat === cat && f.marco === marco).rodada}` : ''}`
+    ? `<span style="color:${rar.cor}">✦ Conquistada</span>${figConq ? ` · R${figConq.rodada}` : ''}`
     : `🔒 Bloqueada — falta${faltam === 1 ? '' : 'm'} <strong>${faltam} ${CATEGORIA_LABEL[cat]}${faltam === 1 ? '' : 's'}</strong>`;
 
   const modal = document.getElementById('modal');
-  modal.style.setProperty('--card-color', tierColor);
+  modal.style.setProperty('--card-color', rar.cor);
   document.getElementById('modal-body').innerHTML = `
     ${url ? `<img class="modal-img ${desbloqueado ? '' : 'silhouette-img'}" src="${url}" alt=""
          onerror="this.outerHTML='<div class=&quot;card-image-fallback&quot; style=&quot;position:relative;height:auto;aspect-ratio:3/4;font-size:5rem&quot;>${CATEGORIA_ICON[cat]}</div>'">` : ''}
     <div class="modal-body">
       <div class="modal-tier">
-        <span style="color:${tierColor};font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase">
+        <span class="rar-pill rar-${rar.cls}" style="margin-right:8px">${rar.label}</span>
+        <span style="color:var(--text-tertiary);font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1.5px">
           #${String(num).padStart(2,'0')} · ${escapeHtml(subtitulo)}
         </span>
       </div>
-      <div class="modal-name" style="color:${tierColor}">${escapeHtml(nome)}</div>
+      <div class="modal-name" style="color:${rar.cor}">${escapeHtml(nome)}</div>
       <div class="modal-marco">${status}</div>
+      <div class="modal-criterio"><strong>Como conquistar:</strong> ${escapeHtml(criterio)}</div>
       <div class="modal-desc">${escapeHtml(lore)}</div>
-    </div>
-  `;
-  modal.classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function openGaleriaModal(num){
-  /* Encontra o que é #num */
-  let info = null;
-  if (num === 1){
-    info = {cat:'inicial', marco:0, nome:'Escudeiro Sem Nome', subtitulo:'Tier Inicial', lore:TITULOS_LORE['Escudeiro Sem Nome']};
-  } else if (num >= 31){
-    const p = PREMIOS_FINAIS.find(x => x.num === num);
-    if (!p) return;
-    info = {cat:'premio', marco:0, nome:p.nome, subtitulo:`Prêmio Final · ${p.desc}`, lore:TITULOS_LORE[p.nome]};
-  } else {
-    /* Procura nos progressivos */
-    for (const cat of Object.keys(CARD_NUM)){
-      if (cat === 'inicial') continue;
-      const entry = Object.entries(CARD_NUM[cat]).find(([m, n]) => n === num);
-      if (entry){
-        const marco = parseInt(entry[0]);
-        const nome = TITULOS[cat]?.find(t => t[0] === marco)?.[1];
-        info = {cat, marco, nome, subtitulo:`${marco}× ${CATEGORIA_LABEL[cat]}`, lore:TITULOS_LORE[nome] || ''};
-        break;
-      }
-    }
-  }
-  if (!info) return;
-
-  const donos = _ctx?.donos[num] || [];
-  const tier = tierRaridade(donos.length);
-  const url = getCardUrlByNum(num);
-
-  const modal = document.getElementById('modal');
-  modal.style.setProperty('--card-color', tier.color);
-
-  const donosHtml = donos.length > 0
-    ? `<div class="modal-donos">
-         ${donos.map(d => `<span class="modal-dono ${d === _ctx?.cfg?.csvKey ? 'me' : ''}">${escapeHtml(d)}</span>`).join('')}
-       </div>`
-    : `<div style="color:var(--text-tertiary);font-style:italic">Nenhum invocador conquistou ainda</div>`;
-
-  document.getElementById('modal-body').innerHTML = `
-    <img class="modal-img" src="${url}" alt=""
-         onerror="this.outerHTML='<div class=&quot;card-image-fallback&quot; style=&quot;position:relative;height:auto;aspect-ratio:3/4;font-size:5rem&quot;>⭐</div>'">
-    <div class="modal-body">
-      <div class="modal-tier">
-        <span style="color:${tier.color};font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase">
-          #${String(num).padStart(2,'0')} · ${escapeHtml(info.subtitulo)}
-        </span>
-      </div>
-      <div class="modal-name" style="color:${tier.color}">${escapeHtml(info.nome)}</div>
-      <div class="modal-marco">
-        <span class="rar-pill rar-${tier.cls}" style="margin-right:8px">${tier.label}</span>
-        ${donos.length}/9 invocadores
-      </div>
-      ${donosHtml}
-      <div class="modal-desc" style="margin-top:1rem">${escapeHtml(info.lore || '')}</div>
-    </div>
-  `;
-  modal.classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function openPremioModal(id){
-  const premio = PREMIOS_FINAIS.find(p => p.id === id);
-  if (!premio) return;
-  const tierColor = `var(--tier-s)`;
-  const lideres = calcularPremiosFinais(_ctx?.state);
-  const lider = lideres[premio.id];
-  const ehLider = lider === _ctx?.cfg?.csvKey;
-  const lore = TITULOS_LORE[premio.nome] || '';
-
-  const modal = document.getElementById('modal');
-  modal.style.setProperty('--card-color', tierColor);
-
-  const status = ehLider
-    ? `<span style="color:${tierColor}">★ Você lidera atualmente</span> — defenda até R38`
-    : (lider ? `Líder atual: <strong style="color:${tierColor}">${escapeHtml(lider)}</strong>` : 'Sem favorito definido');
-
-  document.getElementById('modal-body').innerHTML = `
-    <img class="modal-img" src="${getCardUrlByNum(premio.num)}" alt=""
-         onerror="this.outerHTML='<div class=&quot;card-image-fallback&quot; style=&quot;position:relative;height:auto;aspect-ratio:3/4;font-size:5rem&quot;>⭐</div>'">
-    <div class="modal-body">
-      <div class="modal-tier">
-        <span style="color:${tierColor};font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase">
-          #${String(premio.num).padStart(2,'0')} · Prêmio Final · R38
-        </span>
-      </div>
-      <div class="modal-name" style="color:${tierColor}">${escapeHtml(premio.nome)}</div>
-      <div class="modal-marco">${status}</div>
-      <div class="modal-desc"><strong>Critério:</strong> ${escapeHtml(premio.desc)}<br><br><em>${escapeHtml(lore)}</em></div>
     </div>
   `;
   modal.classList.add('open');
@@ -978,7 +871,6 @@ async function initPortal(){
   if (state){
     document.getElementById('hm-rodadas').textContent = state.rodadas.length;
     document.getElementById('hm-jogadores').textContent = state.finais.length;
-    /* Estatística leve no header: total de figurinhas distribuídas */
     const totalFigurinhas = state.finais.reduce((acc, j) => acc + j.figurinhas.length + 1, 0);
     document.getElementById('hm-conquistadas').textContent = totalFigurinhas;
   }
@@ -992,6 +884,9 @@ async function initJogador(slug){
     return;
   }
   const state = processarLiga(csv);
+  /* Necessário: portal-donos pra modal de galeria não usar (mas mesmo assim, cache aqui) */
+  _portalState = state;
+  _portalDonos = donosPorFigurinha(state);
   renderJogador(slug, state);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCardModalDirect(); });
 }
